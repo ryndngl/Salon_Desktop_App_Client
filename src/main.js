@@ -1,56 +1,84 @@
-import { app, BrowserWindow } from 'electron';
-import path from 'node:path';
-import started from 'electron-squirrel-startup';
+import { app, BrowserWindow, ipcMain } from "electron";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import started from "electron-squirrel-startup";
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (started) {
-  app.quit();
-}
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+if (started) app.quit();
 
 const createWindow = () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 800,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: false,
+      contextIsolation: true,
     },
   });
 
-  // and load the index.html of the app.
-  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+  if (process.env.NODE_ENV === "development") {
+    mainWindow.loadURL(`http://localhost:5173`);
+    mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
+    mainWindow.loadFile(path.join(__dirname, 'dist/index.html'))
+      .catch(err => console.error("Failed to load index.html:", err));
   }
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  return mainWindow;
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+// IPC handlers para sa login functionality
+ipcMain.handle('login', async (event, credentials) => {
+  console.log('Login attempt received:', credentials);
+  
+  // I-implement mo dito yung authentication logic mo
+  // Example:
+  try {
+    // Validate credentials
+    const { username, password, rememberMe } = credentials;
+    
+    if (username === 'admin' && password === 'admin123') { // Example validation
+      console.log('Login successful');
+      
+      // Store remember me preference if needed
+      if (rememberMe) {
+        // Save to electron-store or similar
+      }
+      
+      return { success: true, message: 'Login successful' };
+    } else {
+      return { success: false, message: 'Invalid credentials' };
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    return { success: false, message: 'Login failed' };
+  }
+});
+
+// Window navigation handler
+ipcMain.handle('navigate-to-dashboard', async () => {
+  // Load dashboard after successful login
+  const window = BrowserWindow.getFocusedWindow();
+  if (window) {
+    if (process.env.NODE_ENV === "development") {
+      window.loadURL(`http://localhost:5173/src/pages/dashboard/index.html`);
+    } else {
+      window.loadFile(path.join(__dirname, 'dist/dashboard.html'));
+    }
+  }
+});
+
 app.whenReady().then(() => {
   createWindow();
-
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
+  
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
