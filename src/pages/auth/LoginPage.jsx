@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// src/pages/auth/LoginPage.jsx
+import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
 const LoginPage = () => {
@@ -17,10 +18,18 @@ const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login attempt:', formData);
+    try {
+      const result = await window.electronAPI.login(formData);
+      if (result.success) {
+        console.log('Login successful!');
+      } else {
+        console.log('Login failed:', result.message);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -46,7 +55,7 @@ const LoginPage = () => {
             Welcome Back! Admin
           </h2>
           
-          <div>
+          <form onSubmit={handleSubmit}>
             {/* Username Input */}
             <div className="mb-5">
               <input
@@ -84,7 +93,7 @@ const LoginPage = () => {
 
             {/* Login Button */}
             <button
-              onClick={handleSubmit}
+              type="submit"
               className="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg cursor-pointer transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg border-none outline-none"
             >
               Login
@@ -112,12 +121,11 @@ const LoginPage = () => {
               >
                 Forgot password?
               </a>
+              
             </div>
-          </div>
+          </form>
         </div>
       </div>
-
-
     </div>
   );
 };

@@ -28,17 +28,17 @@ module.exports = {
     {
       name: '@electron-forge/plugin-vite',
       config: {
-        // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
-        // If you are familiar with Vite configuration, it will look really familiar.
+        // Updated paths to match your new folder structure
         build: [
           {
-            // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
-            entry: 'src/main.js',
+            // Main process entry point
+            entry: 'src/main/main.js',  // ← UPDATED PATH
             config: 'vite.main.config.mjs',
             target: 'main',
           },
           {
-            entry: 'src/preload.js',
+            // Preload script entry point
+            entry: 'src/main/preload.js',  // ← UPDATED PATH
             config: 'vite.preload.config.mjs',
             target: 'preload',
           },

@@ -1,8 +1,8 @@
 {
   "name": "salon_desktop_app_client",
-  "productName": "salon_desktop_app_client",
+  "productName": "Van's Glow Up Salon",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Van's Glow Up Salon Desktop Application",
   "main": ".vite/build/main.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development electron-forge start",
@@ -12,7 +12,12 @@
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
-  "keywords": [],
+  "keywords": [
+    "salon",
+    "desktop",
+    "electron",
+    "react"
+  ],
   "author": {
     "name": "Ryan Dingle",
     "email": "ryanlaurencedingle@gmail.com"
@@ -28,9 +33,12 @@
     "@electron-forge/plugin-fuses": "^7.8.3",
     "@electron-forge/plugin-vite": "^7.8.3",
     "@electron/fuses": "^1.8.0",
+    "autoprefixer": "^10.4.21",
     "cross-env": "^7.0.3",
     "electron": "37.3.1",
     "electron-reload": "^2.0.0-alpha.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
     "vite": "^5.4.19"
   },
   "dependencies": {
