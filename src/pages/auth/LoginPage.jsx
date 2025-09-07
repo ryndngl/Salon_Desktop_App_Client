@@ -41,6 +41,9 @@ const LoginPage = () => {
       {/* Left Panel */}
       <div className="flex-1 bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center text-white text-center p-8">
         <div>
+        <h1 className="text-3xl font-bold mb-3 tracking-wider">
+            WELCOME!
+          </h1>
           <h1 className="text-3xl font-bold mb-3 tracking-wider">
             VAN'S GLOW UP SALON
           </h1>
@@ -52,7 +55,7 @@ const LoginPage = () => {
       <div className="flex-1 bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center p-10">
         <div className="w-full max-w-sm bg-white/80 backdrop-blur-md rounded-2xl p-9 shadow-xl animate-fadeIn">
           <h2 className="text-center text-xl font-semibold text-gray-800 mb-6">
-            Welcome Back! Admin
+            ADMIN
           </h2>
           
           <form onSubmit={handleSubmit}>
@@ -98,31 +101,6 @@ const LoginPage = () => {
             >
               Login
             </button>
-
-            {/* Additional Options */}
-            <div className="flex justify-between items-center mt-4 text-xs">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleInputChange}
-                  className="mr-2 w-3 h-3 accent-green-600"
-                />
-                <span className="text-gray-600">Remember me</span>
-              </label>
-              <a 
-                href="#" 
-                className="text-red-700 hover:underline transition-colors duration-200"
-                onClick={(e) => {
-                  e.preventDefault();
-                  console.log('Forgot password clicked');
-                }}
-              >
-                Forgot password?
-              </a>
-              
-            </div>
           </form>
         </div>
       </div>
