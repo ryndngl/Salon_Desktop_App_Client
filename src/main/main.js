@@ -1,4 +1,4 @@
-// MAIN.JS - Fixed version with server connection
+// MAIN.JS - Fixed version with server connection and focus handler
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,10 +10,13 @@ const __dirname = path.dirname(__filename);
 // Your server configuration
 const SERVER_URL = 'http://localhost:5000'; // Your server port
 
+// Store mainWindow reference globally
+let mainWindow;
+
 if (started) app.quit();
 
 const createWindow = () => {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     webPreferences: {
@@ -34,6 +37,34 @@ const createWindow = () => {
   return mainWindow;
 };
 
+// ADD THIS - Focus window handler to fix login input issue
+// Replace the focus-window handler in main.js with this:
+ipcMain.handle('focus-window', () => {
+  if (mainWindow) {
+    // Multiple focus strategies
+    mainWindow.show();
+    mainWindow.focus();
+    mainWindow.moveTop();
+    
+    // Force restore if minimized
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore();
+    }
+    
+    // On Windows, sometimes need to blur and refocus
+    if (process.platform === 'win32') {
+      mainWindow.blur();
+      setTimeout(() => {
+        mainWindow.focus();
+      }, 50);
+    }
+    
+    // Force webContents focus
+    mainWindow.webContents.focus();
+    
+    console.log('Window focus attempted');
+  }
+});
 // IPC handler for login - FIXED to connect to your server
 ipcMain.handle('login', async (event, credentials) => {
   console.log('🔄 Login attempt received:', credentials);

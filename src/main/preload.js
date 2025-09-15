@@ -1,4 +1,4 @@
-// PRELOAD.JS - Updated with connection test
+// PRELOAD.JS - Updated with connection test and focus window
 import { contextBridge, ipcRenderer } from 'electron';
 
 // Expose protected methods that allow the renderer process to use
@@ -9,7 +9,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     try {
       console.log('📤 Sending login request:', credentials);
       const result = await ipcRenderer.invoke('login', credentials);
-      console.log('📥 Login response received:', result);
+      console.log('🔥 Login response received:', result);
       
       // If login successful, navigate to dashboard
       if (result.success) {
@@ -41,6 +41,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
         message: 'Failed to test server connection' 
       };
     }
+  },
+
+  // ADD THIS - Focus window function
+  focusWindow: () => {
+    console.log('🎯 Focusing window...');
+    return ipcRenderer.invoke('focus-window');
   },
 
   // Navigation functions
