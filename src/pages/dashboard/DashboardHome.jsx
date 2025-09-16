@@ -28,28 +28,24 @@ const DashboardHome = () => (
         value="15" 
         icon={Calendar} 
         color="blue"
-        trend="+12% from yesterday"
       />
       <StatsCard 
         title="Walk-in Clients" 
         value="8" 
         icon={UserPlus} 
         color="green"
-        trend="+5% from yesterday"
       />
       <StatsCard 
         title="Daily Revenue" 
         value="₱12,450" 
         icon={DollarSign} 
         color="purple"
-        trend="+18% from yesterday"
       />
       <StatsCard 
         title="Services Completed" 
         value="23" 
         icon={Scissors} 
         color="red"
-        trend="+8% from yesterday"
       />
     </div>
   </div>
