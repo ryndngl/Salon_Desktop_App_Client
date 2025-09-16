@@ -1,5 +1,5 @@
 // MAIN.JS - Fixed version with server connection and focus handler
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, Menu } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import started from "electron-squirrel-startup";
@@ -19,16 +19,22 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    autoHideMenuBar: true,  // Hide menu bar
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
+      devTools: false,  // Disable dev tools completely
     },
   });
 
+  // Remove application menu completely
+  Menu.setApplicationMenu(null);
+
   if (process.env.NODE_ENV === "development") {
     mainWindow.loadURL(`http://localhost:5173`);
-    mainWindow.webContents.openDevTools();
+    // Remove this line to disable dev tools in development
+    // mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, 'dist/index.html'))
       .catch(err => console.error("Failed to load index.html:", err));
