@@ -2,7 +2,7 @@ import { useState } from 'react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import DashboardHome from './DashboardHome';
 import AppointmentsPage from './AppointmentsPage';
-import WalkInClientsPage from './WalkinClientsPage';
+import WalkInClientsPage from './WalkInClientsPage';
 import ServicesPage from './ServicesPage';
 import SalesReportPage from './SalesReportPage';
 import LoyaltyPointsPage from './LoyaltyPointsPage';

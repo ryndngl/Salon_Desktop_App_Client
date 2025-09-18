@@ -1,10 +1,9 @@
 // Sa WalkInClientsPage.jsx
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
-import WalkInStats from "./components/WalkInStats"; 
-import WalkInForm from "./components/WalkInForm";
-import WalkInTable from "./components/WalkInTable";
-
+import WalkInTable from "./WalkInComponents/WalkInTable";
+import WalkInStats from "./WalkInComponents/WalkInStats";
+import WalkInForm  from "./WalkInComponents/WalkInForm"
 const WalkInClientsPage = () => {
   const [clients, setClients] = useState([
     {
