@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit2, Trash2, DollarSign, CheckCircle } from 'lucide-react';
+import { Edit2, Trash2, DollarSign, CheckCircle, XCircle } from 'lucide-react';
 
 const WalkInTable = ({ 
   clients, 
@@ -128,7 +128,7 @@ const WalkInTable = ({
                         className="text-orange-600 hover:text-orange-900 p-1"
                         title="Mark as Cancelled"
                       >
-                        ❌
+                        <XCircle size={16} />
                       </button>
                     )}
                     <button
