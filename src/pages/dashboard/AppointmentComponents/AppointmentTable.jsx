@@ -27,17 +27,17 @@ const AppointmentTable = ({
   const getStatusColor = (status) => {
     switch (status) {
       case 'Confirmed':
-        return 'text-green-600 bg-green-100';
+        return 'text-green-600';
       case 'Pending':
-        return 'text-yellow-600 bg-yellow-100';
+        return 'text-yellow-600';
       case 'Completed':
-        return 'text-blue-600 bg-blue-100';
+        return 'text-blue-600';
       case 'Cancelled':
-        return 'text-red-600 bg-red-100';
+        return 'text-red-600';
       case 'Rescheduled':
-        return 'text-purple-600 bg-purple-100';
+        return 'text-purple-600';
       default:
-        return 'text-gray-600 bg-gray-100';
+        return 'text-gray-600';
     }
   };
 
