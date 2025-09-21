@@ -25,7 +25,7 @@ const ServiceSelector = ({ selectedServices, onServiceToggle }) => {
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-1">
-        Services *
+        Services 
       </label>
       <div className="border border-gray-300 rounded-md p-3 max-h-60 overflow-y-auto">
         {Object.entries(servicesData).map(([service, data]) => (
