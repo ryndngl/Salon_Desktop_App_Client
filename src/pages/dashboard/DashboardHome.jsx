@@ -31,7 +31,7 @@ const DashboardHome = () => (
       <StatsCard
         title="Walk-in Clients"
         value="8"
-        color="gray"
+        color="black"
       />
       <StatsCard
         title="Daily Revenue"
