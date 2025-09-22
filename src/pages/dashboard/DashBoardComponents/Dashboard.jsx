@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import DashboardLayout from '../../components/layout/DashboardLayout';
-import DashboardHome from './DashboardHome';
-import AppointmentsPage from './AppointmentsPage';
-import WalkInClientsPage from './WalkInClientsPage';
-import ServicesPage from './ServicesPage';
-import SalesReportPage from './SalesReportPage';
-import LoyaltyPointsPage from './LoyaltyPointsPage';
-import ManageUserPage from './ManageUserPage';
+import {DashboardLayout} from '../DashboardComponents';
+import { DashboardHome } from '../DashboardComponents';
+import { AppointmentsPage } from '../AppointmentComponents';
+import { WalkInClientsPage } from '../WalkInComponents';
+import { ServicesPage } from '../ServicesComponents';
+import { SalesReportPage } from '../SalesReportComponents'; 
+import LoyaltyPointsPage from '../LoyaltyPointsPage';
+import { ManageUserPage } from '../ManageUserComponents';
 
 const Dashboard = ({ onLogout }) => {  
   const [activeTab, setActiveTab] = useState('dashboard');
