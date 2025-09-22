@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import WalkInTable from "./WalkInComponents/WalkInTable";
 import WalkInStats from "./WalkInComponents/WalkInStats";
 import WalkInForm  from "./WalkInComponents/WalkInForm";
-const WalkInClientsPage = () => {
+const WalkInClientsPage = () => { 
   const [clients, setClients] = useState([
     {
       id: 1,
