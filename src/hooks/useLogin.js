@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 const useLogin = (setIsLoggedIn) => {
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
     rememberMe: false
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -12,20 +12,38 @@ const useLogin = (setIsLoggedIn) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      console.log('🔄 Attempting login...');
-      const result = await window.electronAPI.login(formData);
-      console.log('🔥 Login result:', result);
+      console.log('🔥 Attempting login...');
       
-      if (result.success || result.isSuccess) {
-        setShowSpinner(true);
-        setTimeout(() => {
-          setShowSpinner(false);
-          setIsLoggedIn(true);
-        }, 1500);
+      // Simple check if electronAPI exists and has login method
+      if (window.electronAPI?.login) {
+        const result = await window.electronAPI.login(formData);
+        console.log('🔥 Login result:', result);
+
+        if (result.success || result.isSuccess) {
+          setShowSpinner(true);
+          setTimeout(() => {
+            setShowSpinner(false);
+            setIsLoggedIn(true);
+          }, 1500);
+        } else {
+          alert(`Login failed: ${result.message}`);
+        }
       } else {
-        alert(`Login failed: ${result.message}`);
+        // Fallback for browser - temporary mock login
+        console.log('🌐 ElectronAPI not available, using fallback...');
+        
+        // Mock success for testing
+        if (formData.username && formData.password) {
+          setShowSpinner(true);
+          setTimeout(() => {
+            setShowSpinner(false);
+            setIsLoggedIn(true);
+          }, 1500);
+        } else {
+          alert('Please enter username and password');
+        }
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -37,8 +55,8 @@ const useLogin = (setIsLoggedIn) => {
 
   const resetForm = () => {
     setFormData({
-      username: '',
-      password: '',
+      username: "",
+      password: "",
       rememberMe: false
     });
     setIsLoading(false);
