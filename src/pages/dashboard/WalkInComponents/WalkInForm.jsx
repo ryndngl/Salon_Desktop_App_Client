@@ -14,17 +14,16 @@ const WalkInForm = ({
 }) => {
   if (!showForm) return null;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     onSubmit();
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold mb-4">
+    <div className="bg-white rounded-xl shadow-sm p-6">
+      <h3 className="text-lg font-semibold mb-6">
         {isEditing ? "Edit Client" : "Add New Walk-in Client"}
       </h3>
-      <form onSubmit={handleSubmit}>
+      <div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -67,6 +66,19 @@ const WalkInForm = ({
               onChange={onInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               placeholder="client@email.com"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Phone
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={onInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="+63 912 345 6789"
             />
           </div>
           <div>
@@ -120,21 +132,20 @@ const WalkInForm = ({
         </div>
         <div className="flex gap-2">
           <button
-            type="submit"
+            onClick={handleSubmit}
             className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md flex items-center"
           >
             <Save size={16} className="mr-2" />
             {isEditing ? "Update" : "Save"}
           </button>
           <button
-            type="button"
             onClick={onCancel}
             className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
           >
             Cancel
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
