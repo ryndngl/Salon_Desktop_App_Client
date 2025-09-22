@@ -12,11 +12,11 @@ const AppointmentTable = ({
 }) => {
   if (appointments.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold text-gray-800">Appointments List</h2>
         </div>
-        <div className="p-6 text-center text-gray-500">
+        <div className="text-center text-gray-500">
           Wala pang appointments na naka-schedule
         </div>
       </div>
@@ -64,42 +64,37 @@ const AppointmentTable = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200">
+    <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg font-semibold text-gray-800">Appointments List</h2>
       </div>
       
-      <div className="overflow-x-auto">
-        <table className="min-w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Client
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Contact
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Services
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Schedule
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Mode of Payment
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
+      <div className="overflow-x-auto max-h-96 overflow-y-auto">
+        <table className="w-full table-fixed">
+          <colgroup>
+            <col className="w-1/7" />
+            <col className="w-1/7" />
+            <col className="w-1/7" />
+            <col className="w-1/7" />
+            <col className="w-1/7" />
+            <col className="w-1/7" />
+            <col className="w-1/7" />
+          </colgroup>
+          <thead className="sticky top-0 bg-white">
+            <tr className="border-b border-gray-200 text-left">
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2">Client</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2">Contact</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2">Services</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2">Schedule</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2">Mode of Payment</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2">Status</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white">
+          <tbody>
             {appointments.map((appointment, index) => (
               <tr key={appointment.id} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="py-4 px-2">
                   <div className="flex items-center">
                     <div className={`w-10 h-10 rounded-full ${getRandomColor(index)} flex items-center justify-center text-white font-medium text-sm mr-3`}>
                       {getInitials(appointment.name)}
@@ -114,7 +109,7 @@ const AppointmentTable = ({
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="py-4 px-2">
                   <div className="space-y-1">
                     <div className="flex items-center text-sm text-gray-600">
                       <Mail size={14} className="mr-2 text-gray-400" />
@@ -126,10 +121,10 @@ const AppointmentTable = ({
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+                <td className="py-4 text-sm text-gray-600 px-2">
                   {appointment.services}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="py-4 px-2">
                   <div className="space-y-1">
                     <div className="text-sm text-gray-900">
                       {new Date(appointment.date).toLocaleDateString('en-PH')}
@@ -139,15 +134,15 @@ const AppointmentTable = ({
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                <td className="py-4 text-sm text-gray-600 px-2">
                   {appointment.modeOfPayment || 'Not specified'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="py-4 px-2">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
                     {appointment.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <td className="py-4 text-sm font-medium px-2">
                   <div className="flex gap-2">
                     {/* Edit Button */}
                     <button
@@ -216,10 +211,6 @@ const AppointmentTable = ({
             ))}
           </tbody>
         </table>
-      </div>
-      
-      <div className="px-6 py-3 bg-gray-50 text-center text-sm text-gray-500">
-        Showing {appointments.length} of {appointments.length} appointments
       </div>
     </div>
   );
