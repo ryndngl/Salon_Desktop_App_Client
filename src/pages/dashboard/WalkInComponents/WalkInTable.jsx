@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit2, Trash2, DollarSign, CheckCircle, XCircle } from 'lucide-react';
+import { Edit2, Trash2, DollarSign, CheckCircle, XCircle, Mail, Phone } from 'lucide-react';
 
 const WalkInTable = ({ 
   clients, 
@@ -11,11 +11,11 @@ const WalkInTable = ({
 }) => {
   if (clients.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold text-gray-800">Walk-in Clients List</h2>
         </div>
-        <div className="p-6 text-center text-gray-500">
+        <div className="text-center text-gray-500">
           Wala pang walk-in clients na naka-record
         </div>
       </div>
@@ -23,60 +23,53 @@ const WalkInTable = ({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200">
+    <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg font-semibold text-gray-800">Walk-in Clients List</h2>
       </div>
       
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Services
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Amount
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Payment
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
+      <div className="overflow-x-auto max-h-96 overflow-y-auto">
+        <table className="w-full">
+          <thead className="sticky top-0 bg-white">
+            <tr className="border-b border-gray-200 text-left">
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-32">Name</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-48">Contact</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-40">Services</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-24">Date</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-24">Amount</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-24">Payment</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-24">Status</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-32">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody>
             {clients.map((client) => (
-              <tr key={client.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              <tr key={client.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <td className="py-4 text-sm font-medium text-gray-900 px-2">
                   {client.name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {client.email || 'No email'}
+                <td className="py-4 px-2">
+                  <div className="flex flex-col space-y-1">
+                    <div className="flex items-center text-sm text-gray-900">
+                      <Mail className="h-4 w-4 mr-2 text-gray-400" />
+                      {client.email || 'Not provided'}
+                    </div>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Phone className="h-4 w-4 mr-2 text-gray-400" />
+                      {client.phone || 'Not provided'}
+                    </div>
+                  </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500">
+                <td className="py-4 text-sm text-gray-500 px-2">
                   {client.services}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="py-4 text-sm text-gray-500 px-2">
                   {new Date(client.date).toLocaleDateString('en-PH')}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="py-4 text-sm text-gray-500 px-2">
                   ₱{client.amount ? parseFloat(client.amount).toLocaleString() : '0'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <td className="py-4 text-sm font-medium px-2">
                   <span className={`${
                     client.paymentStatus === 'Paid' ? 'text-green-600' :
                     client.paymentStatus === 'Partial' ? 'text-yellow-600' :
@@ -85,7 +78,7 @@ const WalkInTable = ({
                     {client.paymentStatus}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <td className="py-4 text-sm font-medium px-2">
                   <span className={`${
                     client.status === 'Served' ? 'text-green-600' :
                     client.status === 'Pending' ? 'text-yellow-600' :
@@ -95,7 +88,7 @@ const WalkInTable = ({
                     {client.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <td className="py-4 text-sm font-medium px-2">
                   <div className="flex gap-1">
                     <button
                       onClick={() => onEdit(client)}
