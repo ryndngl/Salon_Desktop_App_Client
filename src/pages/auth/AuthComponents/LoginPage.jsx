@@ -1,10 +1,11 @@
-import LoginForm from '../../components/auth/LoginForm';
-import LoginHero from '../../components/auth/LoginHero';
-import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import Dashboard from '../dashboard/Dashboard';
-import useAuthState from '../../hooks/useAuthState';
-import useLogin from '../../hooks/useLogin';
-
+// pages/auth/AuthComponents/LoginPage.jsx
+import { useState } from 'react';
+import LoginForm from './LoginForm';
+import LoginHero from './LoginHero';
+import LoadingSpinner from '../../../components/ui/LoadingSpinner';
+import Dashboard from '../../dashboard/DashboardComponents/Dashboard';
+import useAuthState from '../../../hooks/useAuthState';
+import useLogin from '../../../hooks/useLogin';
 const LoginPage = () => {
   const { isLoggedIn, setIsLoggedIn, handleLogout, usernameRef } = useAuthState();
   const { 
