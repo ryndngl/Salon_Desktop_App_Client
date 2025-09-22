@@ -3,13 +3,14 @@ import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import WalkInTable from "./WalkInComponents/WalkInTable";
 import WalkInStats from "./WalkInComponents/WalkInStats";
-import WalkInForm  from "./WalkInComponents/WalkInForm"
+import WalkInForm  from "./WalkInComponents/WalkInForm";
 const WalkInClientsPage = () => {
   const [clients, setClients] = useState([
     {
       id: 1,
       name: "Maria Santos",
       email: "maria.santos@gmail.com",
+      phone: "09123456789",
       services: "Haircut - Women, Hair Color - Full Hair",
       date: "2025-09-16",
       amount: 800,
@@ -20,6 +21,7 @@ const WalkInClientsPage = () => {
       id: 2,
       name: "Juan Dela Cruz",
       email: "juan.delacruz@yahoo.com",
+      phone: "09987654321",
       services: "Haircut - Men, Hair Treatment",
       date: "2025-09-16",
       amount: 500,
