@@ -1,4 +1,3 @@
-import React from "react";
 
 const WalkInStats = ({ clients }) => {
   const today = new Date().toISOString().split("T")[0];
