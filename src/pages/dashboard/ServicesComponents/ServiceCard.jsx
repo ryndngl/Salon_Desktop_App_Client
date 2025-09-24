@@ -19,7 +19,7 @@ const ServiceCard = ({ service, isExpanded, onToggle }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow border w-full">
+    <div className="bg-white rounded-xl shadow-sm p-6 w-full">
       {/* Card Header */}
       <div 
         className="p-4 cursor-pointer hover:bg-gray-50"
