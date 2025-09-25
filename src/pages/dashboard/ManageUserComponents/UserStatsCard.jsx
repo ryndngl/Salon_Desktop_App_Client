@@ -35,7 +35,7 @@ const UserStatsCards = ({ users, filteredUsers }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
       {statsData.map((stat, index) => (
-        <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div key={index} className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center">
             <div className={`p-3 ${stat.bgColor} rounded-full`}>
               <stat.icon className={`h-6 w-6 ${stat.textColor}`} />
