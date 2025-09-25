@@ -35,7 +35,7 @@ const TransactionTable = ({ transactions, selectedFilter, onFilterChange }) => {
           </colgroup>
           <thead className="sticky top-0 bg-white">
             <tr className="border-b border-gray-200 text-left">
-              <th className="pb-3 text-sm font-medium text-gray-600 px-2">Client</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2">Customer</th>
               <th className="pb-3 text-sm font-medium text-gray-600 px-2">Service</th>
               <th className="pb-3 text-sm font-medium text-gray-600 px-2">Amount</th>
               <th className="pb-3 text-sm font-medium text-gray-600 px-2">Payment Method</th>
