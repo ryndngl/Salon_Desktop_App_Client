@@ -15,10 +15,7 @@ const UserTable = ({
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900">User List</h2>
-      </div>
-      
+  
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
