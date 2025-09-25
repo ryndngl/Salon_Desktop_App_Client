@@ -27,7 +27,7 @@ const ServiceCard = ({ service, isExpanded, onToggle }) => {
       >
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{service.name}</h3>
+            <h3 className="text-sm font-medium text-gray-600">{service.name}</h3>
             <div className="flex items-center gap-2 mt-1">
               <span className={`text-xs font-semibold ${
                 service.status === 'active' 
