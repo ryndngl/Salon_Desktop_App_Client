@@ -64,7 +64,8 @@ const WalkInTable = ({
                   {client.services}
                 </td>
                 <td className="py-4 text-sm text-gray-500 px-2">
-                  {new Date(client.date).toLocaleDateString('en-PH')}
+                  <div>{new Date(client.date).toLocaleDateString('en-PH')}</div>
+                  <div className="text-xs text-gray-500">{client.time || '10:00 AM'}</div>
                 </td>
                 <td className="py-4 text-sm text-gray-500 px-2">
                   ₱{client.amount ? parseFloat(client.amount).toLocaleString() : '0'}
