@@ -5,8 +5,8 @@ import { AppointmentsPage } from '../AppointmentComponents';
 import { WalkInClientsPage } from '../WalkInComponents';
 import { ServicesPage } from '../ServicesComponents';
 import { SalesReportPage } from '../SalesReportComponents'; 
-import LoyaltyPointsPage from '../LoyaltyPointsPage';
 import { ManageUserPage } from '../ManageUserComponents';
+import { LoyaltyPointsPage } from '../LoyaltyPointsComponents';
 
 const Dashboard = ({ onLogout }) => {  
   const [activeTab, setActiveTab] = useState('dashboard');
