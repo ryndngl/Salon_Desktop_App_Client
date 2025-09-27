@@ -45,35 +45,39 @@ const DashboardHome = () => {
         />
       </div>
 
-      {/* Additional Dashboard Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Appointments */}
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Today's Schedule</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center p-3 bg-blue-50 rounded">
-              <div>
-                <p className="font-medium">Maria Santos</p>
-                <p className="text-sm text-gray-600">Hair Cut & Color</p>
-              </div>
-              <span className="text-blue-600 font-medium">10:00 AM</span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-green-50 rounded">
-              <div>
-                <p className="font-medium">Juan Dela Cruz</p>
-                <p className="text-sm text-gray-600">Massage</p>
-              </div>
-              <span className="text-green-600 font-medium">2:00 PM</span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-yellow-50 rounded">
-              <div>
-                <p className="font-medium">Ana Garcia</p>
-                <p className="text-sm text-gray-600">Manicure & Pedicure</p>
-              </div>
-              <span className="text-yellow-600 font-medium">4:00 PM</span>
-            </div>
-          </div>
+    {/* Additional Dashboard Content */}
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  {/* Recent Appointments */}
+  <div className="bg-white rounded-xl shadow-sm p-6">
+    <h3 className="text-lg font-semibold text-gray-800 mb-4">Today's Schedule</h3>
+    
+    <div className="space-y-3">
+      <div className="flex justify-between items-center p-3">
+        <div>
+          <p className="font-medium">Maria Santos</p>
+          <p className="text-sm text-gray-600">Hair Cut & Color</p>
         </div>
+        <span className="text-blue-600 font-medium">10:00 AM</span>
+      </div>
+      
+      <div className="flex justify-between items-center p-3">
+        <div>
+          <p className="font-medium">Juan Dela Cruz</p>
+          <p className="text-sm text-gray-600">Massage</p>
+        </div>
+        <span className="text-green-600 font-medium">2:00 PM</span>
+      </div>
+      
+      <div className="flex justify-between items-center p-3">
+        <div>
+          <p className="font-medium">Ana Garcia</p>
+          <p className="text-sm text-gray-600">Manicure & Pedicure</p>
+        </div>
+        <span className="text-yellow-600 font-medium">4:00 PM</span>
+      </div>
+    </div>
+  </div>
+
 
         {/* Popular Services */}
         <div className="bg-white rounded-xl shadow-sm p-6">
