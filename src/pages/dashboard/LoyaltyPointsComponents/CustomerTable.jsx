@@ -44,12 +44,16 @@ const CustomerTable = ({
                   <span className="text-green-600 text-sm font-medium">{customer.membershipLevel}</span>
                 </td>
                 <td className="py-3 px-4">
-                  <button
-                    onClick={() => onSelectCustomer(customer)}
-                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                  >
-                    See Details
-                  </button>
+                 <button
+                  onClick={() => {
+                  console.log('CLICKED!', customer); // ← DAGDAG MO TO
+                  onSelectCustomer(customer);
+                  }}
+                 className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                >
+                See Details
+                </button>
+                
                 </td>
               </tr>
             ))}
