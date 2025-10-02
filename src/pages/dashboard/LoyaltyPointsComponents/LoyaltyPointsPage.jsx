@@ -9,7 +9,6 @@ const LoyaltyPointsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   
-  // Sample loyal customers data
   const loyalCustomers = [
     {
       id: 1,
@@ -65,20 +64,7 @@ const LoyaltyPointsPage = () => {
       totalRedeemed: 0,
       visits: 1,
       membershipLevel: 'Regular Member'
-    },
-    {
-      id: 6,
-      name: 'Carlos Mendoza',
-      phone: '+63 923 456 7890',
-      email: 'carlos.mendoza@outlook.com',
-      currentPoints: 2100,
-      totalEarned: 3500,
-      totalRedeemed: 1400,
-      visits: 22,
-      membershipLevel: 'VIP Member'
     }
-    
-    
   ];
 
   const recentActivity = [
@@ -89,7 +75,6 @@ const LoyaltyPointsPage = () => {
     { service: 'Hair Coloring', date: 'Sep 5, 2025', points: 125, type: 'earned' }
   ];
 
-  // Handle search with live filtering
   const getFilteredCustomers = () => {
     if (!searchQuery.trim()) {
       return loyalCustomers;
@@ -102,70 +87,54 @@ const LoyaltyPointsPage = () => {
     );
   };
 
-  // Handle search - auto select if only one result
-  const handleSearch = () => {
-    const filtered = getFilteredCustomers();
-    if (filtered.length === 1) {
-      setSelectedCustomer(filtered[0]);
-    }
-  };
-
-  // Handle Enter key press
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
-  // Clear search and go back to list
-  const handleClearSearch = () => {
-    setSearchQuery('');
-    setSelectedCustomer(null);
-  };
-
-  // Handle search change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  // Handle select customer
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      const filtered = getFilteredCustomers();
+      if (filtered.length === 1) {
+        setSelectedCustomer(filtered[0]);
+      }
+    }
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedCustomer(null);
+  };
+
   const handleSelectCustomer = (customer) => {
     setSelectedCustomer(customer);
   };
 
   const filteredCustomers = getFilteredCustomers();
 
-  // If customer is selected, show full details
-  if (selectedCustomer) {
-    return (
+ return (
+  <div className="space-y-6">
+    <SearchBar
+      searchQuery={searchQuery}
+      onSearchChange={handleSearchChange}
+      onKeyPress={handleKeyPress}
+    />
+
+    {/* Conditional: Show either TABLE or DETAILS */}
+    {selectedCustomer ? (
       <CustomerDetails
         customer={selectedCustomer}
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-        onKeyPress={handleKeyPress}
-        onBack={handleClearSearch}
+        onBack={handleCloseDetails}
         recentActivity={recentActivity}
       />
-    );
-  }
-
-  // Default view - Search + Table
-  return (
-    <div className="space-y-6">
-      <SearchBar
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-        onKeyPress={handleKeyPress}
-      />
-
+    ) : (
       <CustomerTable
         customers={filteredCustomers}
         onSelectCustomer={handleSelectCustomer}
         searchQuery={searchQuery}
         totalCustomers={loyalCustomers.length}
       />
-    </div>
-  );
+    )}
+  </div>
+);
 };
 
 export default LoyaltyPointsPage;
