@@ -16,12 +16,17 @@ const useLogin = (setIsLoggedIn) => {
     try {
       console.log('🔥 Attempting login...');
       
-      // Simple check if electronAPI exists and has login method
       if (window.electronAPI?.login) {
         const result = await window.electronAPI.login(formData);
         console.log('🔥 Login result:', result);
 
         if (result.success || result.isSuccess) {
+          // SAVE TOKEN TO LOCALSTORAGE
+          if (result.token) {
+            localStorage.setItem('token', result.token);
+            console.log('✅ Token saved to localStorage');
+          }
+          
           setShowSpinner(true);
           setTimeout(() => {
             setShowSpinner(false);
@@ -31,18 +36,37 @@ const useLogin = (setIsLoggedIn) => {
           alert(`Login failed: ${result.message}`);
         }
       } else {
-        // Fallback for browser - temporary mock login
-        console.log('🌐 ElectronAPI not available, using fallback...');
+        // Fallback - call server API directly
+        console.log('🌐 Calling server API directly...');
         
-        // Mock success for testing
-        if (formData.username && formData.password) {
+        const response = await fetch('http://localhost:5000/api/auth/admin/sign-in', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: formData.username,
+            password: formData.password
+          })
+        });
+
+        const result = await response.json();
+        console.log('API Response:', result);
+
+        if (result.success || result.isSuccess) {
+          // SAVE TOKEN
+          if (result.token) {
+            localStorage.setItem('token', result.token);
+            console.log('✅ Token saved to localStorage');
+          }
+          
           setShowSpinner(true);
           setTimeout(() => {
             setShowSpinner(false);
             setIsLoggedIn(true);
           }, 1500);
         } else {
-          alert('Please enter username and password');
+          alert(`Login failed: ${result.message || 'Invalid credentials'}`);
         }
       }
     } catch (error) {
