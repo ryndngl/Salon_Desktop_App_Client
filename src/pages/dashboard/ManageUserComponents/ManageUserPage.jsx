@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Import components
 import UserSearchBar from './UserSearchBar';
@@ -7,6 +7,34 @@ import UserTable from './UserTable';
 import UserDetailsModal from './UserDetailsModal';
 import UserEditModal from './UserEditModal';
 import UserDeleteModal from './UserDeleteModal';
+
+// TEMPORARY - userService code pasted directly here (for testing)
+const API_BASE_URL = 'http://localhost:5000/api';
+
+const userService = {
+  getAll: async () => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch(`${API_BASE_URL}/users`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('userService.getAll error:', error);
+      throw error;
+    }
+  }
+};
 
 const ManageUserPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,94 +45,56 @@ const ManageUserPage = () => {
   const [deletingUser, setDeletingUser] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   
-  // Sample user data - replace with actual data from your API
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: 'Maria Santos',
-      email: 'maria.santos@email.com',
-      phone: '+63 912 345 6789',
-      joinDate: '2024-01-15',
-      lastBooking: '2024-09-18',
-      totalBookings: 12,
-      status: 'Active',
-      avatar: 'MS',
-      favoriteServices: 'Haircut, Hair Color, Nail Art',
-      bookingHistory: [
-        { id: 1, date: '2024-09-18', service: 'Haircut & Color', price: 2500, status: 'Completed' },
-        { id: 2, date: '2024-08-30', service: 'Manicure & Pedicure', price: 1200, status: 'Completed' },
-        { id: 3, date: '2024-07-15', service: 'Hair Treatment', price: 1800, status: 'Completed' },
-        { id: 4, date: '2024-06-20', service: 'Facial', price: 1500, status: 'Completed' }
-      ]
-    },
-    {
-      id: 2,
-      name: 'Juan Dela Cruz',
-      email: 'juan.delacruz@email.com',
-      phone: 'Not provided',
-      joinDate: '2024-02-20',
-      lastBooking: '2024-09-15',
-      totalBookings: 8,
-      status: 'Active',
-      avatar: 'JD',
-      favoriteServices: 'Haircut, Beard Trim',
-      bookingHistory: [
-        { id: 1, date: '2024-09-15', service: 'Haircut & Beard Trim', price: 800, status: 'Completed' },
-        { id: 2, date: '2024-08-15', service: 'Haircut', price: 500, status: 'Completed' },
-        { id: 3, date: '2024-07-15', service: 'Haircut & Beard Trim', price: 800, status: 'Completed' }
-      ]
-    },
-    {
-      id: 3,
-      name: 'Anna Reyes',
-      email: 'anna.reyes@email.com',
-      phone: '+63 905 123 4567',
-      joinDate: '2024-03-10',
-      lastBooking: '2024-08-30',
-      totalBookings: 15,
-      status: 'Inactive',
-      avatar: 'AR',
-      favoriteServices: 'Hair Rebond, Nail Art, Facial',
-      bookingHistory: [
-        { id: 1, date: '2024-08-30', service: 'Hair Rebond', price: 4500, status: 'Completed' },
-        { id: 2, date: '2024-07-20', service: 'Nail Art', price: 1800, status: 'Completed' },
-        { id: 3, date: '2024-06-15', service: 'Hair Color', price: 3200, status: 'Completed' }
-      ]
-    },
-    {
-      id: 4,
-      name: 'Carlos Garcia',
-      email: 'carlos.garcia@email.com',
-      phone: 'Not provided',
-      joinDate: '2024-04-05',
-      lastBooking: '2024-09-20',
-      totalBookings: 6,
-      status: 'Active',
-      avatar: 'CG',
-      favoriteServices: 'None selected',
-      bookingHistory: [
-        { id: 1, date: '2024-09-20', service: 'Quick Trim', price: 300, status: 'Completed' },
-        { id: 2, date: '2024-08-05', service: 'Haircut', price: 500, status: 'Completed' }
-      ]
-    },
-    {
-      id: 5,
-      name: 'Lisa Fernandez',
-      email: 'lisa.fernandez@email.com',
-      phone: '+63 918 246 8135',
-      joinDate: '2024-05-12',
-      lastBooking: '2024-09-19',
-      totalBookings: 10,
-      status: 'Active',
-      avatar: 'LF',
-      favoriteServices: 'Hair Spa, Manicure',
-      bookingHistory: [
-        { id: 1, date: '2024-09-19', service: 'Hair Spa', price: 2200, status: 'Completed' },
-        { id: 2, date: '2024-08-25', service: 'Manicure', price: 800, status: 'Completed' },
-        { id: 3, date: '2024-07-30', service: 'Hair Treatment', price: 1800, status: 'Completed' }
-      ]
+  // State for users - empty array initially
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch users from API when component mounts
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+const fetchUsers = async () => {
+  try {
+    setLoading(true);
+    const response = await userService.getAll();
+    const data = response.users || response; // FIX: access users array from response object
+    
+    console.log('API Response:', response);
+    console.log('Users Array:', data);
+    console.log('Is Array?', Array.isArray(data));
+    
+    // Check if data is actually an array
+    if (!Array.isArray(data)) {
+      throw new Error('Invalid response format from server');
     }
-  ]);
+    
+    // Transform MongoDB data to match your component structure
+    const transformedUsers = data.map((user, index) => ({
+      id: user._id,
+      name: user.fullName,
+      email: user.email,
+      phone: 'Not provided',
+      joinDate: new Date(user.createdAt).toLocaleDateString('en-US'),
+      lastBooking: '',
+      totalBookings: '',
+      status: 'Active',
+      avatar: user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+      favoriteServices: user.favorites?.map(f => f.name).join(', ') || 'None selected',
+      bookingHistory: []
+    }));
+    
+    setUsers(transformedUsers);
+    setError(null);
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    console.error('Error details:', err.message);
+    setError('Failed to load users. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Filter users based on search term
   const filteredUsers = users.filter(user =>
@@ -172,6 +162,35 @@ const ManageUserPage = () => {
     setDeletingUser(null);
     alert('User deleted successfully!');
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading users...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button 
+            onClick={fetchUsers}
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
