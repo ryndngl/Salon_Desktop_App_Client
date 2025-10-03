@@ -57,15 +57,16 @@ const ServiceCard = ({ service, isExpanded, onToggle }) => {
       }`}>
         <div className="border-t bg-gray-50">
           <div className="p-4 max-h-72 overflow-y-auto space-y-3">
-            {service.categories.map((category, index) => (
-              <ServiceCategory
-                key={index}
-                category={category}
-                index={index}
-                isExpanded={expandedCategory === index}
-                onToggle={handleCategoryToggle}
+          {service.categories.map((category, index) => (
+             <ServiceCategory
+              key={index}
+              category={category}
+              serviceId={service._id}
+              index={index}
+              isExpanded={expandedCategory === index}
+              onToggle={handleCategoryToggle}
               />
-            ))}
+             ))}
           </div>
         </div>
       </div>
