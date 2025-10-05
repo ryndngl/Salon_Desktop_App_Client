@@ -226,7 +226,7 @@ const WalkInClientsPage = () => {
 
   // Handle delete
   const handleDeleteClient = async (id) => {
-    if (confirm("Sure ka ba na gusto mo i-delete ang client na ito?")) {
+    if (confirm("Are you sure you want to delete this client?")) {
       try {
         await walkInService.delete(id);
         alert('Walk-in client deleted successfully!');
