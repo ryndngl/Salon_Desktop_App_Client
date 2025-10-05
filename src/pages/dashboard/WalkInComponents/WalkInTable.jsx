@@ -13,10 +13,10 @@ const WalkInTable = ({
     return (
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-semibold text-gray-800">Walk-in Clients List</h2>
+          <h2 className="text-lg font-semibold text-gray-800">Walk-in Clients</h2>
         </div>
         <div className="text-center text-gray-500">
-          Wala pang walk-in clients na naka-record
+        No walk-in clients recorded yet
         </div>
       </div>
     );
@@ -25,7 +25,7 @@ const WalkInTable = ({
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-semibold text-gray-800">Walk-in Clients List</h2>
+        <h2 className="text-lg font-semibold text-gray-800">List of Walk-in Clients</h2>
       </div>
       
       <div className="overflow-x-auto max-h-96 overflow-y-auto">
