@@ -128,7 +128,7 @@ const DashboardHome = () => {
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <button className="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-center transition-colors">
-            <div className="text-blue-600 font-medium">New Appointment</div>
+            <div className="text-blue-600 font-medium"> Appointment</div>
           </button>
           <button className="p-4 bg-green-50 hover:bg-green-100 rounded-lg text-center transition-colors">
             <div className="text-green-600 font-medium">Add Walk-in</div>
