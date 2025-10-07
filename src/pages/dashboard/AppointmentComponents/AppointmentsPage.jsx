@@ -1,116 +1,142 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppointmentTable from './AppointmentTable';
 import AppointmentStats from './AppointmentStats';
+import { appointmentService } from './appointmentService';
 
 const AppointmentsPage = () => {
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1,
-      name: "Maria Santos",
-      email: "maria@email.com",
-      phone: "09123456789",
-      services: "Hair Cut, Hair Color",
-      date: new Date().toISOString().split("T")[0],
-      time: "10:00 AM",
-      modeOfPayment: "Cash",
-      status: "Pending"
-    },
-    {
-      id: 2,
-      name: "Juan Dela Cruz",
-      email: "juan@email.com",
-      phone: "09987654321",
-      services: "Massage, Facial",
-      date: "2024-01-16",
-      time: "2:00 PM",
-      modeOfPayment: "GCash",
-      status: "Confirmed"
-    },
-    {
-      id: 3,
-      name: "Ana Garcia",
-      email: "ana@email.com",
-      phone: "09111222333",
-      services: "Manicure, Pedicure",
-      date: new Date().toISOString().split("T")[0],
-      time: "11:00 AM",
-      modeOfPayment: "Card",
-      status: "Completed"
-    },
-    {
-      id: 4,
-      name: "Pedro Silva",
-      email: "pedro@email.com",
-      phone: "09444555666",
-      services: "Haircut",
-      date: "2024-01-18",
-      time: "3:00 PM",
-      modeOfPayment: "Cash",
-      status: "Rescheduled"
-    },
-    {
-      id: 5,
-      name: "Lisa Wong",
-      email: "lisa@email.com",
-      phone: "09777888999",
-      services: "Facial Treatment",
-      date: "2024-01-19",
-      time: "1:00 PM",
-      modeOfPayment: "GCash",
-      status: "Cancelled"
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch appointments on component mount
+  useEffect(() => {
+    fetchAppointments();
+  }, []);
+
+  // Fetch all appointments from backend
+  const fetchAppointments = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const data = await appointmentService.getAll();
+      setAppointments(data);
+      
+      console.log('Appointments loaded:', data.length);
+    } catch (err) {
+      console.error('Failed to fetch appointments:', err);
+      setError('Failed to load appointments. Please try again.');
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  // Refresh appointments manually
+  const handleRefresh = () => {
+    fetchAppointments();
+  };
 
   const handleEdit = (appointment) => {
     console.log('Edit appointment:', appointment);
+    // TODO: Implement edit modal/form
   };
 
-  const handleDelete = (appointmentId) => {
+  const handleDelete = async (appointmentId) => {
     if (window.confirm('Are you sure you want to delete this appointment?')) {
-      setAppointments(prev => prev.filter(apt => apt.id !== appointmentId));
+      try {
+        await appointmentService.delete(appointmentId);
+        
+        // Remove from local state
+        setAppointments(prev => prev.filter(apt => apt.id !== appointmentId));
+        
+        console.log('Appointment deleted successfully');
+      } catch (err) {
+        console.error('Delete error:', err);
+        alert('Failed to delete appointment. Please try again.');
+      }
     }
   };
 
-  const handleConfirm = (appointmentId) => {
-    setAppointments(prev => 
-      prev.map(apt => 
-        apt.id === appointmentId 
-          ? { ...apt, status: 'Confirmed' }
-          : apt
-      )
-    );
-  };
-
-  const handleReschedule = (appointment) => {
-    setAppointments(prev => 
-      prev.map(apt => 
-        apt.id === appointment.id 
-          ? { ...apt, status: 'Rescheduled' }
-          : apt
-      )
-    );
-  };
-
-  const handleCancel = (appointmentId) => {
-    if (window.confirm('Are you sure you want to cancel this appointment?')) {
+  const handleConfirm = async (appointmentId) => {
+    try {
+      await appointmentService.updateStatus(appointmentId, 'Confirmed');
+      
+      // Update local state
       setAppointments(prev => 
         prev.map(apt => 
           apt.id === appointmentId 
-            ? { ...apt, status: 'Cancelled' }
+            ? { ...apt, status: 'Confirmed' }
             : apt
         )
       );
+      
+      console.log('Appointment confirmed');
+    } catch (err) {
+      console.error('Confirm error:', err);
+      alert('Failed to confirm appointment. Please try again.');
     }
   };
 
-  const handleMarkAsCompleted = (appointmentId) => {
-    setAppointments(prev => 
-      prev.map(apt => 
-        apt.id === appointmentId 
-          ? { ...apt, status: 'Completed' }
-          : apt
-      )
-    );
+  const handleReschedule = async (appointment) => {
+    try {
+      await appointmentService.updateStatus(appointment.id, 'Rescheduled');
+      
+      // Update local state
+      setAppointments(prev => 
+        prev.map(apt => 
+          apt.id === appointment.id 
+            ? { ...apt, status: 'Rescheduled' }
+            : apt
+        )
+      );
+      
+      console.log('Appointment rescheduled');
+    } catch (err) {
+      console.error('Reschedule error:', err);
+      alert('Failed to reschedule appointment. Please try again.');
+    }
+  };
+
+  const handleCancel = async (appointmentId) => {
+    if (window.confirm('Are you sure you want to cancel this appointment?')) {
+      try {
+        await appointmentService.updateStatus(appointmentId, 'Cancelled');
+        
+        // Update local state
+        setAppointments(prev => 
+          prev.map(apt => 
+            apt.id === appointmentId 
+              ? { ...apt, status: 'Cancelled' }
+              : apt
+          )
+        );
+        
+        console.log('Appointment cancelled');
+      } catch (err) {
+        console.error('Cancel error:', err);
+        alert('Failed to cancel appointment. Please try again.');
+      }
+    }
+  };
+
+  const handleMarkAsCompleted = async (appointmentId) => {
+    try {
+      await appointmentService.updateStatus(appointmentId, 'Completed');
+      
+      // Update local state
+      setAppointments(prev => 
+        prev.map(apt => 
+          apt.id === appointmentId 
+            ? { ...apt, status: 'Completed' }
+            : apt
+        )
+      );
+      
+      console.log('Appointment marked as completed');
+    } catch (err) {
+      console.error('Mark completed error:', err);
+      alert('Failed to mark appointment as completed. Please try again.');
+    }
   };
 
   const handleCall = (phoneNumber) => {
@@ -122,20 +148,97 @@ const AppointmentsPage = () => {
     }
   };
 
-  return (
+  // Loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading appointments...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button
+            onClick={handleRefresh}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+ return (
     <div className="space-y-6">
+      {/* Stats - MOVED TO TOP */}
       <AppointmentStats appointments={appointments} />
+
+      {/* Refresh button - MOVED BELOW STATS */}
+      <div className="flex justify-end">
+        <button
+          onClick={handleRefresh}
+          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center gap-2"
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            className="h-5 w-5" 
+            viewBox="0 0 20 20" 
+            fill="currentColor"
+          >
+            <path 
+              fillRule="evenodd" 
+              d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" 
+              clipRule="evenodd" 
+            />
+          </svg>
+          Refresh
+        </button>
+      </div>
       
-      <AppointmentTable
-        appointments={appointments}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onConfirm={handleConfirm}
-        onReschedule={handleReschedule}
-        onCancel={handleCancel}
-        onMarkAsCompleted={handleMarkAsCompleted}
-        onCall={handleCall}
-      />
+      {/* Table */}
+      {appointments.length > 0 ? (
+        <AppointmentTable
+          appointments={appointments}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onConfirm={handleConfirm}
+          onReschedule={handleReschedule}
+          onCancel={handleCancel}
+          onMarkAsCompleted={handleMarkAsCompleted}
+          onCall={handleCall}
+        />
+      ) : (
+        <div className="bg-white rounded-lg shadow p-8 text-center">
+          <svg
+            className="mx-auto h-12 w-12 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">No appointments</h3>
+          <p className="mt-1 text-sm text-gray-500">
+            No appointments have been created yet. They will appear here when clients book through the mobile app.
+          </p>
+        </div>
+      )}
     </div>
   );
 };
