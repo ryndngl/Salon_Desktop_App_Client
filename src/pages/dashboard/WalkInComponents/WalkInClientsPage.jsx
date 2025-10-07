@@ -3,7 +3,7 @@ import { Plus, UserX } from "lucide-react";
 import WalkInTable from "./WalkInTable";
 import WalkInStats from "./WalkInStats";
 import WalkInForm from "./WalkInForm";
-
+import WalkInFilters from "./WalkInFilters";
 
 // TEMPORARY - walkInService code pasted directly here
 const API_BASE_URL = 'http://localhost:5000/api';
@@ -88,6 +88,7 @@ const WalkInClientsPage = () => {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeFilter, setActiveFilter] = useState('all');
   
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -136,6 +137,35 @@ const WalkInClientsPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Calculate stats for filters
+  const getStats = () => {
+    const today = new Date().toISOString().split("T")[0];
+    return {
+      total: clients.length,
+      served: clients.filter((c) => c.status === "Served").length,
+      servedToday: clients.filter(
+        (c) => c.status === "Served" && c.date.split("T")[0] === today
+      ).length,
+      pending: clients.filter((c) => c.status === "Pending").length,
+      rescheduled: clients.filter((c) => c.status === "Rescheduled").length,
+      cancelled: clients.filter((c) => c.status === "Cancelled").length,
+    };
+  };
+
+  // Filter clients based on active filter
+  const getFilteredClients = () => {
+    if (activeFilter === 'all') return clients;
+    
+    const filterMap = {
+      served: 'Served',
+      pending: 'Pending',
+      rescheduled: 'Rescheduled',
+      cancelled: 'Cancelled',
+    };
+    
+    return clients.filter((c) => c.status === filterMap[activeFilter]);
   };
 
   // Reset form
@@ -283,9 +313,17 @@ const WalkInClientsPage = () => {
     );
   }
 
+  const filteredClients = getFilteredClients();
+
   return (
     <div className="space-y-6">
       <WalkInStats clients={clients} />
+
+      <WalkInFilters 
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+        stats={getStats()}
+      />
 
       <div className="flex justify-end">
         <button
@@ -297,7 +335,7 @@ const WalkInClientsPage = () => {
         </button>
       </div>
 
-      {clients.length === 0 ? (
+      {filteredClients.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm p-12">
           <div className="text-center">
             <div className="flex justify-center mb-4">
@@ -306,16 +344,20 @@ const WalkInClientsPage = () => {
               </div>
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No Walk-in Clients Yet
+              {activeFilter === 'all' 
+                ? 'No Walk-in Clients Yet' 
+                : `No ${activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1)} Clients`}
             </h3>
             <p className="text-gray-500">
-              Start by adding your first walk-in client to keep track of their visits and services.
+              {activeFilter === 'all'
+                ? 'Start by adding your first walk-in client to keep track of their visits and services.'
+                : `No clients found with ${activeFilter} status.`}
             </p>
           </div>
         </div>
       ) : (
         <WalkInTable
-          clients={clients}
+          clients={filteredClients}
           onEdit={handleEditClient}
           onDelete={handleDeleteClient}
           onMarkAsPaid={handleMarkAsPaid}
