@@ -1,6 +1,18 @@
 import React from 'react';
 import { Edit2, Trash2, DollarSign, CheckCircle, XCircle, Mail, Phone } from 'lucide-react';
 
+// Helper function to convert 24-hour to 12-hour format
+const formatTime = (time) => {
+  if (!time) return '10:00 AM';
+  
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours, 10);
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const displayHour = hour % 12 || 12;
+  
+  return `${displayHour}:${minutes} ${period}`;
+};
+
 const WalkInTable = ({ 
   clients, 
   onEdit, 
@@ -65,16 +77,14 @@ const WalkInTable = ({
                 </td>
                 <td className="py-4 text-sm text-gray-500 px-2">
                   <div>{new Date(client.date).toLocaleDateString('en-PH')}</div>
-                  <div className="text-xs text-gray-500">{client.time || '10:00 AM'}</div>
+                  <div className="text-xs text-gray-500">{formatTime(client.time)}</div>
                 </td>
                 <td className="py-4 text-sm text-gray-500 px-2">
                   ₱{client.amount ? parseFloat(client.amount).toLocaleString() : '0'}
                 </td>
                 <td className="py-4 text-sm font-medium px-2">
                   <span className={`${
-                    client.paymentStatus === 'Paid' ? 'text-green-600' :
-                    client.paymentStatus === 'Partial' ? 'text-yellow-600' :
-                    'text-red-600'
+                    client.paymentStatus === 'Paid' ? 'text-green-600' : 'text-red-600'
                   }`}>
                     {client.paymentStatus}
                   </span>
