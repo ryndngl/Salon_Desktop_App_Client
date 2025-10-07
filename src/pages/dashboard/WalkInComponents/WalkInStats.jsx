@@ -1,11 +1,11 @@
-
 const WalkInStats = ({ clients }) => {
   const today = new Date().toISOString().split("T")[0];
 
   const stats = {
     total: clients.length,
+    served: clients.filter((c) => c.status === "Served").length,
     servedToday: clients.filter(
-      (c) => c.status === "Served" && c.date === today
+      (c) => c.status === "Served" && c.date.split("T")[0] === today
     ).length,
     pending: clients.filter((c) => c.status === "Pending").length,
     rescheduled: clients.filter((c) => c.status === "Rescheduled").length,
