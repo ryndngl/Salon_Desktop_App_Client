@@ -152,7 +152,7 @@ const AppointmentTable = ({
                       })}
                     </div>
                     <div className="text-xs text-gray-500">
-                      {appointment.time}
+                      {appointment.time || 'Time not specified'} 
                     </div>
                   </div>
                 </td>
