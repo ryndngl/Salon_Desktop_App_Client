@@ -47,7 +47,7 @@ const WalkInTable = ({
               <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-32">Name</th>
               <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-48">Contact</th>
               <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-40">Services</th>
-              <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-24">Date</th>
+              <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-24">Schedule</th>
               <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-24">Amount</th>
               <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-24">Payment</th>
               <th className="pb-3 text-sm font-medium text-gray-600 px-2 w-24">Status</th>
@@ -103,7 +103,7 @@ const WalkInTable = ({
                   <div className="flex gap-1">
                     <button
                       onClick={() => onEdit(client)}
-                      className="text-blue-600 hover:text-blue-900 p-1"
+                      className="text-gray-600 hover:text-blue-900 p-1"
                       title="Edit"
                     >
                       <Edit2 size={16} />
