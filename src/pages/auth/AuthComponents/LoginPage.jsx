@@ -1,45 +1,30 @@
-// pages/auth/AuthComponents/LoginPage.jsx
+// src/pages/auth/AuthComponents/LoginPage.jsx - FIXED PATHS
 import { useState } from 'react';
 import LoginForm from './LoginForm';
 import LoginHero from './LoginHero';
 import LoadingSpinner from '../../../components/ui/LoadingSpinner';
-import Dashboard from '../../dashboard/DashboardComponents/Dashboard';
-import useAuthState from '../../../hooks/useAuthState';
 import useLogin from '../../../hooks/useLogin';
+
 const LoginPage = () => {
-  const { isLoggedIn, setIsLoggedIn, handleLogout, usernameRef } = useAuthState();
-  const { 
-    formData, 
+  const {
+    formData,
     setFormData,
-    isLoading, 
-    showSpinner, 
+    isLoading,
+    showSpinner,
     handleSubmit,
-    resetForm
-  } = useLogin(setIsLoggedIn);
-
-  // Modified logout handler that also resets form
-  const onLogout = () => {
-    handleLogout(resetForm);
-  };
-
-  // If logged in, show dashboard
-  if (isLoggedIn) {
-    return <Dashboard onLogout={onLogout} />;
-  }
+  } = useLogin();
 
   return (
     <>
       <div className="flex h-screen font-sans">
         <LoginHero />
-        <LoginForm 
+        <LoginForm
           formData={formData}
           setFormData={setFormData}
           isLoading={isLoading}
           onSubmit={handleSubmit}
-          usernameRef={usernameRef}
         />
       </div>
-      
       <LoadingSpinner show={showSpinner} />
     </>
   );
