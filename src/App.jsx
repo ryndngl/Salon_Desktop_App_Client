@@ -1,16 +1,17 @@
-import { useState } from 'react'
+// src/App.jsx - UPDATED with correct imports
+import { useAuthState } from './hooks/useAuthState';
 import { LoginPage } from './pages/auth/AuthComponents';
-import { Dashboard } from './pages/dashboard/DashboardComponents';
+import Dashboard from './pages/dashboard/DashboardComponents/Dashboard'; 
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const { isLoggedIn, handleLogout } = useAuthState();
 
   return (
     <div className="App">
       {!isLoggedIn ? (
-        <LoginPage onLogin={() => setIsLoggedIn(true)} />
+        <LoginPage />
       ) : (
-        <Dashboard onLogout={() => setIsLoggedIn(false)} />
+        <Dashboard onLogout={handleLogout} />
       )}
     </div>
   )
