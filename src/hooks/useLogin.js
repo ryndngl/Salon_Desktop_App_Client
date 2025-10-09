@@ -1,6 +1,10 @@
+// src/hooks/useLogin.js - UPDATED to use useAuthState
 import { useState } from 'react';
+import { useAuthState } from './useAuthState'; 
 
-const useLogin = (setIsLoggedIn) => {
+const useLogin = () => { // ✅ No more setIsLoggedIn parameter
+  const { login } = useAuthState(); // ✅ Get login function from context
+  
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -21,25 +25,24 @@ const useLogin = (setIsLoggedIn) => {
         console.log('🔥 Login result:', result);
 
         if (result.success || result.isSuccess) {
-          // SAVE TOKEN TO LOCALSTORAGE
-          if (result.token) {
-            localStorage.setItem('token', result.token);
-            console.log('✅ Token saved to localStorage');
-          }
+          // ✅ Save to context (which saves to localStorage automatically)
+          const adminData = result.admin || result.user || { username: formData.username };
+          login(adminData, result.token);
+          console.log('✅ Logged in via Electron API');
           
           setShowSpinner(true);
           setTimeout(() => {
             setShowSpinner(false);
-            setIsLoggedIn(true);
           }, 1500);
         } else {
           alert(`Login failed: ${result.message}`);
+          setIsLoading(false);
         }
       } else {
         // Fallback - call server API directly
         console.log('🌐 Calling server API directly...');
         
-        const response = await fetch('http://localhost:5000/api/auth/admin/sign-in', {
+        const response = await fetch('http://localhost:5000/api/auth/admin-signin', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -54,25 +57,23 @@ const useLogin = (setIsLoggedIn) => {
         console.log('API Response:', result);
 
         if (result.success || result.isSuccess) {
-          // SAVE TOKEN
-          if (result.token) {
-            localStorage.setItem('token', result.token);
-            console.log('✅ Token saved to localStorage');
-          }
+          // ✅ Save to context (which saves to localStorage automatically)
+          const adminData = result.admin || result.user || { username: formData.username };
+          login(adminData, result.token);
+          console.log('✅ Logged in via direct API');
           
           setShowSpinner(true);
           setTimeout(() => {
             setShowSpinner(false);
-            setIsLoggedIn(true);
           }, 1500);
         } else {
           alert(`Login failed: ${result.message || 'Invalid credentials'}`);
+          setIsLoading(false);
         }
       }
     } catch (error) {
       console.error('Login error:', error);
       alert('Login error occurred. Check console for details.');
-    } finally {
       setIsLoading(false);
     }
   };
