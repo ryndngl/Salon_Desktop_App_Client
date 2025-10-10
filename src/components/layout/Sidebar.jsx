@@ -7,6 +7,7 @@ import {
   BarChart3, 
   Star, 
   Users, 
+  MessageSquare,
   LogOut,
   ChevronLeft,
   ChevronRight
@@ -20,6 +21,7 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
     { id: 'appointments', label: 'Appointments', icon: Calendar },
     { id: 'walk-in-clients', label: 'Walk-in Clients', icon: UserPlus },
     { id: 'services', label: 'Services', icon: Scissors },
+    { id: 'reviews', label: 'Reviews', icon: MessageSquare },
     { id: 'sales-report', label: 'Sales Report', icon: BarChart3 },
     { id: 'loyalty-points', label: 'Loyalty Points', icon: Star },
     { id: 'manage-user', label: 'Manage User', icon: Users },
