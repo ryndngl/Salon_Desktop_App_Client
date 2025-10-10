@@ -14,13 +14,22 @@ const FILTER_OPTIONS = [
 ];
 
 // Utility Functions
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+const formatDateTime = (dateString, updatedAt) => {
+  const date = new Date(updatedAt || dateString);
+  
+  const dateStr = date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
   });
+  
+  const timeStr = date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+  
+  return `${dateStr} at ${timeStr}`;
 };
 
 const filterTestimonials = (testimonials, searchTerm, activeFilter) => {
@@ -127,10 +136,11 @@ const ReviewCard = ({ testimonial }) => (
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-1.5 text-xs text-gray-500">
+      
+     <div className="flex items-center gap-1.5 text-xs text-gray-500">
         <Calendar className="h-3.5 w-3.5" />
-        {formatDate(testimonial.createdAt)}
-      </div>
+        {formatDateTime(testimonial.createdAt, testimonial.updatedAt)}
+     </div>
     </div>
 
     {/* Feedback */}
