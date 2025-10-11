@@ -4,9 +4,10 @@ const AppointmentStats = ({ appointments }) => {
   const today = new Date().toISOString().split("T")[0];
 
   const stats = {
-    todayAppointments: appointments.filter(
-      (a) => a.date === today && a.status !== "Cancelled"
-    ).length,
+  todayAppointments: appointments.filter((a) => {
+  return a.date === today && a.status !== "Cancelled";
+}).length,
+
     pending: appointments.filter((a) => a.status === "Pending").length,
     completed: appointments.filter((a) => a.status === "Completed").length,
     rescheduled: appointments.filter((a) => a.status === "Rescheduled").length,
