@@ -2,6 +2,30 @@
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
+// ✅ HELPER FUNCTION: Format services array
+const formatServicesArray = (services) => {
+  if (!services) return 'No service specified';
+  
+  // Handle string format (old data)
+  if (typeof services === 'string') return services;
+  
+  // Handle array of objects or strings
+  if (Array.isArray(services)) {
+    return services.map(s => {
+      // If service is a string, return as-is
+      if (typeof s === 'string') return s;
+      
+      // If service is an object, format it
+      const parts = [s.name || 'Unknown Service'];
+      if (s.category) parts.push(s.category);
+      if (s.style) parts.push(s.style);
+      return parts.join(' - ');
+    }).join(', ');
+  }
+  
+  return 'Invalid service data';
+};
+
 export const appointmentService = {
   /**
    * Get all appointments
@@ -29,10 +53,10 @@ export const appointmentService = {
         name: appointment.clientName,
         email: appointment.email,
         phone: appointment.phone,
-        services: Array.isArray(appointment.services) 
-          ? appointment.services.join(', ') 
-          : appointment.services,
-        date: new Date(appointment.date).toISOString().split('T')[0],
+        services: formatServicesArray(appointment.services), 
+     date: typeof appointment.date === 'string' 
+  ? appointment.date.split('T')[0]  
+  : new Date(appointment.date).toISOString().split('T')[0],
         time: appointment.time,
         modeOfPayment: appointment.modeOfPayment,
         status: appointment.status,
@@ -75,10 +99,10 @@ export const appointmentService = {
         name: appointment.clientName,
         email: appointment.email,
         phone: appointment.phone,
-        services: Array.isArray(appointment.services) 
-          ? appointment.services.join(', ') 
-          : appointment.services,
-        date: new Date(appointment.date).toISOString().split('T')[0],
+        services: formatServicesArray(appointment.services), 
+        date: typeof appointment.date === 'string' 
+  ? appointment.date.split('T')[0]  
+  : new Date(appointment.date).toISOString().split('T')[0],
         time: appointment.time,
         modeOfPayment: appointment.modeOfPayment,
         status: appointment.status,
@@ -205,10 +229,10 @@ export const appointmentService = {
         name: appointment.clientName,
         email: appointment.email,
         phone: appointment.phone,
-        services: Array.isArray(appointment.services) 
-          ? appointment.services.join(', ') 
-          : appointment.services,
-        date: new Date(appointment.date).toISOString().split('T')[0],
+        services: formatServicesArray(appointment.services), 
+        date: typeof appointment.date === 'string' 
+  ? appointment.date.split('T')[0]  
+  : new Date(appointment.date).toISOString().split('T')[0],
         time: appointment.time,
         modeOfPayment: appointment.modeOfPayment,
         status: appointment.status,
@@ -246,10 +270,10 @@ export const appointmentService = {
         name: appointment.clientName,
         email: appointment.email,
         phone: appointment.phone,
-        services: Array.isArray(appointment.services) 
-          ? appointment.services.join(', ') 
-          : appointment.services,
-        date: new Date(appointment.date).toISOString().split('T')[0],
+        services: formatServicesArray(appointment.services), 
+       date: typeof appointment.date === 'string' 
+  ? appointment.date.split('T')[0] 
+  : new Date(appointment.date).toISOString().split('T')[0],
         time: appointment.time,
         modeOfPayment: appointment.modeOfPayment,
         status: appointment.status,
