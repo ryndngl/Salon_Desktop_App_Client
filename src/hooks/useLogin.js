@@ -42,7 +42,7 @@ const useLogin = () => { // ✅ No more setIsLoggedIn parameter
         // Fallback - call server API directly
         console.log('🌐 Calling server API directly...');
         
-        const response = await fetch('http://localhost:5000/api/auth/admin-signin', {
+       const response = await fetch('http://localhost:5000/api/auth/admin/sign-in', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
