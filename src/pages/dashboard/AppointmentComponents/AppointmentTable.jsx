@@ -1,6 +1,36 @@
 import React from 'react';
 import { Edit2, Trash2, CheckCircle, Calendar, XCircle, Mail, Phone } from 'lucide-react';
 
+//  FIXED: Handle both array and string formats
+const formatServices = (services) => {
+  if (!services) return 'No service specified';
+  
+  //  Handle if services is a STRING (old data format)
+  if (typeof services === 'string') {
+    return services;
+  }
+  
+  //  Handle if services is NOT an array
+  if (!Array.isArray(services)) {
+    return 'Invalid service data';
+  }
+  
+  //  Handle if services is EMPTY array
+  if (services.length === 0) return 'No service specified';
+  
+  //  Format array of service objects
+  return services.map(service => {
+    // Handle if service is a string (backward compatibility)
+    if (typeof service === 'string') return service;
+    
+    // Handle service object
+    const parts = [service.name || service];
+    if (service.category) parts.push(service.category);
+    if (service.style) parts.push(service.style);
+    return parts.join(' - ');
+  }).join(', ');
+};
+
 const AppointmentTable = ({ 
   appointments, 
   onEdit, 
@@ -134,10 +164,10 @@ const AppointmentTable = ({
                   </div>
                 </td>
 
-                {/* Services Column */}
+                {/* Services Column - ✅ FIXED */}
                 <td className="px-4 py-4">
                   <div className="text-sm text-gray-900">
-                    {appointment.services}
+                    {formatServices(appointment.services)}
                   </div>
                 </td>
 
@@ -177,7 +207,7 @@ const AppointmentTable = ({
                     {/* Edit Button */}
                     <button
                       onClick={() => onEdit(appointment)}
-                      className="text-gray-600 hover:text-gray-800 hover:bg-gray cls-50 p-1.5 rounded transition-colors"
+                      className="text-gray-600 hover:text-gray-800 hover:bg-gray-50 p-1.5 rounded transition-colors"
                       title="Edit"
                     >
                       <Edit2 size={16} />
