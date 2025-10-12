@@ -37,7 +37,7 @@ const AppointmentTable = ({
   onDelete, 
   onConfirm,
   onReschedule,
-  onCancel,
+  onDecline, 
   onMarkAsCompleted
 }) => {
   if (appointments.length === 0) {
@@ -62,6 +62,8 @@ const AppointmentTable = ({
       case 'Completed':
         return 'text-green-700';
       case 'Cancelled':
+        return 'text-red-700';
+      case 'Declined': 
         return 'text-red-700';
       case 'Rescheduled':
         return 'text-purple-700';
@@ -164,7 +166,7 @@ const AppointmentTable = ({
                   </div>
                 </td>
 
-                {/* Services Column - ✅ FIXED */}
+                {/* Services Column */}
                 <td className="px-4 py-4">
                   <div className="text-sm text-gray-900">
                     {formatServices(appointment.services)}
@@ -246,12 +248,12 @@ const AppointmentTable = ({
                       </button>
                     )}
 
-                    {/* Cancel Button */}
+                    {/* ✅ CHANGED: Decline Button (was Cancel) */}
                     {(appointment.status === 'Pending' || appointment.status === 'Confirmed') && (
                       <button
-                        onClick={() => onCancel(appointment.id)}
-                        className="text-orange-600 hover:text-orange-800 hover:bg-orange-50 p-1.5 rounded transition-colors"
-                        title="Cancel"
+                        onClick={() => onDecline(appointment.id)}
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50 p-1.5 rounded transition-colors"
+                        title="Decline"
                       >
                         <XCircle size={16} />
                       </button>
