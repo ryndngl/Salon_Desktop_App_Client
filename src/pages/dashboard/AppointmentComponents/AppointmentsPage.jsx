@@ -97,24 +97,25 @@ const AppointmentsPage = () => {
     }
   };
 
-  const handleCancel = async (appointmentId) => {
-    if (window.confirm('Are you sure you want to cancel this appointment?')) {
+  // ✅ CHANGED: handleCancel → handleDecline
+  const handleDecline = async (appointmentId) => {
+    if (window.confirm('Are you sure you want to decline this appointment?')) {
       try {
-        await appointmentService.updateStatus(appointmentId, 'Cancelled');
+        await appointmentService.updateStatus(appointmentId, 'Declined');
         
         // Update local state
         setAppointments(prev => 
           prev.map(apt => 
             apt.id === appointmentId 
-              ? { ...apt, status: 'Cancelled' }
+              ? { ...apt, status: 'Declined' }
               : apt
           )
         );
         
-        console.log('Appointment cancelled');
+        console.log('Appointment declined');
       } catch (err) {
-        console.error('Cancel error:', err);
-        alert('Failed to cancel appointment. Please try again.');
+        console.error('Decline error:', err);
+        alert('Failed to decline appointment. Please try again.');
       }
     }
   };
@@ -214,7 +215,7 @@ const AppointmentsPage = () => {
           onDelete={handleDelete}
           onConfirm={handleConfirm}
           onReschedule={handleReschedule}
-          onCancel={handleCancel}
+          onDecline={handleDecline}
           onMarkAsCompleted={handleMarkAsCompleted}
           onCall={handleCall}
         />
