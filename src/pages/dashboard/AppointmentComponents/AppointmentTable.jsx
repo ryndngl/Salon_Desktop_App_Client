@@ -239,7 +239,7 @@ const AppointmentTable = ({
                     {appointment.status === 'Confirmed' && (
                       <button
                         onClick={() => onMarkAsCompleted(appointment.id)}
-                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1.5 rounded transition-colors"
+                        className="text-green-600 hover:text-green-800 hover:bg-green-50 p-1.5 rounded transition-colors"
                         title="Mark Complete"
                       >
                         <CheckCircle size={16} />
