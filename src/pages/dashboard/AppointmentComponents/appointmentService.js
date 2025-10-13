@@ -26,6 +26,46 @@ const formatServicesArray = (services) => {
   return 'Invalid service data';
 };
 
+// ✅ NEW: Helper function to format date consistently
+const formatDateToYYYYMMDD = (dateValue) => {
+  if (!dateValue) return null;
+  
+  try {
+    let dateObj;
+    
+    // If it's already a Date object
+    if (dateValue instanceof Date) {
+      dateObj = dateValue;
+    }
+    // If it's a string (ISO format, etc.)
+    else if (typeof dateValue === 'string') {
+      // Split by 'T' first to remove time component if present
+      const datePart = dateValue.split('T')[0];
+      
+      // If already in YYYY-MM-DD format without time
+      if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+        return datePart;
+      }
+      
+      // Otherwise parse it
+      dateObj = new Date(dateValue);
+    }
+    else {
+      return null;
+    }
+    
+    // Convert to YYYY-MM-DD format
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  } catch (error) {
+    console.error('Error formatting date:', dateValue, error);
+    return null;
+  }
+};
+
 export const appointmentService = {
   /**
    * Get all appointments
@@ -54,15 +94,15 @@ export const appointmentService = {
         email: appointment.email,
         phone: appointment.phone,
         services: formatServicesArray(appointment.services), 
-     date: typeof appointment.date === 'string' 
-  ? appointment.date.split('T')[0]  
-  : new Date(appointment.date).toISOString().split('T')[0],
+        date: formatDateToYYYYMMDD(appointment.date),
         time: appointment.time,
         modeOfPayment: appointment.modeOfPayment,
         status: appointment.status,
         createdAt: appointment.createdAt,
         updatedAt: appointment.updatedAt,
       }));
+
+      console.log('Transformed appointments:', transformedData);
 
       return transformedData;
 
@@ -100,9 +140,7 @@ export const appointmentService = {
         email: appointment.email,
         phone: appointment.phone,
         services: formatServicesArray(appointment.services), 
-        date: typeof appointment.date === 'string' 
-  ? appointment.date.split('T')[0]  
-  : new Date(appointment.date).toISOString().split('T')[0],
+        date: formatDateToYYYYMMDD(appointment.date),
         time: appointment.time,
         modeOfPayment: appointment.modeOfPayment,
         status: appointment.status,
@@ -230,9 +268,7 @@ export const appointmentService = {
         email: appointment.email,
         phone: appointment.phone,
         services: formatServicesArray(appointment.services), 
-        date: typeof appointment.date === 'string' 
-  ? appointment.date.split('T')[0]  
-  : new Date(appointment.date).toISOString().split('T')[0],
+        date: formatDateToYYYYMMDD(appointment.date),
         time: appointment.time,
         modeOfPayment: appointment.modeOfPayment,
         status: appointment.status,
@@ -271,9 +307,7 @@ export const appointmentService = {
         email: appointment.email,
         phone: appointment.phone,
         services: formatServicesArray(appointment.services), 
-       date: typeof appointment.date === 'string' 
-  ? appointment.date.split('T')[0] 
-  : new Date(appointment.date).toISOString().split('T')[0],
+        date: formatDateToYYYYMMDD(appointment.date),
         time: appointment.time,
         modeOfPayment: appointment.modeOfPayment,
         status: appointment.status,
