@@ -141,18 +141,45 @@ const WalkInClientsPage = () => {
 
   // Calculate stats for filters
   const getStats = () => {
-    const today = new Date().toISOString().split("T")[0];
-    return {
-      total: clients.length,
-      served: clients.filter((c) => c.status === "Served").length,
-      servedToday: clients.filter(
-        (c) => c.status === "Served" && c.date.split("T")[0] === today
-      ).length,
-      pending: clients.filter((c) => c.status === "Pending").length,
-      rescheduled: clients.filter((c) => c.status === "Rescheduled").length,
-      cancelled: clients.filter((c) => c.status === "Cancelled").length,
-    };
+  const getTodayDateString = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
+
+  const normalizeDate = (dateStr) => {
+    if (!dateStr) return null;
+    try {
+      if (typeof dateStr === 'string') {
+        if (dateStr.includes('T')) {
+          return dateStr.split('T')[0];
+        }
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+          return dateStr;
+        }
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const today = getTodayDateString();
+
+  return {
+    total: clients.length,
+    served: clients.filter((c) => c.status === "Served").length,
+    servedToday: clients.filter((c) => {
+      const clientDate = normalizeDate(c.date);
+      return c.status === "Served" && clientDate === today;
+    }).length,
+    pending: clients.filter((c) => c.status === "Pending").length,
+    rescheduled: clients.filter((c) => c.status === "Rescheduled").length,
+    cancelled: clients.filter((c) => c.status === "Cancelled").length,
+  };
+};
 
   // Filter clients based on active filter
   const getFilteredClients = () => {
@@ -205,38 +232,53 @@ const WalkInClientsPage = () => {
     });
   };
 
-  // Handle form submit
-  const handleFormSubmit = async () => {
-    if (!formData.name || selectedServices.length === 0) {
-      alert("Name and Services are required");
-      return;
-    }
 
-    const clientData = {
-      ...formData,
-      services: selectedServices.join(", "),
-    };
+ // Handle form submit
+const handleFormSubmit = async () => {
+  if (!formData.name || selectedServices.length === 0) {
+    alert("Name and Services are required");
+    return;
+  }
 
-    try {
-      if (editingId) {
-        // Update existing
-        await walkInService.update(editingId, clientData);
-        alert('Walk-in client updated successfully!');
-      } else {
-        // Create new
-        await walkInService.create(clientData);
-        alert('Walk-in client added successfully!');
-      }
-      
-      // Refresh list
-      await fetchWalkIns();
-      resetForm();
-    } catch (error) {
-      console.error('Error saving walk-in:', error);
-      alert('Failed to save walk-in client. Please try again.');
-    }
+  // Check if token exists
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Session expired. Please login again.');
+    // Optionally redirect to login
+    // window.location.href = '/login';
+    return;
+  }
+
+  const clientData = {
+    ...formData,
+    services: selectedServices.join(", "),
   };
 
+  try {
+    if (editingId) {
+      // Update existing
+      await walkInService.update(editingId, clientData);
+      alert('Walk-in client updated successfully!');
+    } else {
+      // Create new
+      await walkInService.create(clientData);
+      alert('Walk-in client added successfully!');
+    }
+    
+    // Refresh list
+    await fetchWalkIns();
+    resetForm();
+  } catch (error) {
+    console.error('Error saving walk-in:', error);
+    
+    //  Better error message
+    if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+      alert('Session expired. Please login again.');
+    } else {
+      alert('Failed to save walk-in client. Please try again.');
+    }
+  }
+};
   // Handle edit
   const handleEditClient = (client) => {
     setEditingId(client.id);

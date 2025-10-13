@@ -2,6 +2,38 @@
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
+// ✅ Helper function to format date consistently
+const formatDateToYYYYMMDD = (dateValue) => {
+  if (!dateValue) return null;
+  
+  try {
+    let dateObj;
+    
+    if (dateValue instanceof Date) {
+      dateObj = dateValue;
+    } else if (typeof dateValue === 'string') {
+      const datePart = dateValue.split('T')[0];
+      
+      if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+        return datePart;
+      }
+      
+      dateObj = new Date(dateValue);
+    } else {
+      return null;
+    }
+    
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  } catch (error) {
+    console.error('Error formatting date:', dateValue, error);
+    return null;
+  }
+};
+
 export const walkInService = {
   // Get all walk-ins
   getAll: async () => {
@@ -20,7 +52,20 @@ export const walkInService = {
         throw new Error('Failed to fetch walk-ins');
       }
 
-      return await response.json();
+      const result = await response.json();
+      
+      // ✅ Transform data and format dates
+      const transformedData = {
+        ...result,
+        walkIns: (result.walkIns || []).map(walkIn => ({
+          ...walkIn,
+          date: formatDateToYYYYMMDD(walkIn.date)
+        }))
+      };
+      
+      console.log('Transformed walk-ins:', transformedData);
+
+      return transformedData;
     } catch (error) {
       console.error('walkInService.getAll error:', error);
       throw error;
