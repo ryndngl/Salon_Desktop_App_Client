@@ -8,7 +8,7 @@ const ServiceSelector = ({ selectedServices, onServiceToggle }) => {
     "Hair Treatment": false,
     "Rebond & Forms": false,
     "Nail Care": false,
-    FootSpa: false,
+    "Foot Spa": false,
   });
 
   const servicesData = {
@@ -27,7 +27,7 @@ const ServiceSelector = ({ selectedServices, onServiceToggle }) => {
     "Nail Care": {
       categories: ["Gel Polish", "Removing Gel", "Soft Gel"],
     },
-    FootSpa: {
+    "Foot Spa": {
       categories: ["Foot Spa Package", "Manicure", "Pedicure"],
     },
   };
