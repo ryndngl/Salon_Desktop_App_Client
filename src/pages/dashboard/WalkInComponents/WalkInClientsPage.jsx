@@ -5,14 +5,13 @@ import WalkInStats from "./WalkInStats";
 import WalkInForm from "./WalkInForm";
 import WalkInFilters from "./WalkInFilters";
 
-// TEMPORARY - walkInService code pasted directly here
 const API_BASE_URL = 'http://localhost:5000/api';
 
 const walkInService = {
   getAll: async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/walkins`, {
+      const response = await fetch(`${API_BASE_URL}/walkin`, {  
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -30,7 +29,7 @@ const walkInService = {
   create: async (walkInData) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/walkins`, {
+      const response = await fetch(`${API_BASE_URL}/walkin`, {  
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +48,7 @@ const walkInService = {
   update: async (id, walkInData) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/walkins/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/walkin/${id}`, { 
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +67,7 @@ const walkInService = {
   delete: async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/walkins/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/walkin/${id}`, { 
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +82,6 @@ const walkInService = {
     }
   }
 };
-
 const WalkInClientsPage = () => { 
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
