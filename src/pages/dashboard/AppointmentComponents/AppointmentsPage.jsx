@@ -42,17 +42,17 @@ const AppointmentsPage = () => {
   };
 
   const handleDelete = async (appointmentId) => {
-    if (window.confirm('Are you sure you want to delete this appointment?')) {
+    if (window.confirm('Are you sure you want to delete this booking?')) {
       try {
         await appointmentService.delete(appointmentId);
         
         // Remove from local state
         setAppointments(prev => prev.filter(apt => apt.id !== appointmentId));
         
-        console.log('Appointment deleted successfully');
+        console.log('Booking deleted successfully');
       } catch (err) {
         console.error('Delete error:', err);
-        alert('Failed to delete appointment. Please try again.');
+        alert('Failed to delete booking. Please try again.');
       }
     }
   };
@@ -70,10 +70,10 @@ const AppointmentsPage = () => {
         )
       );
       
-      console.log('Appointment confirmed');
+      console.log('Booking confirmed');
     } catch (err) {
       console.error('Confirm error:', err);
-      alert('Failed to confirm appointment. Please try again.');
+      alert('Failed to confirm booking. Please try again.');
     }
   };
 
@@ -112,10 +112,10 @@ const AppointmentsPage = () => {
           )
         );
         
-        console.log('Appointment declined');
+        console.log('Booking declined');
       } catch (err) {
         console.error('Decline error:', err);
-        alert('Failed to decline appointment. Please try again.');
+        alert('Failed to decline booking. Please try again.');
       }
     }
   };
@@ -133,10 +133,10 @@ const AppointmentsPage = () => {
         )
       );
       
-      console.log('Appointment marked as completed');
+      console.log('Booking marked as completed');
     } catch (err) {
       console.error('Mark completed error:', err);
-      alert('Failed to mark appointment as completed. Please try again.');
+      alert('Failed to mark booking as completed. Please try again.');
     }
   };
 
@@ -156,7 +156,7 @@ const AppointmentsPage = () => {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading appointments...</p>
+            <p className="text-gray-600">Loading bookings...</p>
           </div>
         </div>
       </div>
@@ -234,9 +234,9 @@ const AppointmentsPage = () => {
               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No appointments</h3>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">No bookings</h3>
           <p className="mt-1 text-sm text-gray-500">
-            No appointments have been created yet. They will appear here when clients book through the mobile app.
+            No bookings have been created yet. They will appear here when clients book through the mobile app.
           </p>
         </div>
       )}

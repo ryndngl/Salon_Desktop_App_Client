@@ -44,10 +44,10 @@ const AppointmentTable = ({
     return (
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-semibold text-gray-800">Appointments List</h2>
+          <h2 className="text-lg font-semibold text-gray-800">Bookings List</h2>
         </div>
         <div className="text-center text-gray-500">
-          No appointments scheduled yet
+          No bookings scheduled yet
         </div>
       </div>
     );
@@ -98,7 +98,7 @@ const AppointmentTable = ({
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-800">Appointments List</h2>
+        <h2 className="text-lg font-semibold text-gray-800">Bookings List</h2>
       </div>
       
       <div className="overflow-x-auto">

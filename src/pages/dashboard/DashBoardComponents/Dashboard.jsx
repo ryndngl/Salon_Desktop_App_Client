@@ -7,7 +7,7 @@ import { ServicesPage } from '../ServicesComponents';
 import { SalesReportPage } from '../SalesReportComponents'; 
 import { ManageUserPage } from '../ManageUserComponents';
 import { LoyaltyPointsPage } from '../LoyaltyPointsComponents';
-import { ReviewsPage } from '../ReviewsComponents'; // ADD THIS IMPORT
+import { ReviewsPage } from '../ReviewsComponents'; 
 
 const Dashboard = ({ onLogout }) => {  
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -21,7 +21,7 @@ const Dashboard = ({ onLogout }) => {
     switch(activeTab) {
       case 'dashboard':
         return <DashboardHome />;
-      case 'appointments':
+      case 'bookings':
         return <AppointmentsPage />;
       case 'walk-in-clients':
         return <WalkInClientsPage />;
@@ -43,7 +43,7 @@ const Dashboard = ({ onLogout }) => {
   const getPageTitle = () => {
     const titles = {
       'dashboard': 'Dashboard',
-      'appointments': 'Appointments',
+      'bookings': 'Bookings',
       'walk-in-clients': 'Walk-in Clients',
       'services': 'Services',
       'reviews': 'Reviews',  

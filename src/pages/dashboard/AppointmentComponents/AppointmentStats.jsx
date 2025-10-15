@@ -94,7 +94,7 @@ const AppointmentStats = ({ appointments }) => {
     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
       {/* Today Appointments */}
       <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-sm font-medium text-gray-500">Today Appointments</h3>
+        <h3 className="text-sm font-medium text-gray-500">Today Bookings</h3>
         <p className="text-2xl font-bold text-black-600">{stats.todayAppointments}</p>
       </div>
 

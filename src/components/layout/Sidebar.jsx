@@ -18,7 +18,7 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'appointments', label: 'Appointments', icon: Calendar },
+    { id: 'bookings', label: 'Bookings', icon: Calendar },
     { id: 'walk-in-clients', label: 'Walk-in Clients', icon: UserPlus },
     { id: 'services', label: 'Services', icon: Scissors },
     { id: 'reviews', label: 'Reviews', icon: MessageSquare },
