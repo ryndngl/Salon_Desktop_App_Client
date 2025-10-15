@@ -77,26 +77,6 @@ const AppointmentsPage = () => {
     }
   };
 
-  const handleReschedule = async (appointment) => {
-    try {
-      await appointmentService.updateStatus(appointment.id, 'Rescheduled');
-      
-      // Update local state
-      setAppointments(prev => 
-        prev.map(apt => 
-          apt.id === appointment.id 
-            ? { ...apt, status: 'Rescheduled' }
-            : apt
-        )
-      );
-      
-      console.log('Appointment rescheduled');
-    } catch (err) {
-      console.error('Reschedule error:', err);
-      alert('Failed to reschedule appointment. Please try again.');
-    }
-  };
-
   // ✅ CHANGED: handleCancel → handleDecline
   const handleDecline = async (appointmentId) => {
     if (window.confirm('Are you sure you want to decline this appointment?')) {
@@ -214,7 +194,6 @@ const AppointmentsPage = () => {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onConfirm={handleConfirm}
-          onReschedule={handleReschedule}
           onDecline={handleDecline}
           onMarkAsCompleted={handleMarkAsCompleted}
           onCall={handleCall}

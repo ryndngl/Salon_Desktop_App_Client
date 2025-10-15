@@ -65,24 +65,11 @@ const AppointmentStats = ({ appointments }) => {
       const isToday = appointmentDate === today;
       const isNotCancelled = a.status !== "Cancelled";
       
-      // ✅ DEBUG: Log each appointment check
-      console.log('Checking appointment:', {
-        name: a.name,
-        originalDate: a.date,
-        normalizedDate: appointmentDate,
-        todayDate: today,
-        isToday: isToday,
-        status: a.status,
-        isNotCancelled: isNotCancelled,
-        willCount: isToday && isNotCancelled
-      });
-      
       return isToday && isNotCancelled;
     }).length,
 
     pending: appointments.filter((a) => a.status === "Pending").length,
     completed: appointments.filter((a) => a.status === "Completed").length,
-    rescheduled: appointments.filter((a) => a.status === "Rescheduled").length,
     cancelled: appointments.filter((a) => a.status === "Cancelled").length,
   };
 
@@ -108,12 +95,6 @@ const AppointmentStats = ({ appointments }) => {
       <div className="bg-white rounded-xl shadow-sm p-6">
         <h3 className="text-sm font-medium text-gray-500">Completed</h3>
         <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
-      </div>
-
-      {/* Rescheduled */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-sm font-medium text-gray-500">Rescheduled</h3>
-        <p className="text-2xl font-bold text-purple-600">{stats.rescheduled}</p>
       </div>
 
       {/* Cancelled */}

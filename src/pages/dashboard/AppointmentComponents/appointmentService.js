@@ -343,7 +343,6 @@ export const appointmentService = {
         today: 0,
         pending: 0,
         completed: 0,
-        rescheduled: 0,
         cancelled: 0
       };
 
@@ -353,7 +352,6 @@ export const appointmentService = {
         today: 0,
         pending: 0,
         completed: 0,
-        rescheduled: 0,
         cancelled: 0
       };
     }

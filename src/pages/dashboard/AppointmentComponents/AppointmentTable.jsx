@@ -36,7 +36,6 @@ const AppointmentTable = ({
   onEdit, 
   onDelete, 
   onConfirm,
-  onReschedule,
   onDecline, 
   onMarkAsCompleted
 }) => {
@@ -65,8 +64,6 @@ const AppointmentTable = ({
         return 'text-red-700';
       case 'Declined': 
         return 'text-red-700';
-      case 'Rescheduled':
-        return 'text-purple-700';
       default:
         return 'text-gray-700';
     }
@@ -226,17 +223,6 @@ const AppointmentTable = ({
                       </button>
                     )}
 
-                    {/* Reschedule Button */}
-                    {(appointment.status === 'Pending' || appointment.status === 'Confirmed') && (
-                      <button
-                        onClick={() => onReschedule(appointment)}
-                        className="text-purple-600 hover:text-purple-800 hover:bg-purple-50 p-1.5 rounded transition-colors"
-                        title="Reschedule"
-                      >
-                        <Calendar size={16} />
-                      </button>
-                    )}
-
                     {/* Complete Button */}
                     {appointment.status === 'Confirmed' && (
                       <button
@@ -248,7 +234,7 @@ const AppointmentTable = ({
                       </button>
                     )}
 
-                    {/* ✅ CHANGED: Decline Button (was Cancel) */}
+                    {/* CHANGED: Decline Button (was Cancel) */}
                     {(appointment.status === 'Pending' || appointment.status === 'Confirmed') && (
                       <button
                         onClick={() => onDecline(appointment.id)}
