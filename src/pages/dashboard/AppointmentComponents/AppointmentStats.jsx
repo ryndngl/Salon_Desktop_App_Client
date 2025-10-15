@@ -1,7 +1,7 @@
 import React from 'react';
 
 const AppointmentStats = ({ appointments }) => {
-  // ✅ Get today's date in YYYY-MM-DD format
+  //  Get today's date in YYYY-MM-DD format
   const getTodayDateString = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -10,7 +10,7 @@ const AppointmentStats = ({ appointments }) => {
     return `${year}-${month}-${day}`;
   };
 
-  // ✅ Normalize date for comparison
+  //  Normalize date for comparison
   const normalizeDate = (dateStr) => {
     if (!dateStr) return null;
     
@@ -53,12 +53,6 @@ const AppointmentStats = ({ appointments }) => {
 
   const today = getTodayDateString();
 
-  // ✅ DEBUG: Log appointments data
-  console.log('=== APPOINTMENT STATS DEBUG ===');
-  console.log('Today date string:', today);
-  console.log('Total appointments:', appointments.length);
-  console.log('All appointments:', appointments);
-
   const stats = {
     todayAppointments: appointments.filter((a) => {
       const appointmentDate = normalizeDate(a.date);
@@ -72,10 +66,6 @@ const AppointmentStats = ({ appointments }) => {
     completed: appointments.filter((a) => a.status === "Completed").length,
     cancelled: appointments.filter((a) => a.status === "Cancelled").length,
   };
-
-  // ✅ DEBUG: Log final stats
-  console.log('Final stats:', stats);
-  console.log('=== END DEBUG ===');
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">

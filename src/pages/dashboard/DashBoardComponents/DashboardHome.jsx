@@ -99,7 +99,7 @@ const DashboardHome = () => {
     <div className="space-y-6">
       {/* Header with Refresh Button */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">Dashboard Overview</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Overview</h2>
         <button
           onClick={handleRefresh}
           disabled={isRefreshing}
