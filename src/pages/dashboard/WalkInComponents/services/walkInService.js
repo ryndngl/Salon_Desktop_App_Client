@@ -40,7 +40,7 @@ export const walkInService = {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`${API_BASE_URL}/walkins`, {
+      const response = await fetch(`${API_BASE_URL}/walkin`, { 
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export const walkInService = {
 
       const result = await response.json();
       
-      // ✅ Transform data and format dates
+      //  Transform data and format dates
       const transformedData = {
         ...result,
         walkIns: (result.walkIns || []).map(walkIn => ({
@@ -77,7 +77,7 @@ export const walkInService = {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`${API_BASE_URL}/walkins`, {
+      const response = await fetch(`${API_BASE_URL}/walkin`, {  
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export const walkInService = {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`${API_BASE_URL}/walkins/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/walkin/${id}`, {  
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ export const walkInService = {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`${API_BASE_URL}/walkins/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/walkin/${id}`, {  
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
