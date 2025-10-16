@@ -47,14 +47,14 @@ const ServiceStylesList = ({ styles, serviceId, categoryName }) => {
       );
 
       if (result.success) {
-        console.log('✅ Style updated:', result.data);
+        console.log(' Style updated:', result.data);
         alert('Style updated successfully!');
         setEditModalOpen(false);
       } else {
         alert('Failed to update style: ' + result.message);
       }
     } catch (error) {
-      console.error('❌ Error updating style:', error);
+      console.error(' Error updating style:', error);
       alert('Error updating style: ' + error.message);
     } finally {
       setLoading(false);
@@ -71,13 +71,13 @@ const ServiceStylesList = ({ styles, serviceId, categoryName }) => {
           ...prev,
           [style.id]: !prev[style.id]
         }));
-        console.log('✅ Style toggled:', result.data);
+        console.log(' Style toggled:', result.data);
         alert(result.message);
       } else {
         alert('Failed to toggle style: ' + result.message);
       }
     } catch (error) {
-      console.error('❌ Error toggling style:', error);
+      console.error(' Error toggling style:', error);
       alert('Error toggling style: ' + error.message);
     } finally {
       setLoading(false);
