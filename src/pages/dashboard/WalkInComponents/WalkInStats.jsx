@@ -1,7 +1,7 @@
 import React from 'react';
 
 const WalkInStats = ({ clients }) => {
-  // ✅ Get today's date in YYYY-MM-DD format
+  // Get today's date in YYYY-MM-DD format
   const getTodayDateString = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -10,7 +10,7 @@ const WalkInStats = ({ clients }) => {
     return `${year}-${month}-${day}`;
   };
 
-  // ✅ Normalize date for comparison
+  // Normalize date for comparison
   const normalizeDate = (dateStr) => {
     if (!dateStr) return null;
     
@@ -47,40 +47,45 @@ const WalkInStats = ({ clients }) => {
 
   const today = getTodayDateString();
 
-  // ✅ DEBUG: Log for testing
-  console.log('=== WALKIN STATS DEBUG ===');
-  console.log('Today date:', today);
-  console.log('Total clients:', clients.length);
-
   const stats = {
-    total: clients.length,
-    served: clients.filter((c) => c.status === "Served").length,
-    servedToday: clients.filter((c) => {
+    // Total Walk-ins - TODAY ONLY ✅
+    total: clients.filter((c) => {
+      const clientDate = normalizeDate(c.date);
+      return clientDate === today;
+    }).length,
+
+    // Served - TODAY ONLY ✅
+    served: clients.filter((c) => {
       const clientDate = normalizeDate(c.date);
       const isToday = clientDate === today;
       const isServed = c.status === "Served";
-      
-      // ✅ DEBUG: Log each served client check
-      if (isServed) {
-        console.log('Checking served client:', {
-          name: c.name,
-          originalDate: c.date,
-          normalizedDate: clientDate,
-          todayDate: today,
-          isToday: isToday,
-          willCountAsServedToday: isToday && isServed
-        });
-      }
-      
       return isToday && isServed;
     }).length,
-    pending: clients.filter((c) => c.status === "Pending").length,
-    rescheduled: clients.filter((c) => c.status === "Rescheduled").length,
-    cancelled: clients.filter((c) => c.status === "Cancelled").length,
-  };
 
-  console.log('Final walk-in stats:', stats);
-  console.log('=== END DEBUG ===');
+    // Pending - TODAY ONLY ✅
+    pending: clients.filter((c) => {
+      const clientDate = normalizeDate(c.date);
+      const isToday = clientDate === today;
+      const isPending = c.status === "Pending";
+      return isToday && isPending;
+    }).length,
+
+    // Rescheduled - TODAY ONLY ✅
+    rescheduled: clients.filter((c) => {
+      const clientDate = normalizeDate(c.date);
+      const isToday = clientDate === today;
+      const isRescheduled = c.status === "Rescheduled";
+      return isToday && isRescheduled;
+    }).length,
+
+    // Cancelled - TODAY ONLY ✅
+    cancelled: clients.filter((c) => {
+      const clientDate = normalizeDate(c.date);
+      const isToday = clientDate === today;
+      const isCancelled = c.status === "Cancelled";
+      return isToday && isCancelled;
+    }).length,
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -93,7 +98,7 @@ const WalkInStats = ({ clients }) => {
       {/* Served Today */}
       <div className="bg-white rounded-xl shadow-sm p-6">
         <h3 className="text-sm font-medium text-gray-500">Served Today</h3>
-        <p className="text-2xl font-bold text-green-600">{stats.servedToday}</p>
+        <p className="text-2xl font-bold text-green-600">{stats.served}</p>
       </div>
 
       {/* Pending */}
