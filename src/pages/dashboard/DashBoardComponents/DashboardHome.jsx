@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, RefreshCw } from 'lucide-react';
+import { TrendingUp, RefreshCw, Clock } from 'lucide-react';
 import axios from 'axios';
 
 const StatsCard = ({ title, value, color, trend, isLoading }) => (
@@ -31,56 +31,88 @@ const DashboardHome = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // Real-time clock state
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Fetch dashboard stats
-  const fetchStats = async () => {
+  // Update clock every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(timer);
+  }, []);
+
+  // Format time with seconds (e.g., "10:30:45 AM")
+  const formatTime = (date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
+  };
+
+  // Format date (e.g., "Friday, October 17, 2025")
+  const formatDate = (date) => {
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+const fetchStats = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    
+    console.log('🔄 Fetching dashboard stats...');
+    
+    let appointmentStats = { today: 0, completed: 0 };
+    let walkInStats = { today: 0 };
+
+    // Fetch appointment stats with individual try-catch
     try {
-      const token = localStorage.getItem('token');
-      
-      console.log('🔄 Fetching dashboard stats...');
-      console.log('🔑 Token:', token ? 'Present' : 'Missing');
-
-      // Fetch appointment stats
-      console.log('📊 Fetching appointment stats...');
       const appointmentRes = await axios.get('http://localhost:5000/api/appointments/stats', {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('✅ Appointment Stats Response:', appointmentRes.data);
+      appointmentStats = appointmentRes.data.stats;
+    } catch (error) {
+      console.error('❌ Appointment stats error:', error.response?.status);
+    }
 
-      // Fetch walk-in stats
-      console.log('📊 Fetching walk-in stats...');
+    // Fetch walk-in stats with individual try-catch
+    try {
       const walkInRes = await axios.get('http://localhost:5000/api/walkin/stats', {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('✅ Walk-in Stats Response:', walkInRes.data);
-
-      // Update state
-      const newStats = {
-        todayAppointments: appointmentRes.data.stats?.today || 0,
-        walkInClients: walkInRes.data.stats?.today || 0,
-        servicesCompleted: appointmentRes.data.stats?.completed || 0,
-      };
-
-      console.log('📈 Setting new stats:', newStats);
-      setStats(newStats);
-
+      walkInStats = walkInRes.data.stats;
     } catch (error) {
-      console.error('❌ Error fetching stats:', error);
-      
-      // More detailed error logging
-      if (error.response) {
-        console.error('❌ Response error:', error.response.data);
-        console.error('❌ Status code:', error.response.status);
-      } else if (error.request) {
-        console.error('❌ No response received:', error.request);
-      } else {
-        console.error('❌ Error message:', error.message);
-      }
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
+      console.error('❌ Walk-in stats error:', error.response?.status);
     }
-  };
+
+    // Update state - kahit may error sa walk-in, mag-update pa rin
+    const newStats = {
+      todayAppointments: appointmentStats?.today || 0,
+      walkInClients: walkInStats?.today || 0,
+      servicesCompleted: appointmentStats?.completed || 0,
+    };
+
+    console.log('📈 Setting new stats:', newStats);
+    setStats(newStats);
+
+  } catch (error) {
+    console.error('❌ Fatal error:', error);
+  } finally {
+    setIsLoading(false);
+    setIsRefreshing(false);
+  }
+};
 
   // Fetch stats on component mount
   useEffect(() => {
@@ -97,9 +129,20 @@ const DashboardHome = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with Refresh Button */}
+      {/* Header with Live Clock and Refresh Button */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">Overview</h2>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Overview</h2>
+          {/* Live Clock Display */}
+          <div className="flex items-center gap-2 mt-2 text-gray-600">
+            <Clock size={16} className="text-blue-600" />
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">{formatDate(currentTime)}</span>
+              <span className="text-lg font-bold text-blue-600">{formatTime(currentTime)}</span>
+            </div>
+          </div>
+        </div>
+        
         <button
           onClick={handleRefresh}
           disabled={isRefreshing}
