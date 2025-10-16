@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ServiceCard from './ServiceCard';
+import StyleCard from './StyleCard';
 
 const ServicesGrid = ({ services }) => {
   const [expandedCard, setExpandedCard] = useState(null);
@@ -15,7 +15,7 @@ const ServicesGrid = ({ services }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
       {services.map((service) => (
-        <ServiceCard
+        <StyleCard
           key={service.id}
           service={service}
           isExpanded={expandedCard === service.id}
