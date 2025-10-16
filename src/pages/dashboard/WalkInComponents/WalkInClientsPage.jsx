@@ -138,7 +138,8 @@ const WalkInClientsPage = () => {
   };
 
   // Calculate stats for filters
-  const getStats = () => {
+  // Calculate stats for filters
+const getStats = () => {
   const getTodayDateString = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -167,14 +168,28 @@ const WalkInClientsPage = () => {
   const today = getTodayDateString();
 
   return {
-    total: clients.length,
+    // Total - TODAY ONLY 
+    total: clients.filter((c) => {
+      const clientDate = normalizeDate(c.date);
+      return clientDate === today;
+    }).length,
+    
+    // Served - ALL TIME (for filter count)
     served: clients.filter((c) => c.status === "Served").length,
+    
+    // Served Today - TODAY ONLY 
     servedToday: clients.filter((c) => {
       const clientDate = normalizeDate(c.date);
       return c.status === "Served" && clientDate === today;
     }).length,
+    
+    // Pending - ALL TIME (for filter count)
     pending: clients.filter((c) => c.status === "Pending").length,
+    
+    // Rescheduled - ALL TIME (for filter count)
     rescheduled: clients.filter((c) => c.status === "Rescheduled").length,
+    
+    // Cancelled - ALL TIME (for filter count)
     cancelled: clients.filter((c) => c.status === "Cancelled").length,
   };
 };
