@@ -1,7 +1,7 @@
 import React from 'react';
 
 const AppointmentStats = ({ appointments }) => {
-  //  Get today's date in YYYY-MM-DD format
+  // Get today's date in YYYY-MM-DD format
   const getTodayDateString = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -10,7 +10,7 @@ const AppointmentStats = ({ appointments }) => {
     return `${year}-${month}-${day}`;
   };
 
-  //  Normalize date for comparison
+  // Normalize date for comparison
   const normalizeDate = (dateStr) => {
     if (!dateStr) return null;
     
@@ -54,6 +54,7 @@ const AppointmentStats = ({ appointments }) => {
   const today = getTodayDateString();
 
   const stats = {
+    // Today's Bookings - excluding cancelled
     todayAppointments: appointments.filter((a) => {
       const appointmentDate = normalizeDate(a.date);
       const isToday = appointmentDate === today;
@@ -62,13 +63,36 @@ const AppointmentStats = ({ appointments }) => {
       return isToday && isNotCancelled;
     }).length,
 
-    pending: appointments.filter((a) => a.status === "Pending").length,
-    completed: appointments.filter((a) => a.status === "Completed").length,
-    cancelled: appointments.filter((a) => a.status === "Cancelled").length,
+    // Pending - TODAY ONLY ✅
+    pending: appointments.filter((a) => {
+      const appointmentDate = normalizeDate(a.date);
+      const isToday = appointmentDate === today;
+      const isPending = a.status === "Pending";
+      
+      return isToday && isPending;
+    }).length,
+
+    // Completed - TODAY ONLY ✅
+    completed: appointments.filter((a) => {
+      const appointmentDate = normalizeDate(a.date);
+      const isToday = appointmentDate === today;
+      const isCompleted = a.status === "Completed";
+      
+      return isToday && isCompleted;
+    }).length,
+
+    // Cancelled - TODAY ONLY ✅
+    cancelled: appointments.filter((a) => {
+      const appointmentDate = normalizeDate(a.date);
+      const isToday = appointmentDate === today;
+      const isCancelled = a.status === "Cancelled";
+      
+      return isToday && isCancelled;
+    }).length,
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {/* Today Appointments */}
       <div className="bg-white rounded-xl shadow-sm p-6">
         <h3 className="text-sm font-medium text-gray-500">Today Bookings</h3>
