@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { Plus } from 'lucide-react';
 import ServicesStats from './ServicesStats';
 import StyleCard from './StyleCard';
+import AddServiceModal from './AddServiceModal';
 import { servicesAPI } from '../../../../services/api.js';
 
 const ServicesPage = () => {
@@ -8,28 +10,29 @@ const ServicesPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const result = await servicesAPI.getAllServices();
-        if (result.success) {
-          setServices(result.services);
-          // Auto-select first service and category
-          if (result.services.length > 0) {
-            setSelectedService(result.services[0]);
-            if (result.services[0].categories.length > 0) {
-              setSelectedCategory(result.services[0].categories[0]);
-            }
+  const fetchServices = async () => {
+    try {
+      const result = await servicesAPI.getAllServices();
+      if (result.success) {
+        setServices(result.services);
+        // Auto-select first service and category
+        if (result.services.length > 0) {
+          setSelectedService(result.services[0]);
+          if (result.services[0].categories.length > 0) {
+            setSelectedCategory(result.services[0].categories[0]);
           }
         }
-      } catch (error) {
-        console.error('Error fetching services:', error);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchServices();
   }, []);
 
@@ -56,7 +59,6 @@ const ServicesPage = () => {
 
       {/* Main Service Filter Tabs */}
       <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Services</h2>
         
         {/* Service Tabs */}
         <div className="flex flex-wrap gap-3 mb-6 border-b pb-4">
@@ -73,6 +75,15 @@ const ServicesPage = () => {
               {service.name}
             </button>
           ))}
+
+          {/* Add Service Button - Blue */}
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="px-6 py-2.5 rounded-full font-medium transition-all bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2 shadow-md"
+          >
+            <Plus className="w-5 h-5" />
+            Add Service
+          </button>
         </div>
 
         {/* Category Sub-tabs (if service has categories) */}
@@ -115,6 +126,16 @@ const ServicesPage = () => {
           </div>
         )}
       </div>
+
+      {/* Add Service Modal */}
+      <AddServiceModal 
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onServiceAdded={() => {
+          // Refresh services after adding
+          fetchServices();
+        }}
+      />
     </div>
   );
 };
