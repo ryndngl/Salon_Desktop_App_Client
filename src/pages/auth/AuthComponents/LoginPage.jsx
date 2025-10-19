@@ -35,19 +35,20 @@ const LoginPage = () => {
             <div className="w-full max-w-md">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-800 mb-2">Login</h2>
+      
               </div>
 
               <div className="space-y-4">
                 <button
                   onClick={() => handleRoleSelect('admin')}
-                  className="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg"
+                  className="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-200"
                 >
                   Login as Admin
                 </button>
 
                 <button
                   onClick={() => handleRoleSelect('staff')}
-                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg"
+                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200"
                 >
                   Login as Staff
                 </button>
