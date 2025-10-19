@@ -221,16 +221,50 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
 
-  const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'bookings', label: 'Bookings', icon: Calendar },
-    { id: 'walk-in-clients', label: 'Walk-in Clients', icon: UserPlus },
-    { id: 'services', label: 'Services', icon: Scissors },
-    { id: 'reviews', label: 'Reviews', icon: MessageSquare },
-    { id: 'sales-report', label: 'Sales Report', icon: BarChart3 },
-    { id: 'loyalty-points', label: 'Loyalty Points', icon: Star },
-    { id: 'manage-user', label: 'Manage User', icon: Users },
+  // ✅ Get user role from localStorage
+  const getUserRole = () => {
+    const adminData = localStorage.getItem('salon_admin');
+    const staffData = localStorage.getItem('salon_staff');
+    
+    if (adminData) {
+      try {
+        const admin = JSON.parse(adminData);
+        return admin.type || 'admin';
+      } catch (e) {
+        return 'admin';
+      }
+    }
+    
+    if (staffData) {
+      try {
+        const staff = JSON.parse(staffData);
+        return staff.type || 'staff';
+      } catch (e) {
+        return 'staff';
+      }
+    }
+    
+    return 'admin'; // default
+  };
+
+  const userRole = getUserRole();
+  const isAdmin = userRole === 'admin';
+  const isStaff = userRole === 'staff';
+
+  // ✅ Define all menu items with role access
+  const allMenuItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: Home, roles: ['admin', 'staff'] },
+    { id: 'bookings', label: 'Bookings', icon: Calendar, roles: ['admin', 'staff'] },
+    { id: 'walk-in-clients', label: 'Walk-in Clients', icon: UserPlus, roles: ['admin', 'staff'] },
+    { id: 'services', label: 'Services', icon: Scissors, roles: ['admin', 'staff'] },
+    { id: 'reviews', label: 'Reviews', icon: MessageSquare, roles: ['admin', 'staff'] },
+    { id: 'sales-report', label: 'Sales Report', icon: BarChart3, roles: ['admin'] },
+    { id: 'loyalty-points', label: 'Loyalty Points', icon: Star, roles: ['admin'] },
+    { id: 'manage-user', label: 'Manage User', icon: Users, roles: ['admin'] },
   ];
+
+  // ✅ Filter menu items based on user role
+  const menuItems = allMenuItems.filter(item => item.roles.includes(userRole));
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -293,21 +327,23 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
                 );
               })}
 
-              {/* Staff Accounts Button */}
-              <div className="pt-2 mt-2 border-t border-gray-700">
-                <button
-                  onClick={() => setIsStaffModalOpen(true)}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-blue-400 hover:bg-gray-700/50 hover:text-blue-300 transition-all duration-200"
-                  title={!sidebarOpen ? 'Staff Accounts' : undefined}
-                >
-                  <UserCog className="h-5 w-5 flex-shrink-0" />
-                  <span className={`transition-all duration-500 ${
-                    sidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
-                  }`}>
-                    Staff Accounts
-                  </span>
-                </button>
-              </div>
+              {/* Staff Accounts Button - ADMIN ONLY */}
+              {isAdmin && (
+                <div className="pt-2 mt-2 border-t border-gray-700">
+                  <button
+                    onClick={() => setIsStaffModalOpen(true)}
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-blue-400 hover:bg-gray-700/50 hover:text-blue-300 transition-all duration-200"
+                    title={!sidebarOpen ? 'Staff Accounts' : undefined}
+                  >
+                    <UserCog className="h-5 w-5 flex-shrink-0" />
+                    <span className={`transition-all duration-500 ${
+                      sidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+                    }`}>
+                      Staff Accounts
+                    </span>
+                  </button>
+                </div>
+              )}
             </nav>
           </div>
 
