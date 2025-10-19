@@ -1,4 +1,4 @@
-// src/hooks/useLogin.js - UPDATED to use EMAIL instead of USERNAME
+// src/hooks/useLogin.js - UPDATED to support both admin and staff login
 import { useState } from 'react';
 import { useAuthState } from './useAuthState'; 
 
@@ -6,56 +6,76 @@ const useLogin = () => {
   const { login } = useAuthState();
   
   const [formData, setFormData] = useState({
-    username: "",  // Note: this field will contain EMAIL (we keep name for compatibility)
+    username: "",
     password: "",
     rememberMe: false
   });
   const [isLoading, setIsLoading] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
 
-  const handleSubmit = async (e) => {
+  // ✅ ADD selectedRole parameter
+  const handleSubmit = async (e, selectedRole = 'admin') => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      console.log('🔐 Attempting login...');
+      console.log(`🔐 Attempting ${selectedRole} login...`);
+      
+      // ✅ Determine correct endpoint based on role
+      const endpoint = selectedRole === 'staff' 
+        ? 'http://localhost:5000/api/staff/sign-in'
+        : 'http://localhost:5000/api/auth/admin/sign-in';
       
       if (window.electronAPI?.login) {
         // ELECTRON IPC PATH
         const result = await window.electronAPI.login({
-          email: formData.username,  // ✅ Send as EMAIL
+          email: formData.username,
           password: formData.password,
-          rememberMe: formData.rememberMe
+          rememberMe: formData.rememberMe,
+          role: selectedRole  // ✅ Pass role
         });
         
-        console.log('📱 Login result:', result);
+        console.log(`📱 ${selectedRole} login result:`, result);
 
-        if (result.success || result.isSuccess) {
-          const adminData = result.admin || result.user || { 
-            email: formData.username 
-          };
-          login(adminData, result.token);
-          console.log('✅ Logged in via Electron API');
-          
-          setShowSpinner(true);
-          setTimeout(() => {
-            setShowSpinner(false);
-          }, 1500);
-        } else {
+// In handleSubmit function, after successful login:
+if (result.success || result.isSuccess) {
+  const userData = result.admin || result.staff || result.user || { 
+    email: formData.username,
+    type: selectedRole
+  };
+  
+  if (selectedRole === 'staff') {
+    localStorage.setItem('salon_staff', JSON.stringify(userData));
+    localStorage.removeItem('salon_admin'); // Remove admin if exists
+  } else {
+    localStorage.setItem('salon_admin', JSON.stringify(userData));
+    localStorage.removeItem('salon_staff'); // Remove staff if exists
+  }
+  
+  login(userData, result.token);
+  console.log(`✅ Logged in as ${selectedRole}`);
+  
+  setShowSpinner(true);
+  setTimeout(() => {
+    setShowSpinner(false);
+  }, 1500);
+}
+
+         else {
           alert(`Login failed: ${result.message}`);
           setIsLoading(false);
         }
       } else {
         // DIRECT HTTP PATH (Fallback)
-        console.log('🌐 Calling server API directly...');
+        console.log(`🌐 Calling ${endpoint}...`);
         
-        const response = await fetch('http://localhost:5000/api/auth/admin/sign-in', {
+        const response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            email: formData.username,  // ✅ Send as EMAIL
+            email: formData.username,
             password: formData.password
           })
         });
@@ -64,11 +84,12 @@ const useLogin = () => {
         console.log('📡 API Response:', result);
 
         if (result.success || result.isSuccess) {
-          const adminData = result.admin || result.user || { 
-            email: formData.username 
+          const userData = result.admin || result.staff || result.user || { 
+            email: formData.username,
+            type: selectedRole
           };
-          login(adminData, result.token);
-          console.log('✅ Logged in via direct API');
+          login(userData, result.token);
+          console.log(`✅ Logged in via direct API as ${selectedRole}`);
           
           setShowSpinner(true);
           setTimeout(() => {
