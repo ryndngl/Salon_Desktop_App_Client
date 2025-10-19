@@ -1,8 +1,9 @@
+// src/pages/auth/AuthComponents/LoginForm.jsx
 import { useRef, useEffect } from 'react';
 import PasswordInput from './PasswordInput';
 import LoginButton from "./LoginButton";
 
-const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef }) => {
+const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef, selectedRole }) => {
   const localUsernameRef = useRef(null);
   const finalUsernameRef = usernameRef || localUsernameRef;
 
@@ -29,61 +30,62 @@ const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef }) 
   };
 
   return (
-    <div className="flex-1 bg-white flex items-center justify-center p-8">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Admin</h2>
+    <div className="w-full">
+      {/* Header - Updated to show role */}
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-gray-800 mb-2">
+          {selectedRole === 'admin' ? 'Admin' : 'Staff'}
+        </h2>
+      </div>
+      
+      <div onKeyUp={handleKeyPress} className="space-y-6">
+        {/* Username Input */}
+        <div>
+         <label className="block text-sm font-medium text-gray-700 mb-2">
+           Email 
+        </label>
+
+     <input
+      ref={finalUsernameRef}
+      type="email"  
+      name="username"
+      placeholder="Enter email" 
+      value={formData.username}
+      onChange={handleInputChange}
+      disabled={isLoading}
+      autoComplete="email" 
+      className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none disabled:opacity-50 disabled:bg-gray-50"
+      required
+           />
         </div>
-        
-        <div onKeyUp={handleKeyPress} className="space-y-6">
-          {/* Username Input */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Username
-            </label>
-            <input
-              ref={finalUsernameRef}
-              type="text"
-              name="username"
-              placeholder="Enter username"
-              value={formData.username}
-              onChange={handleInputChange}
-              disabled={isLoading}
-              autoComplete="username"
-             className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none disabled:opacity-50 disabled:bg-gray-50"
-              required
-            />
-          </div>
 
-          {/* Password Input */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <PasswordInput 
-              value={formData.password}
-              onChange={handleInputChange}
-              disabled={isLoading}
-            />
-          </div>
-
-          {/* Login Button */}
-          <LoginButton 
-            isLoading={isLoading}
-            onClick={onSubmit}
+        {/* Password Input */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Password
+          </label>
+          <PasswordInput 
+            value={formData.password}
+            onChange={handleInputChange}
+            disabled={isLoading}
           />
+        </div>
 
-          {/* Forgot Password */}
-          <div className="text-center">
-            <button
-              type="button"
-              disabled={isLoading}
-              className="text-sm text-gray-600 hover:text-green-600 transition-colors duration-200 bg-transparent border-none outline-none cursor-pointer disabled:opacity-50"
-            >
-              Forgot your password?
-            </button>
-          </div>
+        {/* Login Button */}
+        <LoginButton 
+          isLoading={isLoading}
+          onClick={onSubmit}
+        />
+
+        {/* Forgot Password */}
+        <div className="text-center">
+          <button
+            type="button"
+            disabled={isLoading}
+            className="text-sm text-gray-600 hover:text-green-600 transition-colors duration-200 bg-transparent border-none outline-none cursor-pointer disabled:opacity-50"
+          >
+            Forgot your password?
+          </button>
         </div>
       </div>
     </div>

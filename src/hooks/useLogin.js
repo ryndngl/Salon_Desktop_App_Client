@@ -1,12 +1,12 @@
-// src/hooks/useLogin.js - UPDATED to use useAuthState
+// src/hooks/useLogin.js - UPDATED to use EMAIL instead of USERNAME
 import { useState } from 'react';
 import { useAuthState } from './useAuthState'; 
 
-const useLogin = () => { // ✅ No more setIsLoggedIn parameter
-  const { login } = useAuthState(); // ✅ Get login function from context
+const useLogin = () => {
+  const { login } = useAuthState();
   
   const [formData, setFormData] = useState({
-    username: "",
+    username: "",  // Note: this field will contain EMAIL (we keep name for compatibility)
     password: "",
     rememberMe: false
   });
@@ -18,15 +18,22 @@ const useLogin = () => { // ✅ No more setIsLoggedIn parameter
     setIsLoading(true);
 
     try {
-      console.log('🔥 Attempting login...');
+      console.log('🔐 Attempting login...');
       
       if (window.electronAPI?.login) {
-        const result = await window.electronAPI.login(formData);
-        console.log('🔥 Login result:', result);
+        // ELECTRON IPC PATH
+        const result = await window.electronAPI.login({
+          email: formData.username,  // ✅ Send as EMAIL
+          password: formData.password,
+          rememberMe: formData.rememberMe
+        });
+        
+        console.log('📱 Login result:', result);
 
         if (result.success || result.isSuccess) {
-          // ✅ Save to context (which saves to localStorage automatically)
-          const adminData = result.admin || result.user || { username: formData.username };
+          const adminData = result.admin || result.user || { 
+            email: formData.username 
+          };
           login(adminData, result.token);
           console.log('✅ Logged in via Electron API');
           
@@ -39,26 +46,27 @@ const useLogin = () => { // ✅ No more setIsLoggedIn parameter
           setIsLoading(false);
         }
       } else {
-        // Fallback - call server API directly
+        // DIRECT HTTP PATH (Fallback)
         console.log('🌐 Calling server API directly...');
         
-       const response = await fetch('http://localhost:5000/api/auth/admin/sign-in', {
+        const response = await fetch('http://localhost:5000/api/auth/admin/sign-in', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            username: formData.username,
+            email: formData.username,  // ✅ Send as EMAIL
             password: formData.password
           })
         });
 
         const result = await response.json();
-        console.log('API Response:', result);
+        console.log('📡 API Response:', result);
 
         if (result.success || result.isSuccess) {
-          // ✅ Save to context (which saves to localStorage automatically)
-          const adminData = result.admin || result.user || { username: formData.username };
+          const adminData = result.admin || result.user || { 
+            email: formData.username 
+          };
           login(adminData, result.token);
           console.log('✅ Logged in via direct API');
           
@@ -72,7 +80,7 @@ const useLogin = () => { // ✅ No more setIsLoggedIn parameter
         }
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('❌ Login error:', error);
       alert('Login error occurred. Check console for details.');
       setIsLoading(false);
     }
