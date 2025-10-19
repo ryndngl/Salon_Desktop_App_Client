@@ -1,4 +1,4 @@
-// MAIN.JS - Fixed version with server connection and focus handler
+// MAIN.JS - Fixed version with ROLE-BASED login support
 import { app, BrowserWindow, ipcMain, Menu } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -43,8 +43,7 @@ const createWindow = () => {
   return mainWindow;
 };
 
-// ADD THIS - Focus window handler to fix login input issue
-// Replace the focus-window handler in main.js with this:
+// Focus window handler to fix login input issue
 ipcMain.handle('focus-window', () => {
   if (mainWindow) {
     // Multiple focus strategies
@@ -67,34 +66,38 @@ ipcMain.handle('focus-window', () => {
     
     // Force webContents focus
     mainWindow.webContents.focus();
-    
-    console.log('Window focus attempted');
   }
 });
-// IPC handler for login - FIXED to connect to your server
+
+// ✅ UPDATED: IPC handler for login - NOW SUPPORTS BOTH ADMIN AND STAFF
 ipcMain.handle('login', async (event, credentials) => {
-  console.log('🔄 Login attempt received:', credentials);
-  console.log('🌐 Connecting to server:', `${SERVER_URL}/api/auth/login`);
-  
   try {
     // Import fetch dynamically (for Node.js)
     const fetch = (await import('node-fetch')).default;
     
-    const response = await fetch(`${SERVER_URL}/api/auth/admin/sign-in`, {
+    // ✅ Determine endpoint based on role
+    const role = credentials.role || 'admin'; // Default to admin if not specified
+    const endpoint = role === 'staff' 
+      ? `${SERVER_URL}/api/staff/sign-in`
+      : `${SERVER_URL}/api/auth/admin/sign-in`;
+  
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(credentials)
+      body: JSON.stringify({
+        email: credentials.email,
+        password: credentials.password
+      })
     });
     
     const result = await response.json();
     
     if (response.ok) {
-      console.log('✅ Login successful:', result);
       return result;
     } else {
-      console.log('❌ Login failed:', result);
+      console.log(`❌ ${role} login failed:`, result);
       return result;
     }
     
@@ -105,12 +108,14 @@ ipcMain.handle('login', async (event, credentials) => {
     if (error.code === 'ECONNREFUSED' || error.message.includes('fetch')) {
       return {
         success: false,
+        isSuccess: false,
         message: 'Cannot connect to server. Make sure the server is running on port 5000.'
       };
     }
     
     return {
       success: false,
+      isSuccess: false,
       message: `Connection error: ${error.message}`
     };
   }
