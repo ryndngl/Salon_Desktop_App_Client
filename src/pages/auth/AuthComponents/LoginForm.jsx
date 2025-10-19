@@ -25,7 +25,7 @@ const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef, se
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      onSubmit(e);
+   onSubmit(e, selectedRole); 
     }
   };
 
