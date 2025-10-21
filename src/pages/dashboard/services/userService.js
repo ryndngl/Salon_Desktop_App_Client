@@ -1,7 +1,7 @@
 // /src/services/userService.js
 
 // Base URL ng server mo - CHANGE THIS to your actual server URL
-const API_BASE_URL = 'http://localhost:5000/api'; // or your server port
+const API_BASE_URL = "http://192.168.100.6:5000";
 
 export const userService = {
   // Get all users

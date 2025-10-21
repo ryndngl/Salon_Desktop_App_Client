@@ -58,32 +58,48 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
     setIsLoading(true);
 
     try {
-      console.log('Creating staff account:', formData);
-      
-      // TODO: Replace with actual API call
-      // const response = await fetch('http://localhost:5000/api/staff/create', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
-      // });
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      alert('Staff account created successfully!');
-      
-      // Reset form
-      setFormData({
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
+      console.log('Creating staff account:', {
+        username: formData.username,
+        email: formData.email
       });
       
-      onClose();
+      // ✅ ACTUAL API CALL (uncommented and fixed)
+      const response = await fetch('http://192.168.100.6:5000/api/staff/create', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          role: 'staff'
+          // ✅ NOTE: confirmPassword is NOT sent to backend (only for frontend validation)
+        })
+      });
+      
+      const result = await response.json();
+      console.log('API Response:', result);
+      
+      if (response.ok && result.isSuccess) {
+        alert('Staff account created successfully!');
+        
+        // Reset form
+        setFormData({
+          username: '',
+          email: '',
+          password: '',
+          confirmPassword: ''
+        });
+        
+        onClose();
+      } else {
+        alert(`Failed to create staff: ${result.message || 'Unknown error'}`);
+      }
+      
     } catch (error) {
       console.error('Error creating staff:', error);
-      alert('Failed to create staff account');
+      alert('Failed to create staff account. Check console for details.');
     } finally {
       setIsLoading(false);
     }
@@ -107,7 +123,7 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Form */}
-        <div className="p-6">
+        <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-4">
             {/* Username */}
             <div>
@@ -122,6 +138,7 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
                 placeholder="Enter username"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={isLoading}
+                required
               />
             </div>
 
@@ -138,6 +155,7 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
                 placeholder="staff@example.com"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={isLoading}
+                required
               />
             </div>
 
@@ -155,6 +173,8 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
                   placeholder="Enter password (min 6 characters)"
                   className="w-full px-4 py-2.5 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   disabled={isLoading}
+                  minLength={6}
+                  required
                 />
                 <button
                   type="button"
@@ -180,6 +200,7 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
                   placeholder="Re-enter password"
                   className="w-full px-4 py-2.5 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   disabled={isLoading}
+                  required
                 />
                 <button
                   type="button"
@@ -203,19 +224,18 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
               Cancel
             </button>
             <button
-              onClick={handleSubmit}
+              type="submit"
               className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading ? 'Creating...' : 'Create Account'}
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
 };
-
 // Main Sidebar Component
 const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);

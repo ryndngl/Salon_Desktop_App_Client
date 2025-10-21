@@ -1,4 +1,4 @@
-// src/hooks/useLogin.js - UPDATED to support both admin and staff login
+// src/hooks/useLogin.js - FINAL WORKING VERSION
 import { useState } from 'react';
 import { useAuthState } from './useAuthState'; 
 
@@ -13,96 +13,87 @@ const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
 
-  // ✅ ADD selectedRole parameter
   const handleSubmit = async (e, selectedRole = 'admin') => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       console.log(`🔐 Attempting ${selectedRole} login...`);
+      console.log('📧 Email:', formData.username);
       
-      // ✅ Determine correct endpoint based on role
+      // ✅ CORRECT ENDPOINTS
       const endpoint = selectedRole === 'staff' 
-        ? 'http://localhost:5000/api/staff/sign-in'
-        : 'http://localhost:5000/api/auth/admin/sign-in';
+        ? 'http://192.168.100.6:5000/api/staff/sign-in'
+        : 'http://192.168.100.6:5000/api/auth/admin/sign-in';
       
-      if (window.electronAPI?.login) {
-        // ELECTRON IPC PATH
-        const result = await window.electronAPI.login({
+      console.log(`🌐 Calling endpoint: ${endpoint}`);
+      
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
           email: formData.username,
-          password: formData.password,
-          rememberMe: formData.rememberMe,
-          role: selectedRole  // ✅ Pass role
-        });
-        
-        console.log(`📱 ${selectedRole} login result:`, result);
+          password: formData.password
+        })
+      });
 
-// In handleSubmit function, after successful login:
-if (result.success || result.isSuccess) {
-  const userData = result.admin || result.staff || result.user || { 
-    email: formData.username,
-    type: selectedRole
-  };
-  
-  if (selectedRole === 'staff') {
-    localStorage.setItem('salon_staff', JSON.stringify(userData));
-    localStorage.removeItem('salon_admin'); // Remove admin if exists
-  } else {
-    localStorage.setItem('salon_admin', JSON.stringify(userData));
-    localStorage.removeItem('salon_staff'); // Remove staff if exists
-  }
-  
-  login(userData, result.token);
-  console.log(`✅ Logged in as ${selectedRole}`);
-  
-  setShowSpinner(true);
-  setTimeout(() => {
-    setShowSpinner(false);
-  }, 1500);
-}
-
-         else {
-          alert(`Login failed: ${result.message}`);
-          setIsLoading(false);
-        }
+      console.log('📊 Response status:', response.status);
+      
+      let result;
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
+        result = await response.json();
       } else {
-        // DIRECT HTTP PATH (Fallback)
-        console.log(`🌐 Calling ${endpoint}...`);
+        const text = await response.text();
+        console.error('❌ Non-JSON response:', text);
+        throw new Error('Server returned non-JSON response');
+      }
+      
+      console.log('📡 API Response:', result);
+
+      if (response.ok && (result.success || result.isSuccess)) {
+        const userData = result.admin || result.staff || result.user || { 
+          email: formData.username,
+          type: selectedRole,
+          role: selectedRole,
+          ...result.data
+        };
         
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: formData.username,
-            password: formData.password
-          })
-        });
-
-        const result = await response.json();
-        console.log('📡 API Response:', result);
-
-        if (result.success || result.isSuccess) {
-          const userData = result.admin || result.staff || result.user || { 
-            email: formData.username,
-            type: selectedRole
-          };
-          login(userData, result.token);
-          console.log(`✅ Logged in via direct API as ${selectedRole}`);
-          
-          setShowSpinner(true);
-          setTimeout(() => {
-            setShowSpinner(false);
-          }, 1500);
+        // Store in localStorage based on role
+        if (selectedRole === 'staff') {
+          localStorage.setItem('salon_staff', JSON.stringify(userData));
+          localStorage.setItem('userType', 'staff');
+          localStorage.removeItem('salon_admin');
         } else {
-          alert(`Login failed: ${result.message || 'Invalid credentials'}`);
-          setIsLoading(false);
+          localStorage.setItem('salon_admin', JSON.stringify(userData));
+          localStorage.setItem('userType', 'admin');
+          localStorage.removeItem('salon_staff');
         }
+        
+        // Store token
+        if (result.token) {
+          localStorage.setItem('token', result.token);
+        }
+        
+        login(userData, result.token);
+        console.log(`✅ Logged in as ${selectedRole}`, userData);
+        
+        setShowSpinner(true);
+        setTimeout(() => {
+          setShowSpinner(false);
+        }, 1500);
+      } else {
+        console.error('❌ Login failed:', result);
+        alert(`Login failed: ${result.message || 'Invalid credentials'}`);
+        setIsLoading(false);
       }
     } catch (error) {
       console.error('❌ Login error:', error);
-      alert('Login error occurred. Check console for details.');
+      alert(`Login error: ${error.message || 'Network error'}`);
       setIsLoading(false);
     }
   };

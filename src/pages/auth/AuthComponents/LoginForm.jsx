@@ -25,8 +25,13 @@ const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef, se
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-   onSubmit(e, selectedRole); 
+      onSubmit(e, selectedRole); 
     }
+  };
+
+  // ✅ NEW: Create wrapper function that includes selectedRole
+  const handleLoginClick = (e) => {
+    onSubmit(e, selectedRole);
   };
 
   return (
@@ -41,22 +46,21 @@ const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef, se
       <div onKeyUp={handleKeyPress} className="space-y-6">
         {/* Username Input */}
         <div>
-         <label className="block text-sm font-medium text-gray-700 mb-2">
-           Email 
-        </label>
-
-     <input
-      ref={finalUsernameRef}
-      type="email"  
-      name="username"
-      placeholder="Enter email" 
-      value={formData.username}
-      onChange={handleInputChange}
-      disabled={isLoading}
-      autoComplete="email" 
-      className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none disabled:opacity-50 disabled:bg-gray-50"
-      required
-           />
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Email 
+          </label>
+          <input
+            ref={finalUsernameRef}
+            type="email"  
+            name="username"
+            placeholder="Enter email" 
+            value={formData.username}
+            onChange={handleInputChange}
+            disabled={isLoading}
+            autoComplete="email" 
+            className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none disabled:opacity-50 disabled:bg-gray-50"
+            required
+          />
         </div>
 
         {/* Password Input */}
@@ -71,10 +75,10 @@ const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef, se
           />
         </div>
 
-        {/* Login Button */}
+        {/* Login Button - ✅ FIXED: Now passes selectedRole */}
         <LoginButton 
           isLoading={isLoading}
-          onClick={onSubmit}
+          onClick={handleLoginClick}
         />
 
         {/* Forgot Password */}

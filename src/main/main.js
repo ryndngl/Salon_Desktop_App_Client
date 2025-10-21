@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Your server configuration
-const SERVER_URL = 'http://localhost:5000'; // Your server port
+const SERVER_URL = 'http://192.168.100.6:5000';
 
 // Store mainWindow reference globally
 let mainWindow;

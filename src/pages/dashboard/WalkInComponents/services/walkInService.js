@@ -1,6 +1,6 @@
 // /src/services/walkInService.js
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = "http://192.168.100.6:5000";
 
 // ✅ Helper function to format date consistently
 const formatDateToYYYYMMDD = (dateValue) => {

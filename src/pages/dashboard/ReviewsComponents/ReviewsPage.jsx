@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Search, RefreshCw, User, Calendar } from 'lucide-react';
 
-// Constants
+// FIXED: Constants with /api
 const API_BASE_URL = 'http://192.168.100.6:5000/api';
 
 const FILTER_OPTIONS = [

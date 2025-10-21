@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+// services/api.js
+
+const API_BASE_URL = "http://192.168.100.6:5000/api";
 
 export const servicesAPI = {
   getAllServices: async () => {
@@ -20,19 +22,16 @@ export const servicesAPI = {
     return response.json();
   },
 
- toggleStyle: async (serviceId, categoryName, styleId) => {
-  const token = localStorage.getItem('token'); // Get auth token
-  
-  const response = await fetch(
-    `${API_BASE_URL}/services/${serviceId}/categories/${categoryName}/styles/${styleId}/toggle`,
-    {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}` // Add authentication
-      },
-    }
-  );
-  return response.json();
- }
+  toggleStyle: async (serviceId, categoryName, styleId) => {
+    const response = await fetch(
+      `${API_BASE_URL}/services/${serviceId}/categories/${categoryName}/styles/${styleId}/toggle`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return response.json();
+  },
 };

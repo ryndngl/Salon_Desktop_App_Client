@@ -32,20 +32,16 @@ const DashboardHome = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
-  // Real-time clock state
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Update clock every second
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
 
-    // Cleanup interval on component unmount
     return () => clearInterval(timer);
   }, []);
 
-  // Format time with seconds (e.g., "10:30:45 AM")
   const formatTime = (date) => {
     return date.toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -55,7 +51,6 @@ const DashboardHome = () => {
     });
   };
 
-  // Format date (e.g., "Friday, October 17, 2025")
   const formatDate = (date) => {
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
@@ -65,62 +60,51 @@ const DashboardHome = () => {
     });
   };
 
-const fetchStats = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    
-    console.log('🔄 Fetching dashboard stats...');
-    
-    let appointmentStats = { today: 0, completed: 0 };
-    let walkInStats = { today: 0 };
-
-    // Fetch appointment stats with individual try-catch
+  const fetchStats = async () => {
     try {
-      const appointmentRes = await axios.get('http://localhost:5000/api/appointments/stats', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      console.log('✅ Appointment Stats Response:', appointmentRes.data);
-      appointmentStats = appointmentRes.data.stats;
+      console.log('🔄 Fetching dashboard stats...');
+      
+      let appointmentStats = { today: 0, completed: 0 };
+      let walkInStats = { today: 0 };
+
+      try {
+        const appointmentRes = await axios.get('http://192.168.100.6:5000/api/appointments/stats');
+        console.log('✅ Appointment Stats Response:', appointmentRes.data);
+        appointmentStats = appointmentRes.data.stats;
+      } catch (error) {
+        console.error('❌ Appointment stats error:', error.response?.data || error.message);
+      }
+
+      try {
+        const walkInRes = await axios.get('http://192.168.100.6:5000/api/walkin/stats');
+        console.log('✅ Walk-in Stats Response:', walkInRes.data);
+        walkInStats = walkInRes.data.stats;
+      } catch (error) {
+        console.error('❌ Walk-in stats error:', error.response?.data || error.message);
+      }
+
+      const newStats = {
+        todayAppointments: appointmentStats?.today || 0,
+        walkInClients: walkInStats?.today || 0,
+        servicesCompleted: appointmentStats?.completed || 0,
+      };
+
+      console.log('📈 Setting new stats:', newStats);
+      setStats(newStats);
+
     } catch (error) {
-      console.error('❌ Appointment stats error:', error.response?.status);
+      console.error('❌ Fatal error:', error);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
     }
+  };
 
-    // Fetch walk-in stats with individual try-catch
-    try {
-      const walkInRes = await axios.get('http://localhost:5000/api/walkin/stats', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      console.log('✅ Walk-in Stats Response:', walkInRes.data);
-      walkInStats = walkInRes.data.stats;
-    } catch (error) {
-      console.error('❌ Walk-in stats error:', error.response?.status);
-    }
-
-    // Update state - kahit may error sa walk-in, mag-update pa rin
-    const newStats = {
-      todayAppointments: appointmentStats?.today || 0,
-      walkInClients: walkInStats?.today || 0,
-      servicesCompleted: appointmentStats?.completed || 0,
-    };
-
-    console.log('📈 Setting new stats:', newStats);
-    setStats(newStats);
-
-  } catch (error) {
-    console.error('❌ Fatal error:', error);
-  } finally {
-    setIsLoading(false);
-    setIsRefreshing(false);
-  }
-};
-
-  // Fetch stats on component mount
   useEffect(() => {
     console.log('🚀 DashboardHome mounted - fetching initial stats...');
     fetchStats();
   }, []);
 
-  // Refresh stats
   const handleRefresh = () => {
     console.log('🔄 Manual refresh triggered');
     setIsRefreshing(true);
@@ -129,11 +113,9 @@ const fetchStats = async () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with Live Clock and Refresh Button */}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-800">Overview</h2>
-          {/* Live Clock Display */}
           <div className="flex items-center gap-2 mt-2 text-gray-600">
             <Clock size={16} className="text-blue-600" />
             <div className="flex flex-col">
@@ -153,7 +135,6 @@ const fetchStats = async () => {
         </button>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard
           title="Today's Bookings"
@@ -181,9 +162,7 @@ const fetchStats = async () => {
         />
       </div>
 
-      {/* Additional Dashboard Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Appointments */}
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Today's Schedule</h3>
           
@@ -214,7 +193,6 @@ const fetchStats = async () => {
           </div>
         </div>
 
-        {/* Popular Services */}
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Popular Services Today</h3>
           <div className="space-y-4">
@@ -258,7 +236,6 @@ const fetchStats = async () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
       <div className="bg-white rounded-xl shadow-sm p-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

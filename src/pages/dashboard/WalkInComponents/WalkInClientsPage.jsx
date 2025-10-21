@@ -5,7 +5,8 @@ import WalkInStats from "./WalkInStats";
 import WalkInForm from "./WalkInForm";
 import WalkInFilters from "./WalkInFilters";
 
-const API_BASE_URL = 'http://localhost:5000/api';
+
+const API_BASE_URL = "http://192.168.100.6:5000/api";
 
 const walkInService = {
   getAll: async () => {
