@@ -6,6 +6,8 @@ import ServiceSelector from "./ServiceSelector";
 const WalkInForm = ({
   showForm,
   isEditing,
+  clientType,
+  selectedClient,
   formData,
   selectedServices,
   onInputChange,
@@ -18,6 +20,9 @@ const WalkInForm = ({
   const handleSubmit = () => {
     onSubmit();
   };
+
+  // 🆕 Check if returning client (readonly fields)
+  const isReturningClient = clientType === 'returning' && selectedClient;
 
   // Render modal using Portal
   return ReactDOM.createPortal(
@@ -40,9 +45,21 @@ const WalkInForm = ({
         >
           {/* Header */}
           <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl z-10">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {isEditing ? "Edit Walk-in Client" : "Add New Walk-in Client"}
-            </h2>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">
+                {isEditing 
+                  ? "Edit Walk-in Client" 
+                  : isReturningClient 
+                    ? "Add Visit - Returning Client"
+                    : "Add New Walk-in Client"}
+              </h2>
+              {/* 🆕 Show client name if returning */}
+              {isReturningClient && (
+                <p className="text-sm text-blue-600 mt-1">
+                  Client: <span className="font-semibold">{selectedClient.name}</span>
+                </p>
+              )}
+            </div>
             <button
               onClick={onCancel}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -54,6 +71,7 @@ const WalkInForm = ({
           {/* Content - Scrollable */}
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Name - 🆕 Readonly if returning client */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Name *
@@ -63,11 +81,16 @@ const WalkInForm = ({
                   name="name"
                   value={formData.name}
                   onChange={onInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  disabled={isReturningClient}
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                    isReturningClient ? 'bg-gray-100 cursor-not-allowed' : ''
+                  }`}
                   placeholder="Client name"
                   required
                 />
               </div>
+
+              {/* Status */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Status
@@ -84,6 +107,8 @@ const WalkInForm = ({
                   <option value="Cancelled">Cancelled</option>
                 </select>
               </div>
+
+              {/* Email - 🆕 Readonly if returning client */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Email
@@ -93,10 +118,15 @@ const WalkInForm = ({
                   name="email"
                   value={formData.email}
                   onChange={onInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  disabled={isReturningClient}
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                    isReturningClient ? 'bg-gray-100 cursor-not-allowed' : ''
+                  }`}
                   placeholder="client@email.com"
                 />
               </div>
+
+              {/* Phone - 🆕 Readonly if returning client */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Phone
@@ -106,10 +136,15 @@ const WalkInForm = ({
                   name="phone"
                   value={formData.phone}
                   onChange={onInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  disabled={isReturningClient}
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                    isReturningClient ? 'bg-gray-100 cursor-not-allowed' : ''
+                  }`}
                   placeholder="+63 912 345 6789"
                 />
               </div>
+
+              {/* Date */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Date
@@ -122,6 +157,8 @@ const WalkInForm = ({
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
+
+              {/* Time */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Time
@@ -134,6 +171,8 @@ const WalkInForm = ({
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
+
+              {/* Amount */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Amount (₱)
@@ -149,6 +188,8 @@ const WalkInForm = ({
                   step="50"
                 />
               </div>
+
+              {/* Payment Status */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Payment Status
@@ -163,6 +204,8 @@ const WalkInForm = ({
                   <option value="Paid">Paid</option>
                 </select>
               </div>
+
+              {/* Services */}
               <div className="col-span-2">
                 <ServiceSelector
                   selectedServices={selectedServices}
@@ -178,7 +221,7 @@ const WalkInForm = ({
                 className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md flex items-center"
               >
                 <Save size={16} className="mr-2" />
-                {isEditing ? "Update" : "Save"}
+                {isEditing ? "Update" : isReturningClient ? "Add Visit" : "Save"}
               </button>
               <button
                 onClick={onCancel}
