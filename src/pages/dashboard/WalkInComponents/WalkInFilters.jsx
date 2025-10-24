@@ -2,9 +2,8 @@ import React from 'react';
 
 const WalkInFilters = ({ activeFilter, onFilterChange, stats }) => {
   const filters = [
-    { id: 'all', label: 'All', count: stats.total },
-    { id: 'new', label: 'New Client', count: stats.newClients || 0 }, 
-    { id: 'returning', label: 'Returning', count: stats.returningClients || 0 },
+    { id: 'new', label: 'New Client', count: stats.newClients || 0 },
+    { id: 'returning', label: 'Returning Client', count: stats.returningClients || 0 },
     { id: 'served', label: 'Served', count: stats.served },
     { id: 'pending', label: 'Pending', count: stats.pending },
     { id: 'rescheduled', label: 'Rescheduled', count: stats.rescheduled },

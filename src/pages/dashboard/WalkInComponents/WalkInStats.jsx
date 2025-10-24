@@ -1,36 +1,6 @@
-// WalkInStats.jsx
 import React from 'react';
 
-const WalkInStats = ({ clients }) => {
-  const getTodayDateString = () => {
-    const today = new Date();
-    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  };
-
-  const normalizeDate = (dateStr) => {
-    if (!dateStr) return null;
-    try {
-      if (typeof dateStr === 'string') {
-        if (dateStr.includes('T')) return dateStr.split('T')[0];
-        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
-      }
-      return null;
-    } catch (error) {
-      return null;
-    }
-  };
-
-  const today = getTodayDateString();
-  const todayClients = clients.filter(c => normalizeDate(c.date) === today);
-
-  const stats = {
-    total: todayClients.length,
-    served: todayClients.filter(c => c.status === "Served").length,
-    pending: todayClients.filter(c => c.status === "Pending").length,
-    rescheduled: todayClients.filter(c => c.status === "Rescheduled").length,
-    cancelled: todayClients.filter(c => c.status === "Cancelled").length,
-  };
-
+const WalkInStats = ({ stats }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
       <div className="bg-white rounded-xl shadow-sm p-6">
