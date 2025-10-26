@@ -4,11 +4,12 @@ import EditServiceModal from './EditServiceModal';
 import ToggleServiceModal from './ToggleServiceModal';
 import { servicesAPI } from '../../../../services/api.js';
 
-const StyleCard = ({ style, serviceId, categoryName }) => {
+const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [toggleModalOpen, setToggleModalOpen] = useState(false);
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [isActive, setIsActive] = useState(style.isActive !== false);
+  const [isOnSale, setIsOnSale] = useState(style.isOnSale || false);
   const [loading, setLoading] = useState(false);
 
   // Handle multiple images (for Foot Spa Package) or single image
@@ -40,14 +41,19 @@ const StyleCard = ({ style, serviceId, categoryName }) => {
         updatedStyle.id,
         {
           price: updatedStyle.price,
-          description: updatedStyle.description
+          description: updatedStyle.description,
+          isOnSale: updatedStyle.isOnSale
         }
       );
 
       if (result.success) {
         console.log('Style updated:', result.data);
+        setIsOnSale(updatedStyle.isOnSale);
         alert('Style updated successfully!');
         setEditModalOpen(false);
+        
+        // Trigger parent refresh if callback exists
+        if (onUpdate) onUpdate();
       } else {
         alert('Failed to update style: ' + result.message);
       }
@@ -68,6 +74,10 @@ const StyleCard = ({ style, serviceId, categoryName }) => {
         setIsActive(!isActive);
         console.log('Style toggled:', result.data);
         alert(result.message);
+        setToggleModalOpen(false);
+        
+        // Trigger parent refresh if callback exists
+        if (onUpdate) onUpdate();
       } else {
         alert('Failed to toggle style: ' + result.message);
       }
@@ -108,12 +118,23 @@ const StyleCard = ({ style, serviceId, categoryName }) => {
               className="absolute inset-0 w-full h-full object-cover"
             />
           )}
-          {/* Status Badge */}
-          {!isActive && (
-            <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded z-10">
-              Disabled
-            </div>
-          )}
+          
+          {/* Status Badges */}
+          <div className="absolute top-2 right-2 flex flex-col gap-2 z-10">
+            {/* Sale Badge - Orange/Yellow */}
+            {isOnSale && isActive && (
+              <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-pulse">
+                SALE
+              </div>
+            )}
+            
+            {/* Disabled Badge - Red */}
+            {!isActive && (
+              <div className="bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+                Disabled
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Content */}
@@ -123,10 +144,17 @@ const StyleCard = ({ style, serviceId, categoryName }) => {
             {style.name}
           </h4>
 
-          {/* Price */}
-          <p className="text-green-600 font-bold text-xl mb-2">
-            {style.price}
-          </p>
+          {/* Price - with sale indicator */}
+          <div className="flex items-center gap-2 mb-2">
+            <p className={`font-bold text-xl ${isOnSale ? 'text-orange-600' : 'text-green-600'}`}>
+              {style.price}
+            </p>
+            {isOnSale && (
+              <span className="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-0.5 rounded">
+                On Sale
+              </span>
+            )}
+          </div>
 
           {/* Description */}
           <p className="text-sm text-gray-600 line-clamp-2 mb-4 min-h-[40px]">
@@ -221,8 +249,17 @@ const StyleCard = ({ style, serviceId, categoryName }) => {
             
             {/* Image Info */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 rounded-b-lg">
-              <h3 className="text-white font-bold text-xl">{style.name}</h3>
-              <p className="text-green-400 font-bold text-lg">{style.price}</p>
+              <div className="flex items-center gap-2">
+                <h3 className="text-white font-bold text-xl">{style.name}</h3>
+                {isOnSale && (
+                  <span className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                    SALE
+                  </span>
+                )}
+              </div>
+              <p className={`font-bold text-lg ${isOnSale ? 'text-orange-400' : 'text-green-400'}`}>
+                {style.price}
+              </p>
             </div>
           </div>
         </div>

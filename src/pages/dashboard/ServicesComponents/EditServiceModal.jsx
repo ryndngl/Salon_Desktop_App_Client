@@ -1,20 +1,44 @@
-// EditServiceModal.jsx - UPDATED VERSION
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const EditServiceModal = ({ isOpen, onClose, service, onSave }) => {
+const EditServiceModal = ({ isOpen, onClose, service, onSave, loading }) => {
   const [price, setPrice] = useState(service?.price || '');
   const [description, setDescription] = useState(service?.description || '');
+  const [isOnSale, setIsOnSale] = useState(service?.isOnSale || false);
+
+  // Reset state when modal opens with new service
+  useEffect(() => {
+    if (isOpen && service) {
+      setPrice(service.price || '');
+      setDescription(service.description || '');
+      setIsOnSale(service.isOnSale || false);
+      console.log('🔍 Modal opened with service:', service);
+      console.log('🔍 Initial isOnSale:', service.isOnSale);
+    }
+  }, [isOpen, service]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({
-      ...service,  // ← changed from style to service
+    
+    const updatedData = {
+      ...service,
       price,
-      description
-    });
+      description,
+      isOnSale
+    };
+    
+    console.log('🚀 Submitting data:', updatedData);
+    console.log('✅ isOnSale value:', isOnSale);
+    
+    onSave(updatedData);
+  };
+
+  const handleCheckboxChange = (e) => {
+    const newValue = e.target.checked;
+    console.log('📦 Checkbox changed to:', newValue);
+    setIsOnSale(newValue);
   };
 
   return (
@@ -22,7 +46,11 @@ const EditServiceModal = ({ isOpen, onClose, service, onSave }) => {
       <div className="bg-white rounded-lg p-6 w-96">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-900">Edit Style</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <button 
+            onClick={onClose} 
+            className="text-gray-400 hover:text-gray-600"
+            disabled={loading}
+          >
             <X size={20} />
           </button>
         </div>
@@ -36,7 +64,7 @@ const EditServiceModal = ({ isOpen, onClose, service, onSave }) => {
               </label>
               <input
                 type="text"
-                value={service?.name || ''}  // ← changed to service
+                value={service?.name || ''}
                 disabled
                 className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed"
               />
@@ -55,7 +83,8 @@ const EditServiceModal = ({ isOpen, onClose, service, onSave }) => {
                   value={price.replace('₱', '')}
                   onChange={(e) => setPrice(`₱${e.target.value}`)}
                   required
-                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={loading}
+                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                   placeholder="100"
                 />
               </div>
@@ -71,12 +100,40 @@ const EditServiceModal = ({ isOpen, onClose, service, onSave }) => {
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 maxLength={200}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={loading}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                 placeholder="e.g., Sale! 50% off this month only"
               />
               <p className="text-xs text-gray-500 mt-1">
                 {description?.length || 0}/200 characters
               </p>
+            </div>
+
+            {/* Mark as Sale - CHECKBOX */}
+            <div className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+              <input
+                type="checkbox"
+                id="isOnSale"
+                checked={isOnSale}
+                onChange={handleCheckboxChange}
+                disabled={loading}
+                className="mt-1 w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 disabled:opacity-50"
+              />
+              <div className="flex-1">
+                <label 
+                  htmlFor="isOnSale" 
+                  className="block text-sm font-medium text-gray-900 cursor-pointer"
+                >
+                  Mark as Sale {isOnSale && '✓'}
+                </label>
+                <p className="text-xs text-gray-600 mt-1">
+                  Display a "SALE" badge on this style in both desktop and mobile app
+                </p>
+                {/* DEBUG INFO */}
+                <p className="text-xs text-blue-600 mt-1 font-mono">
+                  Current value: {isOnSale ? 'TRUE' : 'FALSE'}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -84,15 +141,17 @@ const EditServiceModal = ({ isOpen, onClose, service, onSave }) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              disabled={loading}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save Changes
+              {loading ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </form>

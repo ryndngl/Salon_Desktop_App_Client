@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, RefreshCw } from 'lucide-react';
 import ServicesStats from './ServicesStats';
 import StyleCard from './StyleCard';
 import AddServiceModal from './AddServiceModal';
@@ -8,17 +8,37 @@ import { servicesAPI } from '../../../../services/api.js';
 const ServicesPage = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const fetchServices = async () => {
+  const fetchServices = async (showRefreshIndicator = false) => {
     try {
+      if (showRefreshIndicator) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+      
       const result = await servicesAPI.getAllServices();
       if (result.success) {
         setServices(result.services);
-        // Auto-select first service and category
-        if (result.services.length > 0) {
+        
+        // Preserve selection after refresh
+        if (selectedService && selectedCategory) {
+          const updatedService = result.services.find(s => s._id === selectedService._id);
+          if (updatedService) {
+            setSelectedService(updatedService);
+            const updatedCategory = updatedService.categories.find(
+              c => c.name === selectedCategory.name
+            );
+            if (updatedCategory) {
+              setSelectedCategory(updatedCategory);
+            }
+          }
+        } else if (result.services.length > 0) {
+          // Auto-select first service and category on initial load
           setSelectedService(result.services[0]);
           if (result.services[0].categories.length > 0) {
             setSelectedCategory(result.services[0].categories[0]);
@@ -29,12 +49,17 @@ const ServicesPage = () => {
       console.error('Error fetching services:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
     fetchServices();
   }, []);
+
+  const handleRefresh = () => {
+    fetchServices(true);
+  };
 
   const handleServiceClick = (service) => {
     setSelectedService(service);
@@ -49,7 +74,14 @@ const ServicesPage = () => {
   };
 
   if (loading) {
-    return <div className="p-6">Loading services...</div>;
+    return (
+      <div className="p-6 flex items-center justify-center h-64">
+        <div className="text-center">
+          <RefreshCw className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-2" />
+          <p className="text-gray-600">Loading services...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -60,29 +92,48 @@ const ServicesPage = () => {
       {/* Main Service Filter Tabs */}
       <div className="bg-white rounded-xl shadow-sm p-6">
         
-        {/* Service Tabs */}
-        <div className="flex flex-wrap gap-3 mb-6 border-b pb-4">
-          {services.map((service) => (
-            <button
-              key={service.id}
-              onClick={() => handleServiceClick(service)}
-              className={`px-6 py-2.5 rounded-full font-medium transition-all ${
-                selectedService?.id === service.id
-                  ? 'bg-red-600 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {service.name}
-            </button>
-          ))}
+        {/* Service Tabs + Refresh Button */}
+        <div className="flex items-center justify-between mb-6 border-b pb-4">
+          <div className="flex flex-wrap gap-3">
+            {services.map((service) => (
+              <button
+                key={service.id}
+                onClick={() => handleServiceClick(service)}
+                className={`px-6 py-2.5 rounded-full font-medium transition-all ${
+                  selectedService?.id === service.id
+                    ? 'bg-red-600 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {service.name}
+              </button>
+            ))}
 
-          {/* Add Service Button - Blue */}
+            {/* Add Service Button - Blue */}
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="px-6 py-2.5 rounded-full font-medium transition-all bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2 shadow-md"
+            >
+              <Plus className="w-5 h-5" />
+              Add Service
+            </button>
+          </div>
+
+          {/* Refresh Button */}
           <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="px-6 py-2.5 rounded-full font-medium transition-all bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2 shadow-md"
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className={`px-4 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 ${
+              refreshing
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-700 text-white hover:bg-gray-600'
+            }`}
+            title="Refresh services"
           >
-            <Plus className="w-5 h-5" />
-            Add Service
+            <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">
+              {refreshing ? 'Refreshing...' : 'Refresh'}
+            </span>
           </button>
         </div>
 
@@ -114,6 +165,7 @@ const ServicesPage = () => {
                 style={style}
                 serviceId={selectedService._id}
                 categoryName={selectedCategory.name}
+                onUpdate={handleRefresh}
               />
             ))}
           </div>
@@ -132,7 +184,6 @@ const ServicesPage = () => {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onServiceAdded={() => {
-          // Refresh services after adding
           fetchServices();
         }}
       />
