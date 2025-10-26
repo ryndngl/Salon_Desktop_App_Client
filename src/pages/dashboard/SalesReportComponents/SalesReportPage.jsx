@@ -1,68 +1,123 @@
-import React, { useState } from 'react';
-import PeriodSelector from './PeriodSelector';
-import WeeklySalesChart from './WeeklySalesChart';
-import ServicePerformanceChart from './ServicePerformanceChart';
+import React, { useState, useEffect } from 'react';
+import FilterTabs from './FilterTabs';
+import DailySalesForm from './DailySalesForm';
+import WeeklySalesForm from './WeeklySalesForm';
+import MonthlySalesForm from './MonthlySalesForm';
 import TransactionTable from './TransactionTable';
+import axios from 'axios';
 
 const SalesReportPage = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState('today');
+  const [activeTab, setActiveTab] = useState(null); 
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock data based on your salon services
-  const mockDailySales = [
-    { day: 'Mon', amount: 3500 },
-    { day: 'Tue', amount: 4200 },
-    { day: 'Wed', amount: 5100 },
-    { day: 'Thu', amount: 3800 },
-    { day: 'Fri', amount: 6500 },
-    { day: 'Sat', amount: 8200 },
-    { day: 'Sun', amount: 4900 }
-  ];
+  // ✅ Fetch real transactions from API
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
 
-  const mockServiceData = [
-    { name: 'Hair Cut', value: 35, amount: 12250 },
-    { name: 'Hair Color', value: 25, amount: 18750 },
-    { name: 'Hair Treatment', value: 15, amount: 9000 },
-    { name: 'Rebond & Perms', value: 12, amount: 14400 },
-    { name: 'Nail Care', value: 8, amount: 3200 },
-    { name: 'Foot Spa', value: 5, amount: 2000 }
-  ];
+  const fetchTransactions = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-  // Mock data for transactions
-  const mockRecentTransactions = [
-    { id: 1, client: 'Maria Santos', service: 'Hair Color', amount: 2500, payment: 'Online', date: '2024-09-22', status: 'Paid' },
-    { id: 2, client: 'Jenny Cruz', service: 'Hair Cut', amount: 350, payment: 'Cash on Service', date: '2024-09-22', status: 'Completed' },
-    { id: 3, client: 'Anna Reyes', service: 'Rebond & Perms', amount: 3500, payment: 'Online', date: '2024-09-22', status: 'Paid' },
-    { id: 4, client: 'Lisa Garcia', service: 'Hair Treatment', amount: 1200, payment: 'Online', date: '2024-09-21', status: 'Paid' },
-    { id: 5, client: 'Carmen Dela Cruz', service: 'Nail Care', amount: 800, payment: 'Cash on Service', date: '2024-09-21', status: 'Completed' },
-    { id: 6, client: 'Rowena Cruz', service: 'Nail Care', amount: 800, payment: 'Cash on Service', date: '2024-09-21', status: 'Completed' },
-    { id: 7, client: 'Lito Dela Joya', service: 'Nail Care', amount: 800, payment: 'Cash on Service', date: '2024-09-21', status: 'Completed' },
-  ];
+      // ✅ FIXED: Use the correct endpoint - /all
+      const response = await axios.get('http://192.168.100.6:5000/api/appointments/all');
+      
+      if (response.data.success) {
+        // ✅ Transform API data to match table format
+        const formattedTransactions = response.data.data
+          .filter(apt => apt.status === 'Completed' || apt.status === 'Confirmed' || apt.status === 'Pending') // ✅ Include Pending
+          .map(apt => ({
+            id: apt._id,
+            client: apt.clientName,
+            email: apt.email,
+            phone: apt.phone,
+            service: apt.services?.[0]?.name || 'N/A',
+            amount: apt.services?.[0]?.price || 0,
+            payment: apt.modeOfPayment === 'GCash' ? 'Online' : 'Cash on Service',
+            paymentProofUrl: apt.paymentProofUrl || null, // ✅ Include payment proof URL
+            date: new Date(apt.date).toISOString().split('T')[0], // Format: YYYY-MM-DD
+            time: apt.time,
+            status: apt.status // ✅ Use actual status
+          }))
+          .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date descending
+
+        setTransactions(formattedTransactions);
+      }
+    } catch (err) {
+      console.error('Error fetching transactions:', err);
+      setError('Failed to load transactions');
+      setTransactions([]); // Fallback to empty array
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Refresh data when tab changes back to table view
+  useEffect(() => {
+    if (!activeTab) {
+      fetchTransactions();
+    }
+  }, [activeTab]);
+
+  // ✅ Render appropriate form based on active tab
+  const renderSalesForm = () => {
+    switch(activeTab) {
+      case 'daily':
+        return <DailySalesForm />;
+      case 'weekly':
+        return <WeeklySalesForm />;
+      case 'monthly':
+        return <MonthlySalesForm />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="space-y-6 p-6 bg-gray-50 min-h-screen">
-      {/* Top Controls */}
-      <div className="flex justify-between items-center">
-        <div className="flex gap-3">
-          <PeriodSelector 
-            selectedPeriod={selectedPeriod} 
-            onChange={setSelectedPeriod} 
-          />
-        </div>
-      </div>
+      {/* Filter Tabs */}
+      <FilterTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <WeeklySalesChart data={mockDailySales} />
-        <ServicePerformanceChart data={mockServiceData} />
-      </div>
+      {/* Sales Form - Renders different component based on tab */}
+      {activeTab && renderSalesForm()}
 
-      {/* Recent Transactions Table */}
-      <TransactionTable 
-        transactions={mockRecentTransactions}
-        selectedFilter={selectedFilter}
-        onFilterChange={setSelectedFilter}
-      />
+      {/* Recent Transactions Table - Only shows when no tab is selected */}
+      {!activeTab && (
+        <>
+          {loading ? (
+            <div className="bg-white rounded-xl shadow-sm p-6 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading transactions...</p>
+            </div>
+          ) : error ? (
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="text-center text-red-600">
+                <p className="font-semibold">{error}</p>
+                <button 
+                  onClick={fetchTransactions}
+                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          ) : transactions.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-sm p-6 text-center">
+              <p className="text-gray-600">No transactions found</p>
+            </div>
+          ) : (
+            <TransactionTable 
+              transactions={transactions}
+              selectedFilter={selectedFilter}
+              onFilterChange={setSelectedFilter}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 };
