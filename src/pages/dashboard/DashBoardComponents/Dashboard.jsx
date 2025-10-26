@@ -4,7 +4,7 @@ import { DashboardHome } from '../DashboardComponents';
 import { AppointmentsPage } from '../AppointmentComponents';
 import { WalkInClientsPage } from '../WalkInComponents';
 import { ServicesPage } from '../ServicesComponents';
-import { SalesReportPage } from '../SalesReportComponents'; 
+import { SalesReportPage} from '../SalesReportComponents'; 
 import { ManageUserPage } from '../ManageUserComponents';
 import { LoyaltyPointsPage } from '../LoyaltyPointsComponents';
 import { ReviewsPage } from '../ReviewsComponents'; 

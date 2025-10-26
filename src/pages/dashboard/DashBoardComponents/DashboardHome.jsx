@@ -28,6 +28,7 @@ const DashboardHome = () => {
     todayAppointments: 0,
     walkInClients: 0,
     servicesCompleted: 0,
+    dailyRevenue: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -62,10 +63,11 @@ const DashboardHome = () => {
 
   const fetchStats = async () => {
     try {
-      console.log('🔄 Fetching dashboard stats...');
+      console.log('📊 Fetching dashboard stats...');
       
       let appointmentStats = { today: 0, completed: 0 };
       let walkInStats = { today: 0 };
+      let salesData = { totalSales: 0 };
 
       try {
         const appointmentRes = await axios.get('http://192.168.100.6:5000/api/appointments/stats');
@@ -83,10 +85,20 @@ const DashboardHome = () => {
         console.error('❌ Walk-in stats error:', error.response?.data || error.message);
       }
 
+      // ✅ NEW: Fetch daily sales report
+      try {
+        const salesRes = await axios.get('http://192.168.100.6:5000/api/appointments/sales-report?period=daily');
+        console.log('✅ Sales Report Response:', salesRes.data);
+        salesData = salesRes.data;
+      } catch (error) {
+        console.error('❌ Sales report error:', error.response?.data || error.message);
+      }
+
       const newStats = {
         todayAppointments: appointmentStats?.today || 0,
         walkInClients: walkInStats?.today || 0,
         servicesCompleted: appointmentStats?.completed || 0,
+        dailyRevenue: salesData?.totalSales || 0,
       };
 
       console.log('📈 Setting new stats:', newStats);
@@ -150,7 +162,7 @@ const DashboardHome = () => {
         />
         <StatsCard
           title="Daily Revenue"
-          value="₱12,450"
+          value={`₱${stats.dailyRevenue.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`}
           color="green"
           isLoading={isLoading}
         />
