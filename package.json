@@ -45,6 +45,7 @@
     "@vitejs/plugin-react": "^5.0.2",
     "axios": "^1.12.2",
     "electron-squirrel-startup": "^1.0.1",
+    "html2pdf.js": "^0.12.1",
     "lucide-react": "^0.542.0",
     "node-fetch": "^3.3.2",
     "react": "^19.1.1",
