@@ -279,7 +279,6 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
     { id: 'services', label: 'Services', icon: Scissors, roles: ['admin', 'staff'] },
     { id: 'reviews', label: 'Reviews', icon: MessageSquare, roles: ['admin', 'staff'] },
     { id: 'sales-report', label: 'Sales Report', icon: BarChart3, roles: ['admin'] },
-    { id: 'loyalty-points', label: 'Loyalty Points', icon: Star, roles: ['admin'] },
     { id: 'manage-user', label: 'Manage User', icon: Users, roles: ['admin'] },
   ];
 
