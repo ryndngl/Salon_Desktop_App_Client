@@ -6,7 +6,6 @@ import { WalkInClientsPage } from '../WalkInComponents';
 import { ServicesPage } from '../ServicesComponents';
 import { SalesReportPage} from '../SalesReportComponents'; 
 import { ManageUserPage } from '../ManageUserComponents';
-import { LoyaltyPointsPage } from '../LoyaltyPointsComponents';
 import { ReviewsPage } from '../ReviewsComponents'; 
 
 const Dashboard = ({ onLogout }) => {  
@@ -31,8 +30,6 @@ const Dashboard = ({ onLogout }) => {
         return <ReviewsPage />;
       case 'sales-report':
         return <SalesReportPage />;
-      case 'loyalty-points':
-        return <LoyaltyPointsPage />;
       case 'manage-user':
         return <ManageUserPage />;
       default:
@@ -48,7 +45,6 @@ const Dashboard = ({ onLogout }) => {
       'services': 'Services',
       'reviews': 'Reviews',  
       'sales-report': 'Sales Report',
-      'loyalty-points': 'Loyalty Points',
       'manage-user': 'Manage Users'
     };
     return titles[activeTab] || 'Dashboard';
