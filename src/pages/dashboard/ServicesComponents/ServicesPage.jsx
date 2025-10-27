@@ -112,7 +112,7 @@ const ServicesPage = () => {
             {/* Add Service Button - Blue */}
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-6 py-2.5 rounded-full font-medium transition-all bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2 shadow-md"
+              className="px-6 py-2.5 rounded-full font-medium transition-all bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
               Add Service
