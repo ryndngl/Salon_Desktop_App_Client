@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { X, Upload, Image as ImageIcon } from 'lucide-react';
 import StylePreviewModal from './StylePreviewModal';
 import { uploadToCloudinary, validateImage } from '../ServicesComponents/cloudinaryUpload';
-
+import { servicesAPI } from '../../../../services/api';
 const AddStyleModal = ({ isOpen, onClose, serviceName, categoryName, onStyleAdded }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -54,38 +54,36 @@ const AddStyleModal = ({ isOpen, onClose, serviceName, categoryName, onStyleAdde
   const handleConfirmSave = async () => {
     setIsLoading(true);
     try {
-      console.log('Starting upload process...');
-      
+       console.log('🔐 Sending request with credentials...');
       // Step 1: Upload image to Cloudinary
       const cloudinaryUrl = await uploadToCloudinary(formData.image);
-      console.log('Image uploaded successfully:', cloudinaryUrl);
 
       // Step 2: Save style with Cloudinary URL
-      // TODO: API call to save style to database
       const styleData = {
         name: formData.name,
         price: formData.price,
         description: formData.description,
-        image: cloudinaryUrl, // ← Cloudinary URL
-        serviceName,
-        categoryName
+        image: cloudinaryUrl
       };
-      
-      console.log('Style data to save:', styleData);
-      // await servicesAPI.addStyle(styleData);
+      console.log('📤 Request data:', { serviceName, categoryName, styleData });
+      const result = await servicesAPI.addStyle(serviceName, categoryName, styleData);
 
-      alert('Style added successfully! Image uploaded to Cloudinary.');
+      if (result.success) {
+        alert('Style added successfully!');
+        
+        // Call callback to refresh the services list
+        if (onStyleAdded) {
+          onStyleAdded();
+        }
 
-      // Call callback
-      if (onStyleAdded) {
-        onStyleAdded();
+        // Reset and close
+        setFormData({ name: '', price: '', description: '', image: null });
+        setImagePreview(null);
+        setIsPreviewOpen(false);
+        onClose();
+      } else {
+        throw new Error(result.message || 'Failed to add style');
       }
-
-      // Reset and close
-      setFormData({ name: '', price: '', description: '', image: null });
-      setImagePreview(null);
-      setIsPreviewOpen(false);
-      onClose();
     } catch (error) {
       console.error('Error adding style:', error);
       alert('Failed to add style: ' + error.message);
