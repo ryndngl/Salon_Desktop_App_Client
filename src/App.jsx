@@ -1,20 +1,23 @@
-// src/App.jsx - UPDATED with correct imports
+// src/App.jsx - UPDATED with currentUser prop
 import { useAuthState } from './hooks/useAuthState';
 import { LoginPage } from './pages/auth/AuthComponents';
-import Dashboard from './pages/dashboard/DashboardComponents/Dashboard'; 
+import Dashboard from './pages/dashboard/DashboardComponents/Dashboard';
 
 function App() {
-  const { isLoggedIn, handleLogout } = useAuthState();
+  const { isLoggedIn, handleLogout, currentUser } = useAuthState(); 
 
   return (
     <div className="App">
       {!isLoggedIn ? (
         <LoginPage />
       ) : (
-        <Dashboard onLogout={handleLogout} />
+        <Dashboard 
+          onLogout={handleLogout} 
+          currentUser={currentUser} 
+        />
       )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
