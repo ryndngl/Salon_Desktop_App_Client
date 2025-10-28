@@ -5,7 +5,6 @@ import {
   UserPlus, 
   Scissors, 
   BarChart3, 
-  Star, 
   Users, 
   MessageSquare,
   LogOut,
@@ -16,6 +15,59 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
+
+// Logout Confirmation Modal Component
+const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 relative">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <X size={20} />
+        </button>
+
+        {/* Content */}
+        <div className="p-8 text-center">
+          {/* Icon */}
+          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+            <LogOut className="h-8 w-8 text-red-600" />
+          </div>
+
+          {/* Title */}
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+            Logout
+          </h3>
+
+          {/* Message */}
+          <p className="text-gray-600 mb-6">
+            Are you sure you want to logout of your account?
+          </p>
+
+          {/* Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 px-6 py-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={onConfirm}
+              className="flex-1 px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Staff Account Creation Modal Component
 const CreateStaffModal = ({ isOpen, onClose }) => {
@@ -236,10 +288,12 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
     </div>
   );
 };
+
 // Main Sidebar Component
 const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   // ✅ Get user role from localStorage
   const getUserRole = () => {
@@ -290,9 +344,12 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
   };
 
   const handleLogout = () => {
-    if (confirm('Are you sure you want to logout?')) {
-      onLogout();
-    }
+    setIsLogoutModalOpen(true);
+  };
+
+  const confirmLogout = () => {
+    setIsLogoutModalOpen(false);
+    onLogout();
   };
 
   return (
@@ -395,6 +452,13 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
           )}
         </button>
       </div>
+
+      {/* Logout Modal */}
+      <LogoutModal 
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={confirmLogout}
+      />
 
       {/* Staff Account Modal */}
       <CreateStaffModal 
