@@ -4,12 +4,18 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    name: '', // ✅ Force empty name
+    executableName: 'salon-app', // ✅ Executable name
+    icon: undefined, // ✅ Don't include icon
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        // ✅ No icon for installer
+        setupIcon: undefined,
+      },
     },
     {
       name: '@electron-forge/maker-zip',
@@ -28,17 +34,14 @@ module.exports = {
     {
       name: '@electron-forge/plugin-vite',
       config: {
-        // Updated paths to match your new folder structure
         build: [
           {
-            // Main process entry point
-            entry: 'src/main/main.js',  // ← UPDATED PATH
+            entry: 'src/main/main.js',
             config: 'vite.main.config.mjs',
             target: 'main',
           },
           {
-            // Preload script entry point
-            entry: 'src/main/preload.js',  // ← UPDATED PATH
+            entry: 'src/main/preload.js',
             config: 'vite.preload.config.mjs',
             target: 'preload',
           },
@@ -51,8 +54,6 @@ module.exports = {
         ],
       },
     },
-    // Fuses are used to enable/disable various Electron functionality
-    // at package time, before code signing the application
     new FusesPlugin({
       version: FuseVersion.V1,
       [FuseV1Options.RunAsNode]: false,
