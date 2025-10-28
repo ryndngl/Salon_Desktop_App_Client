@@ -470,13 +470,12 @@ const WalkInClientsPage = () => {
   const handleMarkAsPaid = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/walkin/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/walkin/mark-paid/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ paymentStatus: "Paid" }),
       });
 
       if (!response.ok) throw new Error("Failed to mark as paid");
