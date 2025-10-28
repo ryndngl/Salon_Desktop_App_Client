@@ -1,8 +1,11 @@
-import { Bell, User } from 'lucide-react';
 import Sidebar from '../../../components/layout/Sidebar';
 
-const DashboardLayout = ({ children, activeTab, setActiveTab, onLogout, pageTitle }) => {
+const DashboardLayout = ({ children, activeTab, setActiveTab, onLogout, pageTitle, currentUser }) => {
   const isDashboard = activeTab === 'dashboard';
+  
+  // ✅ Get display name and role text
+  const displayName = currentUser?.username || 'User';
+  const roleText = currentUser?.role === 'staff' ? 'Staff' : 'Admin';
   
   return (
     <div className="flex h-screen bg-gray-50 font-sans">
@@ -11,6 +14,7 @@ const DashboardLayout = ({ children, activeTab, setActiveTab, onLogout, pageTitl
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
         onLogout={onLogout}
+        currentUser={currentUser} // ✅ Pass to Sidebar
       />
 
       {/* Main Content */}
@@ -21,21 +25,12 @@ const DashboardLayout = ({ children, activeTab, setActiveTab, onLogout, pageTitl
             {/* Left side - Title and subtitle */}
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{pageTitle}</h1>
-              <p className="text-sm text-gray-600">Welcome back, Admin</p>
+              <p className="text-sm text-gray-600">Welcome back, {displayName}</p>
             </div>
             
-            {/* Right side - Notifications and user info */}
-            <div className="flex items-center space-x-4">
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 relative">
-                <Bell size={20} className="text-gray-600" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                  <User size={16} className="text-red-600" />
-                </div>
-                <span className="text-sm font-medium text-gray-700">Admin</span>
-              </div>
+            {/* Right side - Role text only (NO ICONS) */}
+            <div className="flex items-center">
+              <span className="text-sm font-medium text-gray-700">{roleText}</span>
             </div>
           </header>
         ) : (
