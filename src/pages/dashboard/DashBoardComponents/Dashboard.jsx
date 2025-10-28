@@ -8,7 +8,7 @@ import { SalesReportPage} from '../SalesReportComponents';
 import { ManageUserPage } from '../ManageUserComponents';
 import { ReviewsPage } from '../ReviewsComponents'; 
 
-const Dashboard = ({ onLogout }) => {  
+const Dashboard = ({ onLogout, currentUser }) => { // ✅ Receive currentUser prop
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const handleLogout = () => {
@@ -56,6 +56,7 @@ const Dashboard = ({ onLogout }) => {
       setActiveTab={setActiveTab}
       onLogout={handleLogout}
       pageTitle={getPageTitle()}
+      currentUser={currentUser}
     >
       {renderContent()}
     </DashboardLayout>
