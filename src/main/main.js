@@ -1,4 +1,4 @@
-// MAIN.JS - Fixed version with ROLE-BASED login support
+// MAIN.JS - Fixed version with NO ICON
 import { app, BrowserWindow, ipcMain, Menu } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -19,12 +19,14 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    autoHideMenuBar: true,  // Hide menu bar
+    title: "", 
+    icon: null, 
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
-      devTools: false,  // Disable dev tools completely
+      devTools: false,
     },
   });
 
@@ -33,8 +35,6 @@ const createWindow = () => {
 
   if (process.env.NODE_ENV === "development") {
     mainWindow.loadURL(`http://localhost:5173`);
-    // Remove this line to disable dev tools in development
-    // mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, 'dist/index.html'))
       .catch(err => console.error("Failed to load index.html:", err));
@@ -46,17 +46,14 @@ const createWindow = () => {
 // Focus window handler to fix login input issue
 ipcMain.handle('focus-window', () => {
   if (mainWindow) {
-    // Multiple focus strategies
     mainWindow.show();
     mainWindow.focus();
     mainWindow.moveTop();
     
-    // Force restore if minimized
     if (mainWindow.isMinimized()) {
       mainWindow.restore();
     }
     
-    // On Windows, sometimes need to blur and refocus
     if (process.platform === 'win32') {
       mainWindow.blur();
       setTimeout(() => {
@@ -64,7 +61,6 @@ ipcMain.handle('focus-window', () => {
       }, 50);
     }
     
-    // Force webContents focus
     mainWindow.webContents.focus();
   }
 });
@@ -72,11 +68,9 @@ ipcMain.handle('focus-window', () => {
 // ✅ UPDATED: IPC handler for login - NOW SUPPORTS BOTH ADMIN AND STAFF
 ipcMain.handle('login', async (event, credentials) => {
   try {
-    // Import fetch dynamically (for Node.js)
     const fetch = (await import('node-fetch')).default;
     
-    // ✅ Determine endpoint based on role
-    const role = credentials.role || 'admin'; // Default to admin if not specified
+    const role = credentials.role || 'admin';
     const endpoint = role === 'staff' 
       ? `${SERVER_URL}/api/staff/sign-in`
       : `${SERVER_URL}/api/auth/admin/sign-in`;
@@ -104,7 +98,6 @@ ipcMain.handle('login', async (event, credentials) => {
   } catch (error) {
     console.error('❌ Server connection error:', error);
     
-    // Check if it's a connection error
     if (error.code === 'ECONNREFUSED' || error.message.includes('fetch')) {
       return {
         success: false,
@@ -154,7 +147,6 @@ ipcMain.handle('navigate-to-dashboard', async () => {
   const window = BrowserWindow.getFocusedWindow();
   if (window) {
     if (process.env.NODE_ENV === "development") {
-      // Navigate to dashboard route in your React app
       window.loadURL(`http://localhost:5173/dashboard`);
     } else {
       window.loadFile(path.join(__dirname, 'dist/index.html'), { hash: 'dashboard' });
