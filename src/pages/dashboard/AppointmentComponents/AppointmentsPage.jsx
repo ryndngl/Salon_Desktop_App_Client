@@ -169,7 +169,7 @@ const AppointmentsPage = () => {
       <div className="flex justify-end">
         <button
           onClick={handleRefresh}
-          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center gap-2"
+          className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition flex items-center gap-2"
         >
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
