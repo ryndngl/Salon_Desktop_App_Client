@@ -129,10 +129,6 @@ const EditServiceModal = ({ isOpen, onClose, service, onSave, loading }) => {
                 <p className="text-xs text-gray-600 mt-1">
                   Display a "SALE" badge on this style in both desktop and mobile app
                 </p>
-                {/* DEBUG INFO */}
-                <p className="text-xs text-blue-600 mt-1 font-mono">
-                  Current value: {isOnSale ? 'TRUE' : 'FALSE'}
-                </p>
               </div>
             </div>
           </div>
