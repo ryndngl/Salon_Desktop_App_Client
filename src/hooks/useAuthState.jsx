@@ -1,4 +1,3 @@
- 
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 const AuthContext = createContext(null);
@@ -17,6 +16,35 @@ export function AuthProvider({ children }) {
 
   const [token, setToken] = useState(() => {
     return localStorage.getItem('token') || null;
+  });
+
+  // ✅ NEW: Current user state with role and username
+  const [currentUser, setCurrentUser] = useState(() => {
+    const userType = localStorage.getItem('userType');
+    if (userType === 'staff') {
+      const staffData = localStorage.getItem('salon_staff');
+      if (staffData) {
+        const staff = JSON.parse(staffData);
+        return {
+          role: 'staff',
+          username: staff.username || staff.email || 'Staff',
+          email: staff.email,
+          ...staff
+        };
+      }
+    } else if (userType === 'admin') {
+      const adminData = localStorage.getItem('salon_admin');
+      if (adminData) {
+        const admin = JSON.parse(adminData);
+        return {
+          role: 'admin',
+          username: 'Admin',
+          email: admin.email,
+          ...admin
+        };
+      }
+    }
+    return null;
   });
 
   useEffect(() => {
@@ -43,6 +71,25 @@ export function AuthProvider({ children }) {
     setIsLoggedIn(true);
     setAdmin(adminData);
     setToken(authToken);
+    
+    // ✅ Set currentUser based on userType
+    const userType = localStorage.getItem('userType');
+    if (userType === 'staff') {
+      setCurrentUser({
+        role: 'staff',
+        username: adminData.username || adminData.email || 'Staff',
+        email: adminData.email,
+        ...adminData
+      });
+    } else {
+      setCurrentUser({
+        role: 'admin',
+        username: 'Admin',
+        email: adminData.email,
+        ...adminData
+      });
+    }
+    
     console.log('✅ Login successful');
   }
 
@@ -50,6 +97,7 @@ export function AuthProvider({ children }) {
     setIsLoggedIn(false);
     setAdmin(null);
     setToken(null);
+    setCurrentUser(null); // ✅ Clear currentUser
     localStorage.clear();
     
     if (resetForm) {
@@ -92,6 +140,8 @@ export function AuthProvider({ children }) {
     setAdmin,
     token,
     setToken,
+    currentUser, 
+    setCurrentUser, 
     login,
     logout,
     handleLogout,
