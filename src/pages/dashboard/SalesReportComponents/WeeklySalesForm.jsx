@@ -17,7 +17,7 @@ const WeeklySalesForm = () => {
     const fetchSalesData = async () => {
       try {
         const response = await axios.get(
-          "http://https://salon-app-server.onrender.com:5000/api/appointments/sales-weekly-breakdown"
+          "https://salon-app-server.onrender.com/api/appointments/sales-weekly-breakdown"
         );
 
         setSalesData({
