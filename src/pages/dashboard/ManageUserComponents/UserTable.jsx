@@ -13,6 +13,28 @@ const UserTable = ({
       : 'text-red-800';
   };
 
+  // ✅ Helper function to format dates properly
+  const formatDate = (dateString) => {
+    if (!dateString || dateString === 'Invalid Date') {
+      return 'No bookings yet';
+    }
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+      }
+      
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    } catch (error) {
+      return 'Invalid Date';
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 overflow-hidden">
   
@@ -56,22 +78,16 @@ const UserTable = ({
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {new Date(user.joinDate).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric' 
-                  })}
+                  {formatDate(user.joinDate)}
                 </td>
+                {/* ✅ LAST BOOKING with proper formatting */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {new Date(user.lastBooking).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric' 
-                  })}
+                  {formatDate(user.lastBooking)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="inline-flex items-center text-xs font-medium text-blue-800">
-                    {user.totalBookings} bookings
+                {/* ✅ TOTAL BOOKINGS - number only, center aligned, not clickable */}
+                <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <span className="text-sm font-medium text-gray-900">
+                    {user.totalBookings}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
