@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TrendingUp, RefreshCw, Clock } from "lucide-react";
+import { TrendingUp, RefreshCw } from "lucide-react";
 import axios from "axios";
 
 const StatsCard = ({ title, value, color, trend, isLoading }) => (
@@ -25,14 +25,13 @@ const StatsCard = ({ title, value, color, trend, isLoading }) => (
 
 const DashboardHome = () => {
   const [stats, setStats] = useState({
-    todayAppointments: 0,
-    walkInClients: 0,
+    todayBookings: 0,
+    todayWalkIns: 0,
     servicesCompleted: 0,
     dailyRevenue: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -61,59 +60,33 @@ const DashboardHome = () => {
     });
   };
 
+  // ✅ FIXED: Use single dashboard-stats endpoint instead of multiple calls
   const fetchStats = async () => {
     try {
-      let appointmentStats = { today: 0, completed: 0 };
-      let walkInStats = { today: 0 };
-      let salesData = { totalSales: 0 };
+      const response = await axios.get(
+        "https://salon-app-server.onrender.com/api/appointments/dashboard-stats"
+      );
 
-      try {
-        const appointmentRes = await axios.get(
-          "https://salon-app-server.onrender.com/api/appointments/stats"
-        );
-        appointmentStats = appointmentRes.data.stats;
-      } catch (error) {
-        console.error(
-          "❌ Appointment stats error:",
-          error.response?.data || error.message
-        );
+      if (response.data.success) {
+        const dashboardStats = response.data.stats;
+        
+        setStats({
+          todayBookings: dashboardStats.todayBookings || 0,
+          todayWalkIns: dashboardStats.todayWalkIns || 0,
+          servicesCompleted: dashboardStats.servicesCompleted || 0,
+          dailyRevenue: dashboardStats.dailyRevenue || 0,
+        });
       }
-
-      try {
-        const walkInRes = await axios.get(
-          "https://salon-app-server.onrender.com/api/walkin/stats"
-        );
-        walkInStats = walkInRes.data.stats;
-      } catch (error) {
-        console.error(
-          "❌ Walk-in stats error:",
-          error.response?.data || error.message
-        );
-      }
-
-      // ✅ NEW: Fetch daily sales report
-      try {
-        const salesRes = await axios.get(
-          "https://salon-app-server.onrender.com/api/appointments/sales-report?period=daily"
-        );
-        salesData = salesRes.data;
-      } catch (error) {
-        console.error(
-          "❌ Sales report error:",
-          error.response?.data || error.message
-        );
-      }
-
-      const newStats = {
-        todayAppointments: appointmentStats?.today || 0,
-        walkInClients: walkInStats?.today || 0,
-        servicesCompleted: appointmentStats?.completed || 0,
-        dailyRevenue: salesData?.totalSales || 0,
-      };
-
-      setStats(newStats);
     } catch (error) {
-      console.error("❌ Fatal error:", error);
+      console.error("❌ Dashboard stats error:", error.response?.data || error.message);
+      
+      // Fallback to default values on error
+      setStats({
+        todayBookings: 0,
+        todayWalkIns: 0,
+        servicesCompleted: 0,
+        dailyRevenue: 0,
+      });
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -158,19 +131,21 @@ const DashboardHome = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard
           title="Today's Bookings"
-          value={stats.todayAppointments}
+          value={stats.todayBookings}
           color="blue"
           isLoading={isLoading}
         />
         <StatsCard
           title="Walk-in Clients"
-          value={stats.walkInClients}
+          value={stats.todayWalkIns}
           color="black"
           isLoading={isLoading}
         />
         <StatsCard
           title="Daily Revenue"
-          value={`₱${stats.dailyRevenue.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`}
+          value={`₱${stats.dailyRevenue.toLocaleString("en-PH", { 
+            minimumFractionDigits: 2 
+          })}`}
           color="green"
           isLoading={isLoading}
         />
