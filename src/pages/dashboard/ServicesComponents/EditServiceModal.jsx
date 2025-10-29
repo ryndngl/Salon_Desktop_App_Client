@@ -12,8 +12,6 @@ const EditServiceModal = ({ isOpen, onClose, service, onSave, loading }) => {
       setPrice(service.price || '');
       setDescription(service.description || '');
       setIsOnSale(service.isOnSale || false);
-      console.log('🔍 Modal opened with service:', service);
-      console.log('🔍 Initial isOnSale:', service.isOnSale);
     }
   }, [isOpen, service]);
 
@@ -28,16 +26,11 @@ const EditServiceModal = ({ isOpen, onClose, service, onSave, loading }) => {
       description,
       isOnSale
     };
-    
-    console.log('🚀 Submitting data:', updatedData);
-    console.log('✅ isOnSale value:', isOnSale);
-    
     onSave(updatedData);
   };
 
   const handleCheckboxChange = (e) => {
     const newValue = e.target.checked;
-    console.log('📦 Checkbox changed to:', newValue);
     setIsOnSale(newValue);
   };
 

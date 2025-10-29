@@ -7,13 +7,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Login function
   login: async (credentials) => {
     try {
-      console.log('📤 Sending login request:', credentials);
       const result = await ipcRenderer.invoke('login', credentials);
-      console.log('🔥 Login response received:', result);
       
       // If login successful, navigate to dashboard
       if (result.success) {
-        console.log('🚀 Navigating to dashboard...');
         await ipcRenderer.invoke('navigate-to-dashboard');
       }
       
@@ -30,9 +27,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Test server connection
   testConnection: async () => {
     try {
-      console.log('🔍 Testing server connection...');
       const result = await ipcRenderer.invoke('test-connection');
-      console.log('📊 Connection test result:', result);
       return result;
     } catch (error) {
       console.error('❌ Connection test error:', error);
@@ -45,13 +40,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // ADD THIS - Focus window function
   focusWindow: () => {
-    console.log('🎯 Focusing window...');
     return ipcRenderer.invoke('focus-window');
   },
 
   // Navigation functions
   navigateToDashboard: () => {
-    console.log('🏠 Navigating to dashboard...');
     return ipcRenderer.invoke('navigate-to-dashboard');
   },
 
@@ -64,6 +57,3 @@ contextBridge.exposeInMainWorld('electronAPI', {
   closeWindow: () => ipcRenderer.invoke('close-window'),
 });
 
-// Log when preload is loaded
-console.log('🔧 Preload script loaded - electronAPI exposed to renderer');
-console.log('🔌 Available methods:', Object.keys(window.electronAPI || {}));

@@ -14,20 +14,16 @@ export const uploadToCloudinary = async (imageFile) => {
     formData.append('file', imageFile);
     formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
     formData.append('folder', 'salon-services');
-
-    console.log('Uploading image to Cloudinary...');
     const response = await axios.post(CLOUDINARY_UPLOAD_URL, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       },
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        console.log(`Upload progress: ${percentCompleted}%`);
       }
     });
 
     const imageUrl = response.data.secure_url;
-    console.log('Upload successful! Image URL:', imageUrl);
 
     return imageUrl;
   } catch (error) {

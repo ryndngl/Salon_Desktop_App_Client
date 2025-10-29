@@ -55,7 +55,6 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
       );
 
       if (result.success) {
-        console.log("Style updated:", result.data);
         setIsOnSale(updatedStyle.isOnSale);
         alert("Style updated successfully!");
         setEditModalOpen(false);
@@ -84,7 +83,6 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
 
       if (result.success) {
         setIsActive(!isActive);
-        console.log("Style toggled:", result.data);
         alert(result.message);
         setToggleModalOpen(false);
 
@@ -111,7 +109,6 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
       );
 
       if (result.success) {
-        console.log("Style deleted:", result.data);
         alert("Style deleted successfully!");
         setDeleteModalOpen(false);
 

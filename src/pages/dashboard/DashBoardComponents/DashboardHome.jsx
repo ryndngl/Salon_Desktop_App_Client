@@ -63,15 +63,12 @@ const DashboardHome = () => {
 
   const fetchStats = async () => {
     try {
-      console.log('📊 Fetching dashboard stats...');
-      
       let appointmentStats = { today: 0, completed: 0 };
       let walkInStats = { today: 0 };
       let salesData = { totalSales: 0 };
 
       try {
         const appointmentRes = await axios.get('http://192.168.100.6:5000/api/appointments/stats');
-        console.log('✅ Appointment Stats Response:', appointmentRes.data);
         appointmentStats = appointmentRes.data.stats;
       } catch (error) {
         console.error('❌ Appointment stats error:', error.response?.data || error.message);
@@ -79,7 +76,6 @@ const DashboardHome = () => {
 
       try {
         const walkInRes = await axios.get('http://192.168.100.6:5000/api/walkin/stats');
-        console.log('✅ Walk-in Stats Response:', walkInRes.data);
         walkInStats = walkInRes.data.stats;
       } catch (error) {
         console.error('❌ Walk-in stats error:', error.response?.data || error.message);
@@ -88,7 +84,6 @@ const DashboardHome = () => {
       // ✅ NEW: Fetch daily sales report
       try {
         const salesRes = await axios.get('http://192.168.100.6:5000/api/appointments/sales-report?period=daily');
-        console.log('✅ Sales Report Response:', salesRes.data);
         salesData = salesRes.data;
       } catch (error) {
         console.error('❌ Sales report error:', error.response?.data || error.message);
@@ -101,7 +96,6 @@ const DashboardHome = () => {
         dailyRevenue: salesData?.totalSales || 0,
       };
 
-      console.log('📈 Setting new stats:', newStats);
       setStats(newStats);
 
     } catch (error) {
@@ -113,12 +107,10 @@ const DashboardHome = () => {
   };
 
   useEffect(() => {
-    console.log('🚀 DashboardHome mounted - fetching initial stats...');
     fetchStats();
   }, []);
 
   const handleRefresh = () => {
-    console.log('🔄 Manual refresh triggered');
     setIsRefreshing(true);
     fetchStats();
   };

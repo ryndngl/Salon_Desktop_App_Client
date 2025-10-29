@@ -84,9 +84,6 @@ export const appointmentService = {
       }
 
       const result = await response.json();
-      
-      console.log('Fetched appointments:', result);
-
       // Transform backend data to match frontend format
       const transformedData = (result.data || []).map(appointment => ({
         id: appointment._id,
@@ -101,8 +98,6 @@ export const appointmentService = {
         createdAt: appointment.createdAt,
         updatedAt: appointment.updatedAt,
       }));
-
-      console.log('Transformed appointments:', transformedData);
 
       return transformedData;
 
@@ -202,7 +197,6 @@ export const appointmentService = {
 
       const result = await response.json();
       
-      console.log('Status updated:', result);
       
       return {
         id,
@@ -233,7 +227,6 @@ export const appointmentService = {
 
       const result = await response.json();
       
-      console.log('Appointment deleted:', result);
       
       return { success: true };
 

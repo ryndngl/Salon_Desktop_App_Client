@@ -18,15 +18,11 @@ const useLogin = () => {
     setIsLoading(true);
 
     try {
-      console.log(`🔐 Attempting ${selectedRole} login...`);
-      console.log('📧 Email:', formData.username);
       
       // ✅ CORRECT ENDPOINTS
       const endpoint = selectedRole === 'staff' 
         ? 'http://192.168.100.6:5000/api/staff/sign-in'
         : 'http://192.168.100.6:5000/api/auth/admin/sign-in';
-      
-      console.log(`🌐 Calling endpoint: ${endpoint}`);
       
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -40,7 +36,6 @@ const useLogin = () => {
         })
       });
 
-      console.log('📊 Response status:', response.status);
       
       let result;
       const contentType = response.headers.get('content-type');
@@ -53,7 +48,6 @@ const useLogin = () => {
         throw new Error('Server returned non-JSON response');
       }
       
-      console.log('📡 API Response:', result);
 
       if (response.ok && (result.success || result.isSuccess)) {
         const userData = result.admin || result.staff || result.user || { 
@@ -79,9 +73,7 @@ const useLogin = () => {
           localStorage.setItem('token', result.token);
         }
         
-        login(userData, result.token);
-        console.log(`✅ Logged in as ${selectedRole}`, userData);
-        
+        login(userData, result.token);    
         setShowSpinner(true);
         setTimeout(() => {
           setShowSpinner(false);

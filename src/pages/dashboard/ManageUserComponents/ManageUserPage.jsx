@@ -61,9 +61,6 @@ const ManageUserPage = () => {
       const response = await userService.getAll();
       const data = response.users || response;
       
-      console.log('API Response:', response);
-      console.log('Users Array:', data);
-      
       if (!Array.isArray(data)) {
         throw new Error('Invalid response format from server');
       }
@@ -101,7 +98,6 @@ const ManageUserPage = () => {
         };
       });
       
-      console.log('Transformed Users:', transformedUsers);
       setUsers(transformedUsers);
       setError(null);
     } catch (err) {

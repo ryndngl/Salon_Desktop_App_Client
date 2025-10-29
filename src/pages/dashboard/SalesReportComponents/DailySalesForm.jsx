@@ -14,11 +14,7 @@ const DailySalesForm = () => {
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
-        console.log('📊 Fetching daily sales report...');
-        
         const response = await axios.get('http://192.168.100.6:5000/api/appointments/sales-report?period=daily');
-        
-        console.log('✅ Daily sales data received:', response.data);
         
         setSalesData({
           services: response.data.services || [],

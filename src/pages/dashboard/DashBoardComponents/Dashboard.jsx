@@ -8,11 +8,10 @@ import { SalesReportPage} from '../SalesReportComponents';
 import { ManageUserPage } from '../ManageUserComponents';
 import { ReviewsPage } from '../ReviewsComponents'; 
 
-const Dashboard = ({ onLogout, currentUser }) => { // ✅ Receive currentUser prop
+const Dashboard = ({ onLogout, currentUser }) => { 
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const handleLogout = () => {
-    console.log('Logging out...');
     onLogout(); 
   };
 

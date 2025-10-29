@@ -14,12 +14,8 @@ const MonthlySalesForm = () => {
 
   useEffect(() => {
     const fetchSalesData = async () => {
-      try {
-        console.log('📊 Fetching monthly sales breakdown...');
-        
+      try {    
         const response = await axios.get('http://192.168.100.6:5000/api/appointments/sales-monthly-breakdown');
-        
-        console.log('✅ Monthly breakdown received:', response.data);
         
         setSalesData({
           breakdown: response.data.breakdown || [],

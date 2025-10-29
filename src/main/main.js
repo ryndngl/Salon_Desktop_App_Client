@@ -96,7 +96,6 @@ ipcMain.handle('login', async (event, credentials) => {
     if (response.ok) {
       return result;
     } else {
-      console.log(`❌ ${role} login failed:`, result);
       return result;
     }
     
@@ -122,7 +121,6 @@ ipcMain.handle('login', async (event, credentials) => {
 // Test server connection handler
 ipcMain.handle('test-connection', async () => {
   try {
-    console.log('🔍 Testing server connection...');
     const fetch = (await import('node-fetch')).default;
     
     const response = await fetch(`${SERVER_URL}/api/health`, {
@@ -131,10 +129,8 @@ ipcMain.handle('test-connection', async () => {
     });
     
     if (response.ok) {
-      console.log('✅ Server is reachable');
       return { success: true, message: 'Server connected' };
     } else {
-      console.log('⚠️ Server responded but with error status');
       return { success: false, message: 'Server error' };
     }
     

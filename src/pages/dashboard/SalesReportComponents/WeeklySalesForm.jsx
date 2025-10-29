@@ -15,12 +15,8 @@ const WeeklySalesForm = () => {
 
   useEffect(() => {
     const fetchSalesData = async () => {
-      try {
-        console.log('📊 Fetching weekly sales breakdown...');
-        
+      try {        
         const response = await axios.get('http://192.168.100.6:5000/api/appointments/sales-weekly-breakdown');
-        
-        console.log('✅ Weekly breakdown received:', response.data);
         
         setSalesData({
           breakdown: response.data.breakdown || [],

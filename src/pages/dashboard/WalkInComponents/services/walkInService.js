@@ -63,8 +63,6 @@ export const walkInService = {
         }))
       };
       
-      console.log('Transformed walk-ins:', transformedData);
-
       return transformedData;
     } catch (error) {
       console.error('walkInService.getAll error:', error);

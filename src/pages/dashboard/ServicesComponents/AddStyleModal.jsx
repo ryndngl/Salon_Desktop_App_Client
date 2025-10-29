@@ -54,7 +54,6 @@ const AddStyleModal = ({ isOpen, onClose, serviceName, categoryName, onStyleAdde
   const handleConfirmSave = async () => {
     setIsLoading(true);
     try {
-       console.log('🔐 Sending request with credentials...');
       // Step 1: Upload image to Cloudinary
       const cloudinaryUrl = await uploadToCloudinary(formData.image);
 
@@ -65,7 +64,6 @@ const AddStyleModal = ({ isOpen, onClose, serviceName, categoryName, onStyleAdde
         description: formData.description,
         image: cloudinaryUrl
       };
-      console.log('📤 Request data:', { serviceName, categoryName, styleData });
       const result = await servicesAPI.addStyle(serviceName, categoryName, styleData);
 
       if (result.success) {

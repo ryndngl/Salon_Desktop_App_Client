@@ -109,12 +109,7 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
 
     setIsLoading(true);
 
-    try {
-      console.log('Creating staff account:', {
-        username: formData.username,
-        email: formData.email
-      });
-      
+    try {      
       // ✅ ACTUAL API CALL (uncommented and fixed)
       const response = await fetch('http://192.168.100.6:5000/api/staff/create', {
         method: 'POST',
@@ -131,7 +126,6 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
       });
       
       const result = await response.json();
-      console.log('API Response:', result);
       
       if (response.ok && result.isSuccess) {
         alert('Staff account created successfully!');

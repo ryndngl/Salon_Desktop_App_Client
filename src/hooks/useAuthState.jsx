@@ -89,8 +89,6 @@ export function AuthProvider({ children }) {
         ...adminData
       });
     }
-    
-    console.log('✅ Login successful');
   }
 
   function handleLogout(resetForm) {
@@ -126,7 +124,6 @@ export function AuthProvider({ children }) {
       setTimeout(focusInput, 500);
     }, 150);
     
-    console.log('✅ Logged out');
   }
 
   function logout() {

@@ -18,13 +18,11 @@ const ServiceStylesList = ({ styles, serviceId, categoryName }) => {
   const [loading, setLoading] = useState(false);
 
   const handleEditClick = (style) => {
-    console.log('Edit clicked for style:', style.name);
     setSelectedStyle(style);
     setEditModalOpen(true);
   };
 
   const handleToggleClick = (style) => {
-    console.log('Toggle clicked for style:', style.name);
     setSelectedStyle({
       ...style,
       isActive: stylesStatus[style.id]
@@ -47,7 +45,6 @@ const ServiceStylesList = ({ styles, serviceId, categoryName }) => {
       );
 
       if (result.success) {
-        console.log(' Style updated:', result.data);
         alert('Style updated successfully!');
         setEditModalOpen(false);
       } else {
@@ -71,7 +68,6 @@ const ServiceStylesList = ({ styles, serviceId, categoryName }) => {
           ...prev,
           [style.id]: !prev[style.id]
         }));
-        console.log(' Style toggled:', result.data);
         alert(result.message);
       } else {
         alert('Failed to toggle style: ' + result.message);

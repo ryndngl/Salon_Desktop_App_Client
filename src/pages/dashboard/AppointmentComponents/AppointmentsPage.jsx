@@ -22,7 +22,6 @@ const AppointmentsPage = () => {
       const data = await appointmentService.getAll();
       setAppointments(data);
       
-      console.log('Appointments loaded:', data.length);
     } catch (err) {
       console.error('Failed to fetch appointments:', err);
       setError('Failed to load appointments. Please try again.');
@@ -37,7 +36,6 @@ const AppointmentsPage = () => {
   };
 
   const handleEdit = (appointment) => {
-    console.log('Edit appointment:', appointment);
     // TODO: Implement edit modal/form
   };
 
@@ -49,7 +47,6 @@ const AppointmentsPage = () => {
         // Remove from local state
         setAppointments(prev => prev.filter(apt => apt.id !== appointmentId));
         
-        console.log('Booking deleted successfully');
       } catch (err) {
         console.error('Delete error:', err);
         alert('Failed to delete booking. Please try again.');
@@ -69,8 +66,7 @@ const AppointmentsPage = () => {
             : apt
         )
       );
-      
-      console.log('Booking confirmed');
+    
     } catch (err) {
       console.error('Confirm error:', err);
       alert('Failed to confirm booking. Please try again.');
@@ -92,7 +88,6 @@ const AppointmentsPage = () => {
           )
         );
         
-        console.log('Booking declined');
       } catch (err) {
         console.error('Decline error:', err);
         alert('Failed to decline booking. Please try again.');
@@ -112,8 +107,7 @@ const AppointmentsPage = () => {
             : apt
         )
       );
-      
-      console.log('Booking marked as completed');
+    
     } catch (err) {
       console.error('Mark completed error:', err);
       alert('Failed to mark booking as completed. Please try again.');
