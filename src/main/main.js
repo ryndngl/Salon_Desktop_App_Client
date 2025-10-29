@@ -34,9 +34,14 @@ const createWindow = () => {
   Menu.setApplicationMenu(null);
 
   if (process.env.NODE_ENV === "development") {
+    // Development: Gumagamit ng Vite dev server
     mainWindow.loadURL(`http://localhost:5173`);
   } else {
-    mainWindow.loadFile(path.join(__dirname, 'dist/index.html'))
+    // PRODUCTION FIX: Kailangan nating gamitin ang tamang folder structure ng Electron Forge + Vite.
+    // Ang index.html ay nasa loob ng renderer folder na may pangalang 'main_window'
+    const rendererPath = path.join(__dirname, '../renderer/main_window/index.html');
+    
+    mainWindow.loadFile(rendererPath)
       .catch(err => console.error("Failed to load index.html:", err));
   }
 
@@ -149,7 +154,9 @@ ipcMain.handle('navigate-to-dashboard', async () => {
     if (process.env.NODE_ENV === "development") {
       window.loadURL(`http://localhost:5173/dashboard`);
     } else {
-      window.loadFile(path.join(__dirname, 'dist/index.html'), { hash: 'dashboard' });
+      // PRODUCTION FIX: Use the file path and append the hash for routing
+      const rendererPath = path.join(__dirname, '../renderer/main_window/index.html');
+      window.loadFile(rendererPath, { hash: 'dashboard' });
     }
   }
 });
