@@ -6,7 +6,7 @@ import WalkInStats from "./WalkInStats";
 import WalkInForm from "./WalkInForm";
 import WalkInFilters from "./WalkInFilters";
 
-const API_BASE_URL = "http://192.168.100.6:5000/api";
+const API_BASE_URL = "http://https://salon-app-server.onrender.com:5000/api";
 
 const WalkInClientsPage = () => {
   const [clients, setClients] = useState([]);
@@ -646,18 +646,18 @@ const WalkInClientsPage = () => {
       )}
 
       {/* SEARCH RESULTS MODAL */}
-{showSearchResults && searchQuery.trim() && (
-  <div
-    className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-    onClick={() => {
-      setShowSearchResults(false);
-      setSearchResults([]);
-    }}
-  >
-    <div
-      className="bg-white rounded-xl p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto relative shadow-2xl"
-      onClick={(e) => e.stopPropagation()}
-    >
+      {showSearchResults && searchQuery.trim() && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          onClick={() => {
+            setShowSearchResults(false);
+            setSearchResults([]);
+          }}
+        >
+          <div
+            className="bg-white rounded-xl p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto relative shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pb-4 border-b z-10">
               <h2 className="text-2xl font-bold">Search Results</h2>
               <button
@@ -761,18 +761,18 @@ const WalkInClientsPage = () => {
       )}
 
       {/* HISTORY MODAL */}
-{showHistoryModal && (
-  <div
-    className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-    onClick={() => {
-      setShowHistoryModal(false);
-      setHistoryData(null);
-    }}
-  >
-    <div
-      className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative shadow-2xl"
-      onClick={(e) => e.stopPropagation()}
-    >
+      {showHistoryModal && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          onClick={() => {
+            setShowHistoryModal(false);
+            setHistoryData(null);
+          }}
+        >
+          <div
+            className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pb-4 border-b z-10">
               <div>
                 <h2 className="text-2xl font-bold">Visit History</h2>
@@ -844,9 +844,9 @@ const WalkInClientsPage = () => {
 
       {/* EXISTING CLIENT MODAL */}
       {showExistingClientModal && (
-      <div
-         className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black bg-opacity-50"
-         onClick={() => setShowExistingClientModal(false)}
+        <div
+          className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black bg-opacity-50"
+          onClick={() => setShowExistingClientModal(false)}
         >
           <div
             className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative animate-fade-in"

@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { 
-  Home, 
-  Calendar, 
-  UserPlus, 
-  Scissors, 
-  BarChart3, 
-  Users, 
+import { useState } from "react";
+import {
+  Home,
+  Calendar,
+  UserPlus,
+  Scissors,
+  BarChart3,
+  Users,
   MessageSquare,
   LogOut,
   ChevronLeft,
@@ -13,8 +13,8 @@ import {
   UserCog,
   X,
   Eye,
-  EyeOff
-} from 'lucide-react';
+  EyeOff,
+} from "lucide-react";
 
 // Logout Confirmation Modal Component
 const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
@@ -39,9 +39,7 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           {/* Title */}
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            Logout
-          </h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">Logout</h3>
 
           {/* Message */}
           <p className="text-gray-600 mb-6">
@@ -72,10 +70,10 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
 // Staff Account Creation Modal Component
 const CreateStaffModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -84,68 +82,70 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validation
     if (!formData.username || !formData.email || !formData.password) {
-      alert('All fields are required');
+      alert("All fields are required");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      alert("Passwords do not match");
       return;
     }
 
     if (formData.password.length < 6) {
-      alert('Password must be at least 6 characters');
+      alert("Password must be at least 6 characters");
       return;
     }
 
     setIsLoading(true);
 
-    try {      
+    try {
       // ✅ ACTUAL API CALL (uncommented and fixed)
-      const response = await fetch('http://192.168.100.6:5000/api/staff/create', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          role: 'staff'
-          // ✅ NOTE: confirmPassword is NOT sent to backend (only for frontend validation)
-        })
-      });
-      
+      const response = await fetch(
+        "http://https://salon-app-server.onrender.com:5000/api/staff/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+            role: "staff",
+            // ✅ NOTE: confirmPassword is NOT sent to backend (only for frontend validation)
+          }),
+        }
+      );
+
       const result = await response.json();
-      
+
       if (response.ok && result.isSuccess) {
-        alert('Staff account created successfully!');
-        
+        alert("Staff account created successfully!");
+
         // Reset form
         setFormData({
-          username: '',
-          email: '',
-          password: '',
-          confirmPassword: ''
+          username: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
         });
-        
+
         onClose();
       } else {
-        alert(`Failed to create staff: ${result.message || 'Unknown error'}`);
+        alert(`Failed to create staff: ${result.message || "Unknown error"}`);
       }
-      
     } catch (error) {
-      console.error('Error creating staff:', error);
-      alert('Failed to create staff account. Check console for details.');
+      console.error("Error creating staff:", error);
+      alert("Failed to create staff account. Check console for details.");
     } finally {
       setIsLoading(false);
     }
@@ -158,7 +158,9 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-800">Create Staff Account</h2>
+          <h2 className="text-2xl font-bold text-gray-800">
+            Create Staff Account
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -212,7 +214,7 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
@@ -239,7 +241,7 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
               </label>
               <div className="relative">
                 <input
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
@@ -253,7 +255,11 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
-                  {showConfirmPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                  {showConfirmPassword ? (
+                    <Eye size={20} />
+                  ) : (
+                    <EyeOff size={20} />
+                  )}
                 </button>
               </div>
             </div>
@@ -274,7 +280,7 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
               className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
-              {isLoading ? 'Creating...' : 'Create Account'}
+              {isLoading ? "Creating..." : "Create Account"}
             </button>
           </div>
         </form>
@@ -291,47 +297,79 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
 
   // ✅ Get user role from localStorage
   const getUserRole = () => {
-    const adminData = localStorage.getItem('salon_admin');
-    const staffData = localStorage.getItem('salon_staff');
-    
+    const adminData = localStorage.getItem("salon_admin");
+    const staffData = localStorage.getItem("salon_staff");
+
     if (adminData) {
       try {
         const admin = JSON.parse(adminData);
-        return admin.type || 'admin';
+        return admin.type || "admin";
       } catch (e) {
-        return 'admin';
+        return "admin";
       }
     }
-    
+
     if (staffData) {
       try {
         const staff = JSON.parse(staffData);
-        return staff.type || 'staff';
+        return staff.type || "staff";
       } catch (e) {
-        return 'staff';
+        return "staff";
       }
     }
-    
-    return 'admin'; // default
+
+    return "admin"; // default
   };
 
   const userRole = getUserRole();
-  const isAdmin = userRole === 'admin';
-  const isStaff = userRole === 'staff';
+  const isAdmin = userRole === "admin";
+  const isStaff = userRole === "staff";
 
   // ✅ Define all menu items with role access
   const allMenuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home, roles: ['admin', 'staff'] },
-    { id: 'bookings', label: 'Bookings', icon: Calendar, roles: ['admin', 'staff'] },
-    { id: 'walk-in-clients', label: 'Walk-in Clients', icon: UserPlus, roles: ['admin', 'staff'] },
-    { id: 'services', label: 'Services', icon: Scissors, roles: ['admin', 'staff'] },
-    { id: 'reviews', label: 'Reviews', icon: MessageSquare, roles: ['admin', 'staff'] },
-    { id: 'sales-report', label: 'Sales Report', icon: BarChart3, roles: ['admin'] },
-    { id: 'manage-user', label: 'Manage User', icon: Users, roles: ['admin'] },
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: Home,
+      roles: ["admin", "staff"],
+    },
+    {
+      id: "bookings",
+      label: "Bookings",
+      icon: Calendar,
+      roles: ["admin", "staff"],
+    },
+    {
+      id: "walk-in-clients",
+      label: "Walk-in Clients",
+      icon: UserPlus,
+      roles: ["admin", "staff"],
+    },
+    {
+      id: "services",
+      label: "Services",
+      icon: Scissors,
+      roles: ["admin", "staff"],
+    },
+    {
+      id: "reviews",
+      label: "Reviews",
+      icon: MessageSquare,
+      roles: ["admin", "staff"],
+    },
+    {
+      id: "sales-report",
+      label: "Sales Report",
+      icon: BarChart3,
+      roles: ["admin"],
+    },
+    { id: "manage-user", label: "Manage User", icon: Users, roles: ["admin"] },
   ];
 
   // ✅ Filter menu items based on user role
-  const menuItems = allMenuItems.filter(item => item.roles.includes(userRole));
+  const menuItems = allMenuItems.filter((item) =>
+    item.roles.includes(userRole)
+  );
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -348,23 +386,33 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
 
   return (
     <>
-      <div className={`relative ${sidebarOpen ? 'w-64' : 'w-16'} transition-all duration-500 ease-in-out`}>
+      <div
+        className={`relative ${sidebarOpen ? "w-64" : "w-16"} transition-all duration-500 ease-in-out`}
+      >
         <div className="flex h-full flex-col bg-gradient-to-b from-gray-900 to-gray-800 shadow-xl border-r border-gray-700">
           {/* Header */}
           <div className="flex h-16 items-center border-b border-gray-700 px-4 bg-gray-900/50">
             <div className="flex items-center space-x-3 min-w-0 flex-1">
               <div className="flex h-10 w-10 items-center justify-center rounded-full flex-shrink-0 bg-white overflow-hidden">
-                <img 
-                  src="./vans-glow-up-salon.png" 
-                  alt="Van's Glow Up Logo" 
+                <img
+                  src="./vans-glow-up-salon.png"
+                  alt="Van's Glow Up Logo"
                   className="h-full w-full object-cover"
                 />
               </div>
-              <div className={`flex flex-col min-w-0 transition-all duration-500 ${
-                sidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
-              }`}>
-                <span className="text-base font-bold truncate text-white">Van's Glow Up</span>
-                <span className="text-xs text-gray-400 truncate">Beauty Salon</span>
+              <div
+                className={`flex flex-col min-w-0 transition-all duration-500 ${
+                  sidebarOpen
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 -translate-x-4"
+                }`}
+              >
+                <span className="text-base font-bold truncate text-white">
+                  Van's Glow Up
+                </span>
+                <span className="text-xs text-gray-400 truncate">
+                  Beauty Salon
+                </span>
               </div>
             </div>
           </div>
@@ -375,22 +423,26 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
-                
+
                 return (
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
                     className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 ${
                       isActive
-                        ? 'bg-red-600/90 text-white font-medium shadow-sm'
-                        : 'text-gray-400 hover:bg-gray-700/50 hover:text-gray-200'
+                        ? "bg-red-600/90 text-white font-medium shadow-sm"
+                        : "text-gray-400 hover:bg-gray-700/50 hover:text-gray-200"
                     }`}
                     title={!sidebarOpen ? item.label : undefined}
                   >
                     <Icon className="h-5 w-5 flex-shrink-0" />
-                    <span className={`transition-all duration-500 ${
-                      sidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
-                    }`}>
+                    <span
+                      className={`transition-all duration-500 ${
+                        sidebarOpen
+                          ? "opacity-100 translate-x-0"
+                          : "opacity-0 -translate-x-4"
+                      }`}
+                    >
                       {item.label}
                     </span>
                   </button>
@@ -403,12 +455,16 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
                   <button
                     onClick={() => setIsStaffModalOpen(true)}
                     className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-blue-400 hover:bg-gray-700/50 hover:text-blue-300 transition-all duration-200"
-                    title={!sidebarOpen ? 'Staff Accounts' : undefined}
+                    title={!sidebarOpen ? "Staff Accounts" : undefined}
                   >
                     <UserCog className="h-5 w-5 flex-shrink-0" />
-                    <span className={`transition-all duration-500 ${
-                      sidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
-                    }`}>
+                    <span
+                      className={`transition-all duration-500 ${
+                        sidebarOpen
+                          ? "opacity-100 translate-x-0"
+                          : "opacity-0 -translate-x-4"
+                      }`}
+                    >
                       Staff Accounts
                     </span>
                   </button>
@@ -422,12 +478,16 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
             <button
               onClick={handleLogout}
               className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400 transition-all duration-200 hover:bg-gray-700/50 hover:text-red-300"
-              title={!sidebarOpen ? 'Logout' : undefined}
+              title={!sidebarOpen ? "Logout" : undefined}
             >
               <LogOut className="h-5 w-5 flex-shrink-0" />
-              <span className={`transition-all duration-500 ${
-                sidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
-              }`}>
+              <span
+                className={`transition-all duration-500 ${
+                  sidebarOpen
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 -translate-x-4"
+                }`}
+              >
                 Logout
               </span>
             </button>
@@ -448,14 +508,14 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
       </div>
 
       {/* Logout Modal */}
-      <LogoutModal 
+      <LogoutModal
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={confirmLogout}
       />
 
       {/* Staff Account Modal */}
-      <CreateStaffModal 
+      <CreateStaffModal
         isOpen={isStaffModalOpen}
         onClose={() => setIsStaffModalOpen(false)}
       />

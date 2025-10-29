@@ -1,38 +1,39 @@
-import React, { useRef, useState, useEffect } from 'react';
-import html2pdf from 'html2pdf.js';
-import axios from 'axios';
+import React, { useRef, useState, useEffect } from "react";
+import html2pdf from "html2pdf.js";
+import axios from "axios";
 
 const MonthlySalesForm = () => {
   const formRef = useRef();
   const [salesData, setSalesData] = useState({
     breakdown: [],
     totalSales: 0,
-    startDate: '',
-    endDate: '',
-    isLoading: true
+    startDate: "",
+    endDate: "",
+    isLoading: true,
   });
 
   useEffect(() => {
     const fetchSalesData = async () => {
-      try {    
-        const response = await axios.get('http://192.168.100.6:5000/api/appointments/sales-monthly-breakdown');
-        
+      try {
+        const response = await axios.get(
+          "http://https://salon-app-server.onrender.com:5000/api/appointments/sales-monthly-breakdown"
+        );
+
         setSalesData({
           breakdown: response.data.breakdown || [],
           totalSales: response.data.totalSales || 0,
-          startDate: response.data.startDate || '',
-          endDate: response.data.endDate || '',
-          isLoading: false
+          startDate: response.data.startDate || "",
+          endDate: response.data.endDate || "",
+          isLoading: false,
         });
-        
       } catch (error) {
-        console.error('❌ Error fetching monthly breakdown:', error);
+        console.error("❌ Error fetching monthly breakdown:", error);
         setSalesData({
           breakdown: [],
           totalSales: 0,
-          startDate: '',
-          endDate: '',
-          isLoading: false
+          startDate: "",
+          endDate: "",
+          isLoading: false,
         });
       }
     };
@@ -42,24 +43,35 @@ const MonthlySalesForm = () => {
 
   const formatMonthYear = () => {
     if (!salesData.startDate) {
-      return 'Loading...';
+      return "Loading...";
     }
-    return new Date(salesData.startDate).toLocaleDateString('en-US', { 
-      month: 'long', 
-      year: 'numeric' 
+    return new Date(salesData.startDate).toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
     });
   };
 
   const getWeekDateRange = (weekNumber) => {
-    if (!salesData.startDate) return '';
-    
+    if (!salesData.startDate) return "";
+
     const monthStart = new Date(salesData.startDate);
     const startDay = (weekNumber - 1) * 7 + 1;
-    const endDay = Math.min(weekNumber * 7, new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0).getDate());
-    
-    const startDate = new Date(monthStart.getFullYear(), monthStart.getMonth(), startDay);
-    const endDate = new Date(monthStart.getFullYear(), monthStart.getMonth(), endDay);
-    
+    const endDay = Math.min(
+      weekNumber * 7,
+      new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0).getDate()
+    );
+
+    const startDate = new Date(
+      monthStart.getFullYear(),
+      monthStart.getMonth(),
+      startDay
+    );
+    const endDate = new Date(
+      monthStart.getFullYear(),
+      monthStart.getMonth(),
+      endDay
+    );
+
     return `${startDate.getDate()}-${endDate.getDate()}`;
   };
 
@@ -68,10 +80,10 @@ const MonthlySalesForm = () => {
     const opt = {
       margin: 10,
       filename: `monthly-sales-report-${Date.now()}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
+      image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      pagebreak: { mode: ["avoid-all", "css", "legacy"] },
     };
 
     html2pdf().set(opt).from(element).save();
@@ -90,7 +102,10 @@ const MonthlySalesForm = () => {
       </div>
 
       {/* Formal Document Form */}
-      <div ref={formRef} className="bg-white border-2 border-gray-300 max-w-5xl mx-auto">
+      <div
+        ref={formRef}
+        className="bg-white border-2 border-gray-300 max-w-5xl mx-auto"
+      >
         {/* PDF Page Break Styles */}
         <style jsx>{`
           @media print {
@@ -117,7 +132,7 @@ const MonthlySalesForm = () => {
               <p>Brgy. San Jose Rodriguez Rizal, Philippines</p>
             </div>
           </div>
-          
+
           <div className="border-t-2 border-gray-300 pt-4 mt-6">
             <h2 className="text-xl font-bold text-gray-900 uppercase tracking-wide mb-2">
               Monthly Sales Report
@@ -142,7 +157,9 @@ const MonthlySalesForm = () => {
             </div>
           ) : salesData.breakdown.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">No sales data available for this month</p>
+              <p className="text-gray-500">
+                No sales data available for this month
+              </p>
             </div>
           ) : (
             <>
@@ -156,32 +173,72 @@ const MonthlySalesForm = () => {
                       </th>
                       <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase">
                         <div>Week 1</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">{getWeekDateRange(1)}</div>
+                        <div className="text-xs font-normal text-gray-600 mt-1">
+                          {getWeekDateRange(1)}
+                        </div>
                       </th>
                       <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase">
                         <div>Week 2</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">{getWeekDateRange(2)}</div>
+                        <div className="text-xs font-normal text-gray-600 mt-1">
+                          {getWeekDateRange(2)}
+                        </div>
                       </th>
                       <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase">
                         <div>Week 3</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">{getWeekDateRange(3)}</div>
+                        <div className="text-xs font-normal text-gray-600 mt-1">
+                          {getWeekDateRange(3)}
+                        </div>
                       </th>
                       <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase">
                         <div>Week 4</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">{getWeekDateRange(4)}</div>
+                        <div className="text-xs font-normal text-gray-600 mt-1">
+                          {getWeekDateRange(4)}
+                        </div>
                       </th>
-                      <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase bg-gray-100">Total</th>
+                      <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase bg-gray-100">
+                        Total
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {salesData.breakdown.map((service, index) => (
-                      <tr key={index} className="border-b border-gray-200 avoid-break">
-                        <td className="px-4 py-3 text-sm text-gray-800">{service.service}</td>
-                        <td className="px-4 py-3 text-sm text-center text-gray-800">₱{service.week1.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-4 py-3 text-sm text-center text-gray-800">₱{service.week2.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-4 py-3 text-sm text-center text-gray-800">₱{service.week3.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-4 py-3 text-sm text-center text-gray-800">₱{service.week4.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-4 py-3 text-sm text-center text-gray-800 font-bold bg-gray-50">₱{service.total.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
+                      <tr
+                        key={index}
+                        className="border-b border-gray-200 avoid-break"
+                      >
+                        <td className="px-4 py-3 text-sm text-gray-800">
+                          {service.service}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-center text-gray-800">
+                          ₱
+                          {service.week1.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-center text-gray-800">
+                          ₱
+                          {service.week2.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-center text-gray-800">
+                          ₱
+                          {service.week3.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-center text-gray-800">
+                          ₱
+                          {service.week4.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-center text-gray-800 font-bold bg-gray-50">
+                          ₱
+                          {service.total.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -195,7 +252,10 @@ const MonthlySalesForm = () => {
                     Total Monthly Sales:
                   </span>
                   <span className="text-xl font-bold text-gray-900">
-                    ₱{salesData.totalSales.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+                    ₱
+                    {salesData.totalSales.toLocaleString("en-PH", {
+                      minimumFractionDigits: 2,
+                    })}
                   </span>
                 </div>
               </div>
@@ -221,7 +281,8 @@ const MonthlySalesForm = () => {
           {/* Footer note */}
           <div className="mt-8 pt-4 border-t border-gray-300">
             <p className="text-xs text-gray-500 text-center">
-              This is a system-generated document. For inquiries, please contact the salon office.
+              This is a system-generated document. For inquiries, please contact
+              the salon office.
             </p>
           </div>
         </div>

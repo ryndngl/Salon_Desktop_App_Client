@@ -1,33 +1,34 @@
-import React, { useRef, useState, useEffect } from 'react';
-import html2pdf from 'html2pdf.js';
-import axios from 'axios';
+import React, { useRef, useState, useEffect } from "react";
+import html2pdf from "html2pdf.js";
+import axios from "axios";
 
 const DailySalesForm = () => {
   const formRef = useRef();
   const [salesData, setSalesData] = useState({
     services: [],
     totalSales: 0,
-    isLoading: true
+    isLoading: true,
   });
 
   // Fetch daily sales data
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
-        const response = await axios.get('http://192.168.100.6:5000/api/appointments/sales-report?period=daily');
-        
+        const response = await axios.get(
+          "http://https://salon-app-server.onrender.com:5000/api/appointments/sales-report?period=daily"
+        );
+
         setSalesData({
           services: response.data.services || [],
           totalSales: response.data.totalSales || 0,
-          isLoading: false
+          isLoading: false,
         });
-        
       } catch (error) {
-        console.error('❌ Error fetching daily sales data:', error);
+        console.error("❌ Error fetching daily sales data:", error);
         setSalesData({
           services: [],
           totalSales: 0,
-          isLoading: false
+          isLoading: false,
         });
       }
     };
@@ -36,8 +37,8 @@ const DailySalesForm = () => {
   }, []); // Only fetch once on mount
 
   const getCurrentDate = () => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date().toLocaleDateString('en-US', options);
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date().toLocaleDateString("en-US", options);
   };
 
   const handleDownloadPDF = () => {
@@ -45,9 +46,9 @@ const DailySalesForm = () => {
     const opt = {
       margin: 10,
       filename: `daily-sales-report-${Date.now()}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
+      image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
     };
 
     html2pdf().set(opt).from(element).save();
@@ -66,7 +67,10 @@ const DailySalesForm = () => {
       </div>
 
       {/* Formal Document Form */}
-      <div ref={formRef} className="bg-white border-2 border-gray-300 max-w-4xl mx-auto">
+      <div
+        ref={formRef}
+        className="bg-white border-2 border-gray-300 max-w-4xl mx-auto"
+      >
         {/* Document Header with border */}
         <div className="border-b-4 border-double border-gray-800 p-8 text-center">
           <div className="mb-6">
@@ -78,7 +82,7 @@ const DailySalesForm = () => {
               <p>Brgy. San Jose Rodriguez Rizal, Philippines</p>
             </div>
           </div>
-          
+
           <div className="border-t-2 border-gray-300 pt-4 mt-6">
             <h2 className="text-xl font-bold text-gray-900 uppercase tracking-wide mb-2">
               Daily Sales Report
@@ -121,15 +125,15 @@ const DailySalesForm = () => {
                 </thead>
                 <tbody>
                   {salesData.services.map((service, index) => (
-                    <tr 
-                      key={index} 
-                      className="border-b border-gray-200"
-                    >
+                    <tr key={index} className="border-b border-gray-200">
                       <td className="px-4 py-3 text-sm text-gray-800">
                         {service.name}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-800 text-right font-medium">
-                        ₱{service.amount.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+                        ₱
+                        {service.amount.toLocaleString("en-PH", {
+                          minimumFractionDigits: 2,
+                        })}
                       </td>
                     </tr>
                   ))}
@@ -143,7 +147,10 @@ const DailySalesForm = () => {
                     Total Sales:
                   </span>
                   <span className="text-xl font-bold text-gray-900">
-                    ₱{salesData.totalSales.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+                    ₱
+                    {salesData.totalSales.toLocaleString("en-PH", {
+                      minimumFractionDigits: 2,
+                    })}
                   </span>
                 </div>
               </div>
@@ -169,7 +176,8 @@ const DailySalesForm = () => {
           {/* Footer note */}
           <div className="mt-8 pt-4 border-t border-gray-300">
             <p className="text-xs text-gray-500 text-center">
-              This is a system-generated document. For inquiries, please contact the salon office.
+              This is a system-generated document. For inquiries, please contact
+              the salon office.
             </p>
           </div>
         </div>

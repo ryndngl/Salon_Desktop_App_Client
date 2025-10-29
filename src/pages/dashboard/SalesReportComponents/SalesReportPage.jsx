@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import FilterTabs from './FilterTabs';
-import DailySalesForm from './DailySalesForm';
-import WeeklySalesForm from './WeeklySalesForm';
-import MonthlySalesForm from './MonthlySalesForm';
-import TransactionTable from './TransactionTable';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import FilterTabs from "./FilterTabs";
+import DailySalesForm from "./DailySalesForm";
+import WeeklySalesForm from "./WeeklySalesForm";
+import MonthlySalesForm from "./MonthlySalesForm";
+import TransactionTable from "./TransactionTable";
+import axios from "axios";
 
 const SalesReportPage = () => {
-  const [activeTab, setActiveTab] = useState(null); 
-  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [activeTab, setActiveTab] = useState(null);
+  const [selectedFilter, setSelectedFilter] = useState("all");
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,32 +24,40 @@ const SalesReportPage = () => {
       setError(null);
 
       // ✅ FIXED: Use the correct endpoint - /all
-      const response = await axios.get('http://192.168.100.6:5000/api/appointments/all');
-      
+      const response = await axios.get(
+        "http://https://salon-app-server.onrender.com:5000/api/appointments/all"
+      );
+
       if (response.data.success) {
         // ✅ Transform API data to match table format
         const formattedTransactions = response.data.data
-          .filter(apt => apt.status === 'Completed' || apt.status === 'Confirmed' || apt.status === 'Pending') // ✅ Include Pending
-          .map(apt => ({
+          .filter(
+            (apt) =>
+              apt.status === "Completed" ||
+              apt.status === "Confirmed" ||
+              apt.status === "Pending"
+          ) // ✅ Include Pending
+          .map((apt) => ({
             id: apt._id,
             client: apt.clientName,
             email: apt.email,
             phone: apt.phone,
-            service: apt.services?.[0]?.name || 'N/A',
+            service: apt.services?.[0]?.name || "N/A",
             amount: apt.services?.[0]?.price || 0,
-            payment: apt.modeOfPayment === 'GCash' ? 'Online' : 'Cash on Service',
+            payment:
+              apt.modeOfPayment === "GCash" ? "Online" : "Cash on Service",
             paymentProofUrl: apt.paymentProofUrl || null, // ✅ Include payment proof URL
-            date: new Date(apt.date).toISOString().split('T')[0], // Format: YYYY-MM-DD
+            date: new Date(apt.date).toISOString().split("T")[0], // Format: YYYY-MM-DD
             time: apt.time,
-            status: apt.status // ✅ Use actual status
+            status: apt.status, // ✅ Use actual status
           }))
           .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date descending
 
         setTransactions(formattedTransactions);
       }
     } catch (err) {
-      console.error('Error fetching transactions:', err);
-      setError('Failed to load transactions');
+      console.error("Error fetching transactions:", err);
+      setError("Failed to load transactions");
       setTransactions([]); // Fallback to empty array
     } finally {
       setLoading(false);
@@ -65,12 +73,12 @@ const SalesReportPage = () => {
 
   // ✅ Render appropriate form based on active tab
   const renderSalesForm = () => {
-    switch(activeTab) {
-      case 'daily':
+    switch (activeTab) {
+      case "daily":
         return <DailySalesForm />;
-      case 'weekly':
+      case "weekly":
         return <WeeklySalesForm />;
-      case 'monthly':
+      case "monthly":
         return <MonthlySalesForm />;
       default:
         return null;
@@ -97,7 +105,7 @@ const SalesReportPage = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="text-center text-red-600">
                 <p className="font-semibold">{error}</p>
-                <button 
+                <button
                   onClick={fetchTransactions}
                   className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
@@ -110,7 +118,7 @@ const SalesReportPage = () => {
               <p className="text-gray-600">No transactions found</p>
             </div>
           ) : (
-            <TransactionTable 
+            <TransactionTable
               transactions={transactions}
               selectedFilter={selectedFilter}
               onFilterChange={setSelectedFilter}

@@ -1,11 +1,13 @@
 // services/api.js
 
-const API_BASE_URL = "http://192.168.100.6:5000/api";
+const API_BASE_URL = "http://https://salon-app-server.onrender.com:5000/api";
 
 export const servicesAPI = {
   getAllServices: async () => {
     // Desktop: Include disabled styles
-    const response = await fetch(`${API_BASE_URL}/services?includeDisabled=true`);
+    const response = await fetch(
+      `${API_BASE_URL}/services?includeDisabled=true`
+    );
     return response.json();
   },
 
@@ -13,14 +15,14 @@ export const servicesAPI = {
     const response = await fetch(
       `${API_BASE_URL}/services/${serviceName}/styles`,
       {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify({
           categoryName,
-          style: styleData
+          style: styleData,
         }),
       }
     );
@@ -31,9 +33,9 @@ export const servicesAPI = {
     const response = await fetch(
       `${API_BASE_URL}/services/${serviceId}/categories/${categoryName}/styles/${styleId}`,
       {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       }
@@ -45,9 +47,9 @@ export const servicesAPI = {
     const response = await fetch(
       `${API_BASE_URL}/services/${serviceId}/categories/${categoryName}/styles/${styleId}/toggle`,
       {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
     );
@@ -55,16 +57,16 @@ export const servicesAPI = {
   },
 
   deleteStyle: async (serviceId, categoryName, styleId) => {
-  const response = await fetch(
-    `${API_BASE_URL}/services/${serviceId}/categories/${categoryName}/styles/${styleId}`,
-    {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    }
-  );
-  return response.json();
-},
+    const response = await fetch(
+      `${API_BASE_URL}/services/${serviceId}/categories/${categoryName}/styles/${styleId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
+    return response.json();
+  },
 };

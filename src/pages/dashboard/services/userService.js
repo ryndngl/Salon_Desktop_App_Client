@@ -1,29 +1,29 @@
 // /src/services/userService.js
 
 // Base URL ng server mo - CHANGE THIS to your actual server URL
-const API_BASE_URL = "http://192.168.100.6:5000";
+const API_BASE_URL = "http://https://salon-app-server.onrender.com:5000";
 
 export const userService = {
   // Get all users
   getAll: async () => {
     try {
-      const token = localStorage.getItem('token'); // kunin yung auth token
-      
+      const token = localStorage.getItem("token"); // kunin yung auth token
+
       const response = await fetch(`${API_BASE_URL}/users`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // for authentication middleware
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // for authentication middleware
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch users');
+        throw new Error("Failed to fetch users");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('userService.getAll error:', error);
+      console.error("userService.getAll error:", error);
       throw error;
     }
   },
@@ -31,23 +31,23 @@ export const userService = {
   // Get user by ID
   getById: async (id) => {
     try {
-      const token = localStorage.getItem('token');
-      
+      const token = localStorage.getItem("token");
+
       const response = await fetch(`${API_BASE_URL}/users/${id}`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch user');
+        throw new Error("Failed to fetch user");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('userService.getById error:', error);
+      console.error("userService.getById error:", error);
       throw error;
     }
   },
@@ -55,24 +55,24 @@ export const userService = {
   // Update user
   update: async (id, userData) => {
     try {
-      const token = localStorage.getItem('token');
-      
+      const token = localStorage.getItem("token");
+
       const response = await fetch(`${API_BASE_URL}/users/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify(userData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update user');
+        throw new Error("Failed to update user");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('userService.update error:', error);
+      console.error("userService.update error:", error);
       throw error;
     }
   },
@@ -80,24 +80,24 @@ export const userService = {
   // Delete user
   delete: async (id) => {
     try {
-      const token = localStorage.getItem('token');
-      
+      const token = localStorage.getItem("token");
+
       const response = await fetch(`${API_BASE_URL}/users/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete user');
+        throw new Error("Failed to delete user");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('userService.delete error:', error);
+      console.error("userService.delete error:", error);
       throw error;
     }
-  }
+  },
 };

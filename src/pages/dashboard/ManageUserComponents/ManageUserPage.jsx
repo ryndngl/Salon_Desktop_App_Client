@@ -1,50 +1,50 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 // Import components
-import UserSearchBar from './UserSearchBar';
-import UserStatsCards from './UserStatsCard';
-import UserTable from './UserTable';
-import UserDetailsModal from './UserDetailsModal';
-import UserEditModal from './UserEditModal';
-import UserDeleteModal from './UserDeleteModal';
+import UserSearchBar from "./UserSearchBar";
+import UserStatsCards from "./UserStatsCard";
+import UserTable from "./UserTable";
+import UserDetailsModal from "./UserDetailsModal";
+import UserEditModal from "./UserEditModal";
+import UserDeleteModal from "./UserDeleteModal";
 
 // TEMPORARY - userService code pasted directly here (for testing)
-const API_BASE_URL = "http://192.168.100.6:5000/api";
+const API_BASE_URL = "http://https://salon-app-server.onrender.com:5000/api";
 
 const userService = {
   getAll: async () => {
     try {
-      const token = localStorage.getItem('token');
-      
+      const token = localStorage.getItem("token");
+
       const response = await fetch(`${API_BASE_URL}/users`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch users');
+        throw new Error("Failed to fetch users");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('userService.getAll error:', error);
+      console.error("userService.getAll error:", error);
       throw error;
     }
-  }
+  },
 };
 
 const ManageUserPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [deletingUser, setDeletingUser] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
+
   // State for users - empty array initially
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,25 +60,27 @@ const ManageUserPage = () => {
       setLoading(true);
       const response = await userService.getAll();
       const data = response.users || response;
-      
+
       if (!Array.isArray(data)) {
-        throw new Error('Invalid response format from server');
+        throw new Error("Invalid response format from server");
       }
-      
+
       // ✅ FIXED: Transform MongoDB data properly
       const transformedUsers = data.map((user) => {
         // Helper to format dates
         const formatDate = (date) => {
-          if (!date) return 'No bookings yet';
+          if (!date) return "No bookings yet";
           try {
             const d = new Date(date);
-            return isNaN(d.getTime()) ? 'Invalid Date' : d.toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            });
+            return isNaN(d.getTime())
+              ? "Invalid Date"
+              : d.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                });
           } catch {
-            return 'Invalid Date';
+            return "Invalid Date";
           }
         };
 
@@ -86,33 +88,40 @@ const ManageUserPage = () => {
           id: user._id,
           name: user.fullName,
           email: user.email,
-          phone: 'Not provided',
+          phone: "Not provided",
           joinDate: user.createdAt,
           // ✅ Use the actual DB values
           lastBooking: user.lastBooking || null,
           totalBookings: user.totalBookings || 0,
-          status: 'Active',
-          avatar: user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
-          favoriteServices: user.favorites?.map(f => f.name).join(', ') || 'None selected',
-          bookingHistory: []
+          status: "Active",
+          avatar: user.fullName
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2),
+          favoriteServices:
+            user.favorites?.map((f) => f.name).join(", ") || "None selected",
+          bookingHistory: [],
         };
       });
-      
+
       setUsers(transformedUsers);
       setError(null);
     } catch (err) {
-      console.error('Error fetching users:', err);
-      setError('Failed to load users. Please try again.');
+      console.error("Error fetching users:", err);
+      setError("Failed to load users. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   // Filter users based on search term
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.phone.includes(searchTerm)
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.phone.includes(searchTerm)
   );
 
   // Modal handlers
@@ -127,7 +136,7 @@ const ManageUserPage = () => {
   };
 
   const handleEditUser = (user) => {
-    setEditingUser({...user});
+    setEditingUser({ ...user });
     setShowEditModal(true);
   };
 
@@ -137,21 +146,19 @@ const ManageUserPage = () => {
   };
 
   const handleSaveEdit = () => {
-    setUsers(prevUsers => 
-      prevUsers.map(user => 
-        user.id === editingUser.id ? editingUser : user
-      )
+    setUsers((prevUsers) =>
+      prevUsers.map((user) => (user.id === editingUser.id ? editingUser : user))
     );
-    
+
     setShowEditModal(false);
     setEditingUser(null);
-    alert('User updated successfully!');
+    alert("User updated successfully!");
   };
 
   const handleInputChange = (field, value) => {
-    setEditingUser(prev => ({
+    setEditingUser((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -166,13 +173,13 @@ const ManageUserPage = () => {
   };
 
   const handleConfirmDelete = () => {
-    setUsers(prevUsers => 
-      prevUsers.filter(user => user.id !== deletingUser.id)
+    setUsers((prevUsers) =>
+      prevUsers.filter((user) => user.id !== deletingUser.id)
     );
-    
+
     setShowDeleteModal(false);
     setDeletingUser(null);
-    alert('User deleted successfully!');
+    alert("User deleted successfully!");
   };
 
   // Loading state
@@ -193,7 +200,7 @@ const ManageUserPage = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error}</p>
-          <button 
+          <button
             onClick={fetchUsers}
             className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
           >
@@ -207,21 +214,14 @@ const ManageUserPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        
         {/* Search Bar Component */}
-        <UserSearchBar 
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-        />
+        <UserSearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
         {/* Stats Cards Component */}
-        <UserStatsCards 
-          users={users}
-          filteredUsers={filteredUsers}
-        />
+        <UserStatsCards users={users} filteredUsers={filteredUsers} />
 
         {/* Users Table Component */}
-        <UserTable 
+        <UserTable
           filteredUsers={filteredUsers}
           users={users}
           onViewUser={handleViewUser}
@@ -230,14 +230,14 @@ const ManageUserPage = () => {
         />
 
         {/* User Details Modal Component */}
-        <UserDetailsModal 
+        <UserDetailsModal
           showModal={showUserModal}
           selectedUser={selectedUser}
           onCloseModal={handleCloseUserModal}
         />
 
         {/* Edit User Modal Component */}
-        <UserEditModal 
+        <UserEditModal
           showModal={showEditModal}
           editingUser={editingUser}
           onCloseModal={handleCloseEditModal}
@@ -246,13 +246,12 @@ const ManageUserPage = () => {
         />
 
         {/* Delete User Modal Component */}
-        <UserDeleteModal 
+        <UserDeleteModal
           showModal={showDeleteModal}
           deletingUser={deletingUser}
           onCloseModal={handleCloseDeleteModal}
           onConfirmDelete={handleConfirmDelete}
         />
-
       </div>
     </div>
   );

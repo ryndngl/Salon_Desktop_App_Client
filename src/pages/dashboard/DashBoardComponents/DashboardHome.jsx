@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { TrendingUp, RefreshCw, Clock } from 'lucide-react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { TrendingUp, RefreshCw, Clock } from "lucide-react";
+import axios from "axios";
 
 const StatsCard = ({ title, value, color, trend, isLoading }) => (
   <div className="bg-white rounded-xl shadow-sm p-6">
@@ -32,7 +32,7 @@ const DashboardHome = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  
+
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -44,20 +44,20 @@ const DashboardHome = () => {
   }, []);
 
   const formatTime = (date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
     });
   };
 
   const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -68,25 +68,40 @@ const DashboardHome = () => {
       let salesData = { totalSales: 0 };
 
       try {
-        const appointmentRes = await axios.get('http://192.168.100.6:5000/api/appointments/stats');
+        const appointmentRes = await axios.get(
+          "http://https://salon-app-server.onrender.com/api/appointments/stats"
+        );
         appointmentStats = appointmentRes.data.stats;
       } catch (error) {
-        console.error('❌ Appointment stats error:', error.response?.data || error.message);
+        console.error(
+          "❌ Appointment stats error:",
+          error.response?.data || error.message
+        );
       }
 
       try {
-        const walkInRes = await axios.get('http://192.168.100.6:5000/api/walkin/stats');
+        const walkInRes = await axios.get(
+          "http://https://salon-app-server.onrender.com/api/walkin/stats"
+        );
         walkInStats = walkInRes.data.stats;
       } catch (error) {
-        console.error('❌ Walk-in stats error:', error.response?.data || error.message);
+        console.error(
+          "❌ Walk-in stats error:",
+          error.response?.data || error.message
+        );
       }
 
       // ✅ NEW: Fetch daily sales report
       try {
-        const salesRes = await axios.get('http://192.168.100.6:5000/api/appointments/sales-report?period=daily');
+        const salesRes = await axios.get(
+          "http://https://salon-app-server.onrender.com:5000/api/appointments/sales-report?period=daily"
+        );
         salesData = salesRes.data;
       } catch (error) {
-        console.error('❌ Sales report error:', error.response?.data || error.message);
+        console.error(
+          "❌ Sales report error:",
+          error.response?.data || error.message
+        );
       }
 
       const newStats = {
@@ -97,9 +112,8 @@ const DashboardHome = () => {
       };
 
       setStats(newStats);
-
     } catch (error) {
-      console.error('❌ Fatal error:', error);
+      console.error("❌ Fatal error:", error);
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -121,19 +135,23 @@ const DashboardHome = () => {
         <div>
           <div className="flex items-center gap-2 mt-2 text-gray-600">
             <div className="flex flex-col">
-              <span className="text-sm font-medium">{formatDate(currentTime)}</span>
-              <span className="text-lg font-bold text-blue-600">{formatTime(currentTime)}</span>
+              <span className="text-sm font-medium">
+                {formatDate(currentTime)}
+              </span>
+              <span className="text-lg font-bold text-blue-600">
+                {formatTime(currentTime)}
+              </span>
             </div>
           </div>
         </div>
-        
+
         <button
           onClick={handleRefresh}
           disabled={isRefreshing}
           className="flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors disabled:bg-gray-400"
         >
-          <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
-          {isRefreshing ? 'Refreshing...' : 'Refresh'}
+          <RefreshCw size={16} className={isRefreshing ? "animate-spin" : ""} />
+          {isRefreshing ? "Refreshing..." : "Refresh"}
         </button>
       </div>
 
@@ -152,7 +170,7 @@ const DashboardHome = () => {
         />
         <StatsCard
           title="Daily Revenue"
-          value={`₱${stats.dailyRevenue.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`}
+          value={`₱${stats.dailyRevenue.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`}
           color="green"
           isLoading={isLoading}
         />
@@ -163,7 +181,6 @@ const DashboardHome = () => {
           isLoading={isLoading}
         />
       </div>
-
     </div>
   );
 };

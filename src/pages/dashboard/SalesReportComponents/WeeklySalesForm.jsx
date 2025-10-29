@@ -1,41 +1,42 @@
-import React, { useRef, useState, useEffect } from 'react';
-import html2pdf from 'html2pdf.js';
-import axios from 'axios';
+import React, { useRef, useState, useEffect } from "react";
+import html2pdf from "html2pdf.js";
+import axios from "axios";
 
 const WeeklySalesForm = () => {
   const formRef = useRef();
   const [salesData, setSalesData] = useState({
     breakdown: [],
     totalSales: 0,
-    startDate: '',
-    endDate: '',
+    startDate: "",
+    endDate: "",
     dayLabels: [],
-    isLoading: true
+    isLoading: true,
   });
 
   useEffect(() => {
     const fetchSalesData = async () => {
-      try {        
-        const response = await axios.get('http://192.168.100.6:5000/api/appointments/sales-weekly-breakdown');
-        
+      try {
+        const response = await axios.get(
+          "http://https://salon-app-server.onrender.com:5000/api/appointments/sales-weekly-breakdown"
+        );
+
         setSalesData({
           breakdown: response.data.breakdown || [],
           totalSales: response.data.totalSales || 0,
-          startDate: response.data.startDate || '',
-          endDate: response.data.endDate || '',
+          startDate: response.data.startDate || "",
+          endDate: response.data.endDate || "",
           dayLabels: response.data.dayLabels || [],
-          isLoading: false
+          isLoading: false,
         });
-        
       } catch (error) {
-        console.error('❌ Error fetching weekly breakdown:', error);
+        console.error("❌ Error fetching weekly breakdown:", error);
         setSalesData({
           breakdown: [],
           totalSales: 0,
-          startDate: '',
-          endDate: '',
+          startDate: "",
+          endDate: "",
           dayLabels: [],
-          isLoading: false
+          isLoading: false,
         });
       }
     };
@@ -45,17 +46,17 @@ const WeeklySalesForm = () => {
 
   const formatDateRange = () => {
     if (!salesData.startDate || !salesData.endDate) {
-      return 'Loading...';
+      return "Loading...";
     }
-    const start = new Date(salesData.startDate).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
+    const start = new Date(salesData.startDate).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
-    const end = new Date(salesData.endDate).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
+    const end = new Date(salesData.endDate).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
     return `${start} - ${end}`;
   };
@@ -63,9 +64,12 @@ const WeeklySalesForm = () => {
   const formatDayLabel = (index) => {
     if (salesData.dayLabels && salesData.dayLabels[index]) {
       const date = new Date(salesData.dayLabels[index].date);
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
     }
-    return '';
+    return "";
   };
 
   const handleDownloadPDF = () => {
@@ -73,10 +77,10 @@ const WeeklySalesForm = () => {
     const opt = {
       margin: 10,
       filename: `weekly-sales-report-${Date.now()}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
+      image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+      pagebreak: { mode: ["avoid-all", "css", "legacy"] },
     };
 
     html2pdf().set(opt).from(element).save();
@@ -95,7 +99,10 @@ const WeeklySalesForm = () => {
       </div>
 
       {/* Formal Document Form */}
-      <div ref={formRef} className="bg-white border-2 border-gray-300 max-w-6xl mx-auto">
+      <div
+        ref={formRef}
+        className="bg-white border-2 border-gray-300 max-w-6xl mx-auto"
+      >
         {/* PDF Page Break Styles */}
         <style jsx>{`
           @media print {
@@ -122,7 +129,7 @@ const WeeklySalesForm = () => {
               <p>Brgy. San Jose Rodriguez Rizal, Philippines</p>
             </div>
           </div>
-          
+
           <div className="border-t-2 border-gray-300 pt-4 mt-6">
             <h2 className="text-xl font-bold text-gray-900 uppercase tracking-wide mb-2">
               Weekly Sales Report
@@ -147,7 +154,9 @@ const WeeklySalesForm = () => {
             </div>
           ) : salesData.breakdown.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">No sales data available for this week</p>
+              <p className="text-gray-500">
+                No sales data available for this week
+              </p>
             </div>
           ) : (
             <>
@@ -161,47 +170,108 @@ const WeeklySalesForm = () => {
                       </th>
                       <th className="px-2 py-3 text-center font-bold text-gray-900 uppercase">
                         <div>Day 1</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">{formatDayLabel(0)}</div>
+                        <div className="text-xs font-normal text-gray-600 mt-1">
+                          {formatDayLabel(0)}
+                        </div>
                       </th>
                       <th className="px-2 py-3 text-center font-bold text-gray-900 uppercase">
                         <div>Day 2</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">{formatDayLabel(1)}</div>
+                        <div className="text-xs font-normal text-gray-600 mt-1">
+                          {formatDayLabel(1)}
+                        </div>
                       </th>
                       <th className="px-2 py-3 text-center font-bold text-gray-900 uppercase">
                         <div>Day 3</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">{formatDayLabel(2)}</div>
+                        <div className="text-xs font-normal text-gray-600 mt-1">
+                          {formatDayLabel(2)}
+                        </div>
                       </th>
                       <th className="px-2 py-3 text-center font-bold text-gray-900 uppercase">
                         <div>Day 4</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">{formatDayLabel(3)}</div>
+                        <div className="text-xs font-normal text-gray-600 mt-1">
+                          {formatDayLabel(3)}
+                        </div>
                       </th>
                       <th className="px-2 py-3 text-center font-bold text-gray-900 uppercase">
                         <div>Day 5</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">{formatDayLabel(4)}</div>
+                        <div className="text-xs font-normal text-gray-600 mt-1">
+                          {formatDayLabel(4)}
+                        </div>
                       </th>
                       <th className="px-2 py-3 text-center font-bold text-gray-900 uppercase">
                         <div>Day 6</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">{formatDayLabel(5)}</div>
+                        <div className="text-xs font-normal text-gray-600 mt-1">
+                          {formatDayLabel(5)}
+                        </div>
                       </th>
                       <th className="px-2 py-3 text-center font-bold text-gray-900 uppercase">
                         <div>Day 7</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">{formatDayLabel(6)}</div>
+                        <div className="text-xs font-normal text-gray-600 mt-1">
+                          {formatDayLabel(6)}
+                        </div>
                       </th>
-                      <th className="px-2 py-3 text-center font-bold text-gray-900 uppercase bg-gray-100">Total</th>
+                      <th className="px-2 py-3 text-center font-bold text-gray-900 uppercase bg-gray-100">
+                        Total
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {salesData.breakdown.map((service, index) => (
-                      <tr key={index} className="border-b border-gray-200 avoid-break">
-                        <td className="px-2 py-3 text-gray-800">{service.service}</td>
-                        <td className="px-2 py-3 text-center text-gray-800">₱{service.day1.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-2 py-3 text-center text-gray-800">₱{service.day2.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-2 py-3 text-center text-gray-800">₱{service.day3.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-2 py-3 text-center text-gray-800">₱{service.day4.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-2 py-3 text-center text-gray-800">₱{service.day5.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-2 py-3 text-center text-gray-800">₱{service.day6.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-2 py-3 text-center text-gray-800">₱{service.day7.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
-                        <td className="px-2 py-3 text-center text-gray-800 font-bold bg-gray-50">₱{service.total.toLocaleString('en-PH', { minimumFractionDigits: 2 })}</td>
+                      <tr
+                        key={index}
+                        className="border-b border-gray-200 avoid-break"
+                      >
+                        <td className="px-2 py-3 text-gray-800">
+                          {service.service}
+                        </td>
+                        <td className="px-2 py-3 text-center text-gray-800">
+                          ₱
+                          {service.day1.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td className="px-2 py-3 text-center text-gray-800">
+                          ₱
+                          {service.day2.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td className="px-2 py-3 text-center text-gray-800">
+                          ₱
+                          {service.day3.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td className="px-2 py-3 text-center text-gray-800">
+                          ₱
+                          {service.day4.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td className="px-2 py-3 text-center text-gray-800">
+                          ₱
+                          {service.day5.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td className="px-2 py-3 text-center text-gray-800">
+                          ₱
+                          {service.day6.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td className="px-2 py-3 text-center text-gray-800">
+                          ₱
+                          {service.day7.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
+                        <td className="px-2 py-3 text-center text-gray-800 font-bold bg-gray-50">
+                          ₱
+                          {service.total.toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                          })}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -215,7 +285,10 @@ const WeeklySalesForm = () => {
                     Total Weekly Sales:
                   </span>
                   <span className="text-xl font-bold text-gray-900">
-                    ₱{salesData.totalSales.toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+                    ₱
+                    {salesData.totalSales.toLocaleString("en-PH", {
+                      minimumFractionDigits: 2,
+                    })}
                   </span>
                 </div>
               </div>
@@ -241,7 +314,8 @@ const WeeklySalesForm = () => {
           {/* Footer note */}
           <div className="mt-8 pt-4 border-t border-gray-300">
             <p className="text-xs text-gray-500 text-center">
-              This is a system-generated document. For inquiries, please contact the salon office.
+              This is a system-generated document. For inquiries, please contact
+              the salon office.
             </p>
           </div>
         </div>

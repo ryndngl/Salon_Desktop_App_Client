@@ -1,55 +1,57 @@
-import { useState, useEffect } from 'react';
-import { Star, Search, RefreshCw, User, Calendar } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Star, Search, RefreshCw, User, Calendar } from "lucide-react";
 
 // FIXED: Constants with /api
-const API_BASE_URL = 'http://192.168.100.6:5000/api';
+const API_BASE_URL = "http://https://salon-app-server.onrender.com:5000/api";
 
 const FILTER_OPTIONS = [
-  { id: 'all', label: 'All Ratings' },
-  { id: '5', label: '5 Stars' },
-  { id: '4', label: '4 Stars' },
-  { id: '3', label: '3 Stars' },
-  { id: '2', label: '2 Stars' },
-  { id: '1', label: '1 Star' },
+  { id: "all", label: "All Ratings" },
+  { id: "5", label: "5 Stars" },
+  { id: "4", label: "4 Stars" },
+  { id: "3", label: "3 Stars" },
+  { id: "2", label: "2 Stars" },
+  { id: "1", label: "1 Star" },
 ];
 
 // Utility Functions
 const formatDateTime = (dateString, updatedAt) => {
   const date = new Date(updatedAt || dateString);
-  
-  const dateStr = date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
+
+  const dateStr = date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
-  
-  const timeStr = date.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
+
+  const timeStr = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
   });
-  
+
   return `${dateStr} at ${timeStr}`;
 };
 
 const filterTestimonials = (testimonials, searchTerm, activeFilter) => {
-  return testimonials.filter(testimonial => {
-    const matchesSearch = 
+  return testimonials.filter((testimonial) => {
+    const matchesSearch =
       testimonial.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       testimonial.feedback.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesRating = activeFilter === 'all' || testimonial.rating === parseInt(activeFilter);
-    
+
+    const matchesRating =
+      activeFilter === "all" || testimonial.rating === parseInt(activeFilter);
+
     return matchesSearch && matchesRating;
   });
 };
 
 const getFilterCounts = (testimonials) => {
-  return FILTER_OPTIONS.map(option => ({
+  return FILTER_OPTIONS.map((option) => ({
     ...option,
-    count: option.id === 'all' 
-      ? testimonials.length 
-      : testimonials.filter(t => t.rating === parseInt(option.id)).length
+    count:
+      option.id === "all"
+        ? testimonials.length
+        : testimonials.filter((t) => t.rating === parseInt(option.id)).length,
   }));
 };
 
@@ -60,7 +62,7 @@ const StarRating = ({ rating }) => (
       <Star
         key={star}
         className={`h-4 w-4 ${
-          star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'
+          star <= rating ? "fill-yellow-400 text-yellow-400" : "text-gray-400"
         }`}
       />
     ))}
@@ -100,7 +102,7 @@ const RefreshButton = ({ onClick, loading }) => (
     disabled={loading}
     className="flex items-center gap-2 rounded-lg bg-gray-700 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-600 disabled:opacity-50"
   >
-    <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+    <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
     Refresh
   </button>
 );
@@ -136,11 +138,11 @@ const ReviewCard = ({ testimonial }) => (
           </div>
         </div>
       </div>
-      
-     <div className="flex items-center gap-1.5 text-xs text-gray-500">
+
+      <div className="flex items-center gap-1.5 text-xs text-gray-500">
         <Calendar className="h-3.5 w-3.5" />
         {formatDateTime(testimonial.createdAt, testimonial.updatedAt)}
-     </div>
+      </div>
     </div>
 
     {/* Feedback */}
@@ -168,9 +170,9 @@ const EmptyState = ({ searchTerm, activeFilter }) => (
     <Star className="h-16 w-16 text-gray-300" />
     <p className="mt-4 text-lg font-medium text-gray-600">No reviews found</p>
     <p className="mt-2 text-sm text-gray-500">
-      {searchTerm || activeFilter !== 'all' 
-        ? 'Try adjusting your filters'
-        : 'Customer reviews will appear here'}
+      {searchTerm || activeFilter !== "all"
+        ? "Try adjusting your filters"
+        : "Customer reviews will appear here"}
     </p>
   </div>
 );
@@ -185,8 +187,8 @@ const ResultsCount = ({ filtered, total }) => (
 const ReviewsPage = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeFilter, setActiveFilter] = useState("all");
 
   // Fetch testimonials from API
   const fetchTestimonials = async () => {
@@ -198,7 +200,7 @@ const ReviewsPage = () => {
         setTestimonials(result.data || []);
       }
     } catch (error) {
-      console.error('Error fetching testimonials:', error);
+      console.error("Error fetching testimonials:", error);
     } finally {
       setLoading(false);
     }
@@ -209,7 +211,11 @@ const ReviewsPage = () => {
   }, []);
 
   // Computed values
-  const filteredTestimonials = filterTestimonials(testimonials, searchTerm, activeFilter);
+  const filteredTestimonials = filterTestimonials(
+    testimonials,
+    searchTerm,
+    activeFilter
+  );
   const filterOptions = getFilterCounts(testimonials);
 
   return (
@@ -218,7 +224,9 @@ const ReviewsPage = () => {
         {/* Header */}
         <div className="mb-6">
           <div className="mb-4">
-            <h1 className="text-2xl font-bold text-gray-900">Customer Reviews</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Customer Reviews
+            </h1>
             <p className="mt-1 text-sm text-gray-600">
               View and manage all customer testimonials
             </p>
@@ -227,10 +235,10 @@ const ReviewsPage = () => {
           {/* Search, Filter & Refresh */}
           <div className="flex items-center gap-3">
             <SearchBar value={searchTerm} onChange={setSearchTerm} />
-            <FilterDropdown 
-              value={activeFilter} 
-              onChange={setActiveFilter} 
-              options={filterOptions} 
+            <FilterDropdown
+              value={activeFilter}
+              onChange={setActiveFilter}
+              options={filterOptions}
             />
             <RefreshButton onClick={fetchTestimonials} loading={loading} />
           </div>
@@ -240,12 +248,12 @@ const ReviewsPage = () => {
         <TotalReviewsCard count={testimonials.length} />
 
         {/* Reviews List - Scrollable */}
-        <div 
-          className="space-y-4 overflow-y-auto" 
-          style={{ 
-            maxHeight: 'calc(100vh - 450px)', 
-            scrollbarWidth: 'none', 
-            msOverflowStyle: 'none' 
+        <div
+          className="space-y-4 overflow-y-auto"
+          style={{
+            maxHeight: "calc(100vh - 450px)",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
           }}
         >
           <style>{`
@@ -267,9 +275,9 @@ const ReviewsPage = () => {
 
         {/* Results Count */}
         {!loading && filteredTestimonials.length > 0 && (
-          <ResultsCount 
-            filtered={filteredTestimonials.length} 
-            total={testimonials.length} 
+          <ResultsCount
+            filtered={filteredTestimonials.length}
+            total={testimonials.length}
           />
         )}
       </div>
