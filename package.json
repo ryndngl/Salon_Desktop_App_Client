@@ -1,6 +1,6 @@
 {
   "name": "salon_desktop_app_client",
-  "productName": "",
+  "productName": "Glow Up Admin",
   "version": "1.0.0",
   "description": "Van's Glow Up Salon Desktop Application",
   "main": ".vite/build/main.js",

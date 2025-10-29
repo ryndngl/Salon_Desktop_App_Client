@@ -4,17 +4,21 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
-    name: '', // ✅ Force empty name
-    executableName: 'salon-app', // ✅ Executable name
-    icon: undefined, // ✅ Don't include icon
+    name: '',
+    executableName: 'glow-up-admin', 
+    
+    // ✅ IN-UPDATE KO ANG ICON PATH DITO
+    // Tinanggal ko ang .ico/icns dahil awtomatikong dinadagdag ng Electron 'yan.
+    icon: 'icons/vans-glow-up-salon', 
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        // ✅ No icon for installer
-        setupIcon: undefined,
+        // ✅ IN-UPDATE KO ANG INSTALLER ICON PATH DITO
+        // Kailangan pa rin ang .ico extension dito.
+        setupIcon: 'icons/vans-glow-up-salon.ico', 
       },
     },
     {
