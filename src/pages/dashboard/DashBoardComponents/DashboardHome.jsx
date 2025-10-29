@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TrendingUp, RefreshCw } from "lucide-react";
+import { TrendingUp, RefreshCw, Clock } from "lucide-react";
 import axios from "axios";
 
 const StatsCard = ({ title, value, color, trend, isLoading }) => (
@@ -25,13 +25,14 @@ const StatsCard = ({ title, value, color, trend, isLoading }) => (
 
 const DashboardHome = () => {
   const [stats, setStats] = useState({
-    todayBookings: 0,
-    todayWalkIns: 0,
+    todayAppointments: 0,
+    walkInClients: 0,
     servicesCompleted: 0,
     dailyRevenue: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -60,33 +61,26 @@ const DashboardHome = () => {
     });
   };
 
-  // ✅ FIXED: Use single dashboard-stats endpoint instead of multiple calls
   const fetchStats = async () => {
     try {
-      const response = await axios.get(
+      // ✅ Use the dedicated dashboard stats endpoint
+      const dashboardRes = await axios.get(
         "https://salon-app-server.onrender.com/api/appointments/dashboard-stats"
       );
+      
+      const dashboardStats = dashboardRes.data.stats;
 
-      if (response.data.success) {
-        const dashboardStats = response.data.stats;
-        
-        setStats({
-          todayBookings: dashboardStats.todayBookings || 0,
-          todayWalkIns: dashboardStats.todayWalkIns || 0,
-          servicesCompleted: dashboardStats.servicesCompleted || 0,
-          dailyRevenue: dashboardStats.dailyRevenue || 0,
-        });
-      }
+      const newStats = {
+        todayAppointments: dashboardStats?.todayBookings || 0,
+        walkInClients: dashboardStats?.todayWalkIns || 0,
+        servicesCompleted: dashboardStats?.servicesCompleted || 0,
+        dailyRevenue: dashboardStats?.dailyRevenue || 0,
+      };
+
+      console.log("✅ Dashboard Stats:", newStats);
+      setStats(newStats);
     } catch (error) {
       console.error("❌ Dashboard stats error:", error.response?.data || error.message);
-      
-      // Fallback to default values on error
-      setStats({
-        todayBookings: 0,
-        todayWalkIns: 0,
-        servicesCompleted: 0,
-        dailyRevenue: 0,
-      });
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -131,21 +125,19 @@ const DashboardHome = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard
           title="Today's Bookings"
-          value={stats.todayBookings}
+          value={stats.todayAppointments}
           color="blue"
           isLoading={isLoading}
         />
         <StatsCard
           title="Walk-in Clients"
-          value={stats.todayWalkIns}
+          value={stats.walkInClients}
           color="black"
           isLoading={isLoading}
         />
         <StatsCard
           title="Daily Revenue"
-          value={`₱${stats.dailyRevenue.toLocaleString("en-PH", { 
-            minimumFractionDigits: 2 
-          })}`}
+          value={`₱${stats.dailyRevenue.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`}
           color="green"
           isLoading={isLoading}
         />
