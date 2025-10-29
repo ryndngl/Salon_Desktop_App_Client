@@ -9,7 +9,7 @@ import UserEditModal from "./UserEditModal";
 import UserDeleteModal from "./UserDeleteModal";
 
 // TEMPORARY - userService code pasted directly here (for testing)
-const API_BASE_URL = "http://https://salon-app-server.onrender.com:5000/api";
+const API_BASE_URL = "https://salon-app-server.onrender.com/api";
 
 const userService = {
   getAll: async () => {

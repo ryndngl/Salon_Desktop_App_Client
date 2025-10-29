@@ -6,7 +6,7 @@ import WalkInStats from "./WalkInStats";
 import WalkInForm from "./WalkInForm";
 import WalkInFilters from "./WalkInFilters";
 
-const API_BASE_URL = "http://https://salon-app-server.onrender.com:5000/api";
+const API_BASE_URL = "https://salon-app-server.onrender.com/api";
 
 const WalkInClientsPage = () => {
   const [clients, setClients] = useState([]);

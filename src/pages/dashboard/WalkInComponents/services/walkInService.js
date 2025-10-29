@@ -1,6 +1,6 @@
 // /src/services/walkInService.js
 
-const API_BASE_URL = "http://https://salon-app-server.onrender.com:5000";
+const API_BASE_URL = "https://salon-app-server.onrender.com";
 
 // ✅ Helper function to format date consistently
 const formatDateToYYYYMMDD = (dateValue) => {

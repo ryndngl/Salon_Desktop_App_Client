@@ -69,7 +69,7 @@ const DashboardHome = () => {
 
       try {
         const appointmentRes = await axios.get(
-          "http://https://salon-app-server.onrender.com/api/appointments/stats"
+          "https://salon-app-server.onrender.com/api/appointments/stats"
         );
         appointmentStats = appointmentRes.data.stats;
       } catch (error) {
@@ -81,7 +81,7 @@ const DashboardHome = () => {
 
       try {
         const walkInRes = await axios.get(
-          "http://https://salon-app-server.onrender.com/api/walkin/stats"
+          "https://salon-app-server.onrender.com/api/walkin/stats"
         );
         walkInStats = walkInRes.data.stats;
       } catch (error) {
@@ -94,7 +94,7 @@ const DashboardHome = () => {
       // ✅ NEW: Fetch daily sales report
       try {
         const salesRes = await axios.get(
-          "http://https://salon-app-server.onrender.com:5000/api/appointments/sales-report?period=daily"
+          "https://salon-app-server.onrender.com/api/appointments/sales-report?period=daily"
         );
         salesData = salesRes.data;
       } catch (error) {

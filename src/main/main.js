@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Your server configuration
-const SERVER_URL = "http://https://salon-app-server.onrender.com:5000";
+const SERVER_URL = "https://salon-app-server.onrender.com";
 
 // Store mainWindow reference globally
 let mainWindow;
@@ -111,7 +111,7 @@ ipcMain.handle("login", async (event, credentials) => {
         success: false,
         isSuccess: false,
         message:
-          "Cannot connect to server. Make sure the server is running on port 5000.",
+          "Cannot connect to server. Make sure the server is running on port https://salon-app-server.onrender.com.",
       };
     }
 
@@ -130,7 +130,7 @@ ipcMain.handle("test-connection", async () => {
 
     const response = await fetch(`${SERVER_URL}/api/health`, {
       method: "GET",
-      timeout: 5000,
+      timeout: 10000,
     });
 
     if (response.ok) {
@@ -142,7 +142,7 @@ ipcMain.handle("test-connection", async () => {
     console.error("❌ Server connection test failed:", error);
     return {
       success: false,
-      message: "Server unreachable. Check if server is running on port 5000.",
+      message: "Server unreachable. Check if server is running on port https://salon-app-server.onrender.com.",
     };
   }
 });

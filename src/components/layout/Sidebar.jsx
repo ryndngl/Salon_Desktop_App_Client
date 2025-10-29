@@ -110,7 +110,7 @@ const CreateStaffModal = ({ isOpen, onClose }) => {
     try {
       // ✅ ACTUAL API CALL (uncommented and fixed)
       const response = await fetch(
-        "http://https://salon-app-server.onrender.com:5000/api/staff/create",
+        "https://salon-app-server.onrender.com/api/staff/create",
         {
           method: "POST",
           headers: {
