@@ -361,7 +361,7 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
             <div className="flex items-center space-x-3 min-w-0 flex-1">
               <div className="flex h-10 w-10 items-center justify-center rounded-full flex-shrink-0 bg-white overflow-hidden">
                 <img 
-                  src="/vans-glow-up-salon.png" 
+                  src="./vans-glow-up-salon.png" 
                   alt="Van's Glow Up Logo" 
                   className="h-full w-full object-cover"
                 />
