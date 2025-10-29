@@ -55,46 +55,62 @@ const ManageUserPage = () => {
     fetchUsers();
   }, []);
 
-const fetchUsers = async () => {
-  try {
-    setLoading(true);
-    const response = await userService.getAll();
-    const data = response.users || response; // FIX: access users array from response object
-    
-    console.log('API Response:', response);
-    console.log('Users Array:', data);
-    console.log('Is Array?', Array.isArray(data));
-    
-    // Check if data is actually an array
-    if (!Array.isArray(data)) {
-      throw new Error('Invalid response format from server');
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await userService.getAll();
+      const data = response.users || response;
+      
+      console.log('API Response:', response);
+      console.log('Users Array:', data);
+      
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid response format from server');
+      }
+      
+      // ✅ FIXED: Transform MongoDB data properly
+      const transformedUsers = data.map((user) => {
+        // Helper to format dates
+        const formatDate = (date) => {
+          if (!date) return 'No bookings yet';
+          try {
+            const d = new Date(date);
+            return isNaN(d.getTime()) ? 'Invalid Date' : d.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            });
+          } catch {
+            return 'Invalid Date';
+          }
+        };
+
+        return {
+          id: user._id,
+          name: user.fullName,
+          email: user.email,
+          phone: 'Not provided',
+          joinDate: user.createdAt,
+          // ✅ Use the actual DB values
+          lastBooking: user.lastBooking || null,
+          totalBookings: user.totalBookings || 0,
+          status: 'Active',
+          avatar: user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+          favoriteServices: user.favorites?.map(f => f.name).join(', ') || 'None selected',
+          bookingHistory: []
+        };
+      });
+      
+      console.log('Transformed Users:', transformedUsers);
+      setUsers(transformedUsers);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setError('Failed to load users. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    
-    // Transform MongoDB data to match your component structure
-    const transformedUsers = data.map((user, index) => ({
-      id: user._id,
-      name: user.fullName,
-      email: user.email,
-      phone: 'Not provided',
-      joinDate: new Date(user.createdAt).toLocaleDateString('en-US'),
-      lastBooking: '',
-      totalBookings: '',
-      status: 'Active',
-      avatar: user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
-      favoriteServices: user.favorites?.map(f => f.name).join(', ') || 'None selected',
-      bookingHistory: []
-    }));
-    
-    setUsers(transformedUsers);
-    setError(null);
-  } catch (err) {
-    console.error('Error fetching users:', err);
-    console.error('Error details:', err.message);
-    setError('Failed to load users. Please try again.');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   // Filter users based on search term
   const filteredUsers = users.filter(user =>
