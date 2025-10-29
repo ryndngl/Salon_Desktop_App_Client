@@ -1,278 +1,159 @@
-import React, { useRef, useState, useEffect } from "react";
-import html2pdf from "html2pdf.js";
-import axios from "axios";
-
-const MonthlySalesForm = () => {
-  const formRef = useRef();
-  const [salesData, setSalesData] = useState({
-    breakdown: [],
-    totalSales: 0,
-    totalWeeks: 4, // Default to 4 weeks
-    weekRanges: [],
-    startDate: "",
-    endDate: "",
-    isLoading: true,
-  });
-
-  useEffect(() => {
-    const fetchSalesData = async () => {
-      try {
-        const response = await axios.get(
-          "https://salon-app-server.onrender.com/api/appointments/sales-monthly-breakdown"
-        );
-
-        setSalesData({
-          breakdown: response.data.breakdown || [],
-          totalSales: response.data.totalSales || 0,
-          totalWeeks: response.data.totalWeeks || 4, // ✅ Get dynamic weeks
-          weekRanges: response.data.weekRanges || [],
-          startDate: response.data.startDate || "",
-          endDate: response.data.endDate || "",
-          isLoading: false,
-        });
-      } catch (error) {
-        console.error("❌ Error fetching monthly breakdown:", error);
-        setSalesData({
-          breakdown: [],
-          totalSales: 0,
-          totalWeeks: 4,
-          weekRanges: [],
-          startDate: "",
-          endDate: "",
-          isLoading: false,
-        });
-      }
-    };
-
-    fetchSalesData();
-  }, []);
-
-  const formatMonthYear = () => {
-    if (!salesData.startDate) {
-      return "Loading...";
+export const getMonthlySalesBreakdown = async (req, res) => {
+  try {
+    const { year, month } = req.query;
+    
+    let startDate, endDate;
+    
+    if (year && month) {
+      startDate = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, 1));
+      endDate = new Date(Date.UTC(parseInt(year), parseInt(month), 0, 23, 59, 59, 999));
+    } else {
+      const today = getPhilippineToday();
+      startDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1));
+      endDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 1, 0, 23, 59, 59, 999));
     }
-    return new Date(salesData.startDate).toLocaleDateString("en-US", {
-      month: "long",
-      year: "numeric",
+
+    const appointments = await Appointment.find({
+      date: { $gte: startDate, $lte: endDate },
+      status: { $in: ['Completed', 'Confirmed'] }
     });
-  };
 
-  const getWeekDateRange = (weekNumber) => {
-    // ✅ Use weekRanges from API instead of calculating
-    const weekRange = salesData.weekRanges.find(w => w.week === weekNumber);
-    if (weekRange) {
-      return `${weekRange.start}-${weekRange.end}`;
+    const walkIns = await WalkIn.find({
+      date: { $gte: startDate, $lte: endDate },
+      paymentStatus: 'Paid',
+      is_main_record: true
+    });
+
+    // ✅ DYNAMIC: Calculate total days in month
+    const totalDaysInMonth = endDate.getUTCDate();
+    
+    // ✅ DYNAMIC: Calculate how many weeks based on days
+    const totalWeeks = Math.ceil(totalDaysInMonth / 7);
+    
+    // ✅ DYNAMIC: Generate week ranges automatically
+    const weekRanges = [];
+    for (let week = 1; week <= totalWeeks; week++) {
+      const weekStart = 1 + (week - 1) * 7;
+      let weekEnd = weekStart + 6;
+      
+      // Last week shouldn't exceed month's last day
+      if (weekEnd > totalDaysInMonth) {
+        weekEnd = totalDaysInMonth;
+      }
+      
+      weekRanges.push({
+        week,
+        start: weekStart,
+        end: weekEnd
+      });
     }
-    return "";
-  };
 
-  const handleDownloadPDF = () => {
-    const element = formRef.current;
-    const opt = {
-      margin: 10,
-      filename: `monthly-sales-report-${Date.now()}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+    // ✅ DYNAMIC: Function to get week number based on day
+    const getWeekOfMonth = (date) => {
+      const dateObj = new Date(date);
+      const dayOfMonth = dateObj.getUTCDate();
+      
+      // Find which week this day belongs to
+      for (let i = 0; i < weekRanges.length; i++) {
+        if (dayOfMonth >= weekRanges[i].start && dayOfMonth <= weekRanges[i].end) {
+          return weekRanges[i].week;
+        }
+      }
+      
+      // Fallback: return last week
+      return totalWeeks;
     };
 
-    html2pdf().set(opt).from(element).save();
-  };
+    // ✅ DYNAMIC: Initialize service breakdown with dynamic weeks
+    const initServiceData = (serviceName) => {
+      const data = { service: serviceName, total: 0 };
+      
+      // Add week1, week2, week3, etc. dynamically
+      for (let i = 1; i <= totalWeeks; i++) {
+        data[`week${i}`] = 0;
+      }
+      
+      return data;
+    };
 
-  // ✅ Dynamic function to render week columns based on totalWeeks
-  const renderWeekHeaders = () => {
-    const headers = [];
-    for (let week = 1; week <= salesData.totalWeeks; week++) {
-      headers.push(
-        <th 
-          key={week}
-          className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase"
-        >
-          <div>Week {week}</div>
-          <div className="text-xs font-normal text-gray-600 mt-1">
-            {getWeekDateRange(week)}
-          </div>
-        </th>
-      );
-    }
-    return headers;
-  };
+    // ✅ Helper function to normalize service names
+    const normalizeServiceName = (name) => {
+      const normalized = name.toLowerCase().trim();
+      
+      // Normalize haircut variations
+      if (normalized.includes('haircut') || normalized.includes('hair cut')) {
+        return 'Hair Cut';
+      }
+      
+      // Add more normalizations here as needed
+      // if (normalized.includes('rebond')) return 'Rebond';
+      // if (normalized.includes('color')) return 'Hair Color';
+      
+      return name; // Return original if no match
+    };
 
-  // ✅ Dynamic function to render week data cells
-  const renderWeekCells = (service) => {
-    const cells = [];
-    for (let week = 1; week <= salesData.totalWeeks; week++) {
-      const weekKey = `week${week}`;
-      const value = service[weekKey] || 0;
-      cells.push(
-        <td 
-          key={week}
-          className="px-4 py-3 text-sm text-center text-gray-800"
-        >
-          ₱{value.toLocaleString("en-PH", {
-            minimumFractionDigits: 2,
-          })}
-        </td>
-      );
-    }
-    return cells;
-  };
+    const serviceBreakdown = new Map();
 
-  return (
-    <div className="relative">
-      {/* Download Button */}
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={handleDownloadPDF}
-          className="px-6 py-2 bg-red-600 text-white rounded-md font-medium text-sm hover:bg-red-700"
-        >
-          Download PDF
-        </button>
-      </div>
+    // Process appointments
+    appointments.forEach(apt => {
+      const weekNum = getWeekOfMonth(apt.date);
 
-      {/* Formal Document Form */}
-      <div
-        ref={formRef}
-        className="bg-white border-2 border-gray-300 max-w-5xl mx-auto"
-      >
-        {/* PDF Page Break Styles */}
-        <style jsx>{`
-          @media print {
-            .page-break-before {
-              page-break-before: always;
-            }
-            .page-break-after {
-              page-break-after: always;
-            }
-            .avoid-break {
-              page-break-inside: avoid;
-            }
-          }
-        `}</style>
+      apt.services.forEach(service => {
+        const serviceName = normalizeServiceName(service.name);
+        const servicePrice = parseFloat(service.price) || 0;
 
-        {/* Document Header */}
-        <div className="border-b-4 border-double border-gray-800 p-8 text-center avoid-break">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 uppercase tracking-wide mb-3">
-              Van's Glow Up Salon
-            </h1>
-            <div className="text-sm text-gray-700 leading-relaxed space-y-1">
-              <p>Blk 7 Lot 2 Phase 1 Sub Urban Village</p>
-              <p>Brgy. San Jose Rodriguez Rizal, Philippines</p>
-            </div>
-          </div>
+        if (!serviceBreakdown.has(serviceName)) {
+          serviceBreakdown.set(serviceName, initServiceData(serviceName));
+        }
 
-          <div className="border-t-2 border-gray-300 pt-4 mt-6">
-            <h2 className="text-xl font-bold text-gray-900 uppercase tracking-wide mb-2">
-              Monthly Sales Report
-            </h2>
-            <p className="text-sm text-gray-600">Period: {formatMonthYear()}</p>
-          </div>
-        </div>
+        const weekKey = `week${weekNum}`;
+        const serviceData = serviceBreakdown.get(serviceName);
+        
+        if (serviceData[weekKey] !== undefined) {
+          serviceData[weekKey] += servicePrice;
+          serviceData.total += servicePrice;
+        }
+      });
+    });
 
-        {/* Document Body */}
-        <div className="p-8">
-          {/* Sales Summary Section */}
-          <div className="mb-6 avoid-break">
-            <h3 className="text-base font-bold text-gray-900 uppercase mb-4 border-b border-gray-400 pb-2">
-              Sales Summary
-            </h3>
-          </div>
+    // Process walk-ins
+    walkIns.forEach(walkIn => {
+      const weekNum = getWeekOfMonth(walkIn.date);
+      const serviceName = normalizeServiceName(walkIn.services || 'Walk-in Service');
+      const servicePrice = parseFloat(walkIn.amount) || 0;
 
-          {/* Loading State */}
-          {salesData.isLoading ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500">Loading sales data...</p>
-            </div>
-          ) : salesData.breakdown.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500">
-                No sales data available for this month
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* ✅ Dynamic Services Table - Week columns adjust automatically */}
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="border-y-2 border-gray-800 avoid-break">
-                      <th className="px-4 py-3 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">
-                        Service
-                      </th>
-                      {/* ✅ Dynamic week headers */}
-                      {renderWeekHeaders()}
-                      <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase bg-gray-100">
-                        Total
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {salesData.breakdown.map((service, index) => (
-                      <tr
-                        key={index}
-                        className="border-b border-gray-200 avoid-break"
-                      >
-                        <td className="px-4 py-3 text-sm text-gray-800">
-                          {service.service}
-                        </td>
-                        {/* ✅ Dynamic week cells */}
-                        {renderWeekCells(service)}
-                        <td className="px-4 py-3 text-sm text-center text-gray-800 font-bold bg-gray-50">
-                          ₱{service.total.toLocaleString("en-PH", {
-                            minimumFractionDigits: 2,
-                          })}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+      if (!serviceBreakdown.has(serviceName)) {
+        serviceBreakdown.set(serviceName, initServiceData(serviceName));
+      }
 
-              {/* Total Section */}
-              <div className="mt-8 border-t-4 border-double border-gray-800 pt-4 avoid-break">
-                <div className="flex justify-between items-center px-4">
-                  <span className="text-base font-bold text-gray-900 uppercase tracking-wide">
-                    Total Monthly Sales:
-                  </span>
-                  <span className="text-xl font-bold text-gray-900">
-                    ₱{salesData.totalSales.toLocaleString("en-PH", {
-                      minimumFractionDigits: 2,
-                    })}
-                  </span>
-                </div>
-              </div>
-            </>
-          )}
+      const weekKey = `week${weekNum}`;
+      const serviceData = serviceBreakdown.get(serviceName);
+      
+      if (serviceData[weekKey] !== undefined) {
+        serviceData[weekKey] += servicePrice;
+        serviceData.total += servicePrice;
+      }
+    });
 
-          {/* Signature Section */}
-          <div className="mt-12 grid grid-cols-2 gap-8 avoid-break">
-            <div className="text-center">
-              <div className="border-t border-gray-800 pt-2 mt-12">
-                <p className="text-sm font-medium text-gray-900">Prepared by</p>
-                <p className="text-xs text-gray-600 mt-1">Admin</p>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="border-t border-gray-800 pt-2 mt-12">
-                <p className="text-sm font-medium text-gray-900">Approved by</p>
-                <p className="text-xs text-gray-600 mt-1">Salon Owner</p>
-              </div>
-            </div>
-          </div>
+    const breakdown = Array.from(serviceBreakdown.values());
+    const totalSales = breakdown.reduce((sum, service) => sum + service.total, 0);
 
-          {/* Footer note */}
-          <div className="mt-8 pt-4 border-t border-gray-300">
-            <p className="text-xs text-gray-500 text-center">
-              This is a system-generated document. For inquiries, please contact
-              the salon office.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    res.status(200).json({
+      success: true,
+      startDate,
+      endDate,
+      totalWeeks, 
+      weekRanges,
+      breakdown,
+      totalSales
+    });
+
+  } catch (error) {
+    console.error('❌ Monthly breakdown error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
 };
-
-export default MonthlySalesForm;
