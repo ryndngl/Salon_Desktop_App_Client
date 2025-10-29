@@ -7,6 +7,8 @@ const MonthlySalesForm = () => {
   const [salesData, setSalesData] = useState({
     breakdown: [],
     totalSales: 0,
+    totalWeeks: 4, // Default to 4 weeks
+    weekRanges: [],
     startDate: "",
     endDate: "",
     isLoading: true,
@@ -16,12 +18,14 @@ const MonthlySalesForm = () => {
     const fetchSalesData = async () => {
       try {
         const response = await axios.get(
-          "http://https://salon-app-server.onrender.com:5000/api/appointments/sales-monthly-breakdown"
+          "https://salon-app-server.onrender.com/api/appointments/sales-monthly-breakdown"
         );
 
         setSalesData({
           breakdown: response.data.breakdown || [],
           totalSales: response.data.totalSales || 0,
+          totalWeeks: response.data.totalWeeks || 4, // ✅ Get dynamic weeks
+          weekRanges: response.data.weekRanges || [],
           startDate: response.data.startDate || "",
           endDate: response.data.endDate || "",
           isLoading: false,
@@ -31,6 +35,8 @@ const MonthlySalesForm = () => {
         setSalesData({
           breakdown: [],
           totalSales: 0,
+          totalWeeks: 4,
+          weekRanges: [],
           startDate: "",
           endDate: "",
           isLoading: false,
@@ -52,27 +58,12 @@ const MonthlySalesForm = () => {
   };
 
   const getWeekDateRange = (weekNumber) => {
-    if (!salesData.startDate) return "";
-
-    const monthStart = new Date(salesData.startDate);
-    const startDay = (weekNumber - 1) * 7 + 1;
-    const endDay = Math.min(
-      weekNumber * 7,
-      new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0).getDate()
-    );
-
-    const startDate = new Date(
-      monthStart.getFullYear(),
-      monthStart.getMonth(),
-      startDay
-    );
-    const endDate = new Date(
-      monthStart.getFullYear(),
-      monthStart.getMonth(),
-      endDay
-    );
-
-    return `${startDate.getDate()}-${endDate.getDate()}`;
+    // ✅ Use weekRanges from API instead of calculating
+    const weekRange = salesData.weekRanges.find(w => w.week === weekNumber);
+    if (weekRange) {
+      return `${weekRange.start}-${weekRange.end}`;
+    }
+    return "";
   };
 
   const handleDownloadPDF = () => {
@@ -87,6 +78,45 @@ const MonthlySalesForm = () => {
     };
 
     html2pdf().set(opt).from(element).save();
+  };
+
+  // ✅ Dynamic function to render week columns based on totalWeeks
+  const renderWeekHeaders = () => {
+    const headers = [];
+    for (let week = 1; week <= salesData.totalWeeks; week++) {
+      headers.push(
+        <th 
+          key={week}
+          className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase"
+        >
+          <div>Week {week}</div>
+          <div className="text-xs font-normal text-gray-600 mt-1">
+            {getWeekDateRange(week)}
+          </div>
+        </th>
+      );
+    }
+    return headers;
+  };
+
+  // ✅ Dynamic function to render week data cells
+  const renderWeekCells = (service) => {
+    const cells = [];
+    for (let week = 1; week <= salesData.totalWeeks; week++) {
+      const weekKey = `week${week}`;
+      const value = service[weekKey] || 0;
+      cells.push(
+        <td 
+          key={week}
+          className="px-4 py-3 text-sm text-center text-gray-800"
+        >
+          ₱{value.toLocaleString("en-PH", {
+            minimumFractionDigits: 2,
+          })}
+        </td>
+      );
+    }
+    return cells;
   };
 
   return (
@@ -163,7 +193,7 @@ const MonthlySalesForm = () => {
             </div>
           ) : (
             <>
-              {/* Services Table with 4 Week Columns */}
+              {/* ✅ Dynamic Services Table - Week columns adjust automatically */}
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
                   <thead>
@@ -171,30 +201,8 @@ const MonthlySalesForm = () => {
                       <th className="px-4 py-3 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">
                         Service
                       </th>
-                      <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase">
-                        <div>Week 1</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">
-                          {getWeekDateRange(1)}
-                        </div>
-                      </th>
-                      <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase">
-                        <div>Week 2</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">
-                          {getWeekDateRange(2)}
-                        </div>
-                      </th>
-                      <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase">
-                        <div>Week 3</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">
-                          {getWeekDateRange(3)}
-                        </div>
-                      </th>
-                      <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase">
-                        <div>Week 4</div>
-                        <div className="text-xs font-normal text-gray-600 mt-1">
-                          {getWeekDateRange(4)}
-                        </div>
-                      </th>
+                      {/* ✅ Dynamic week headers */}
+                      {renderWeekHeaders()}
                       <th className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase bg-gray-100">
                         Total
                       </th>
@@ -209,33 +217,10 @@ const MonthlySalesForm = () => {
                         <td className="px-4 py-3 text-sm text-gray-800">
                           {service.service}
                         </td>
-                        <td className="px-4 py-3 text-sm text-center text-gray-800">
-                          ₱
-                          {service.week1.toLocaleString("en-PH", {
-                            minimumFractionDigits: 2,
-                          })}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-center text-gray-800">
-                          ₱
-                          {service.week2.toLocaleString("en-PH", {
-                            minimumFractionDigits: 2,
-                          })}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-center text-gray-800">
-                          ₱
-                          {service.week3.toLocaleString("en-PH", {
-                            minimumFractionDigits: 2,
-                          })}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-center text-gray-800">
-                          ₱
-                          {service.week4.toLocaleString("en-PH", {
-                            minimumFractionDigits: 2,
-                          })}
-                        </td>
+                        {/* ✅ Dynamic week cells */}
+                        {renderWeekCells(service)}
                         <td className="px-4 py-3 text-sm text-center text-gray-800 font-bold bg-gray-50">
-                          ₱
-                          {service.total.toLocaleString("en-PH", {
+                          ₱{service.total.toLocaleString("en-PH", {
                             minimumFractionDigits: 2,
                           })}
                         </td>
@@ -252,8 +237,7 @@ const MonthlySalesForm = () => {
                     Total Monthly Sales:
                   </span>
                   <span className="text-xl font-bold text-gray-900">
-                    ₱
-                    {salesData.totalSales.toLocaleString("en-PH", {
+                    ₱{salesData.totalSales.toLocaleString("en-PH", {
                       minimumFractionDigits: 2,
                     })}
                   </span>
