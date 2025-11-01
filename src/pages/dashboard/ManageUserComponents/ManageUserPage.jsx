@@ -65,47 +65,45 @@ const ManageUserPage = () => {
         throw new Error("Invalid response format from server");
       }
 
-      // ✅ FIXED: Transform MongoDB data properly
-      const transformedUsers = data.map((user) => {
-        // Helper to format dates
-        const formatDate = (date) => {
-          if (!date) return "No bookings yet";
-          try {
-            const d = new Date(date);
-            return isNaN(d.getTime())
-              ? "Invalid Date"
-              : d.toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                });
-          } catch {
-            return "Invalid Date";
-          }
-        };
+     // FIXED: Transform MongoDB data properly
+const transformedUsers = data.map((user) => {
+  // Helper to format dates
+  const formatDate = (date) => {
+    if (!date) return "No bookings yet";
+    try {
+      const d = new Date(date);
+      return isNaN(d.getTime())
+        ? "Invalid Date"
+        : d.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+    } catch {
+      return "Invalid Date";
+    }
+  };
 
-        return {
-          id: user._id,
-          name: user.fullName,
-          email: user.email,
-          phone: "Not provided",
-          joinDate: user.createdAt,
-          // ✅ Use the actual DB values
-          lastBooking: user.lastBooking || null,
-          totalBookings: user.totalBookings || 0,
-          status: "Active",
-          avatar: user.fullName
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2),
-          favoriteServices:
-            user.favorites?.map((f) => f.name).join(", ") || "None selected",
-          bookingHistory: [],
-        };
-      });
-
+  return {
+    id: user._id,
+    name: user.fullName,
+    email: user.email,
+    phone: user.phone || "Not provided", 
+    joinDate: user.createdAt,
+    lastBooking: user.lastBooking || null,
+    totalBookings: user.totalBookings || 0,
+    status: "Active",
+    avatar: user.fullName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2),
+    favoriteServices:
+      user.favorites?.map((f) => f.name).join(", ") || "None selected",
+    bookingHistory: [],
+  };
+});
       setUsers(transformedUsers);
       setError(null);
     } catch (err) {
