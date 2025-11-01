@@ -13,7 +13,6 @@ const UserTable = ({
       : 'text-red-800';
   };
 
-  // ✅ Helper function to format dates properly
   const formatDate = (dateString) => {
     if (!dateString || dateString === 'Invalid Date') {
       return 'No bookings yet';
@@ -37,7 +36,6 @@ const UserTable = ({
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 overflow-hidden">
-  
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -73,18 +71,16 @@ const UserTable = ({
                     </div>
                     <div className="flex items-center text-sm text-gray-500">
                       <Phone className="h-4 w-4 mr-2 text-gray-400" />
-                      {user.phone}
+                      {user.phone || "Not provided"}
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {formatDate(user.joinDate)}
                 </td>
-                {/* ✅ LAST BOOKING with proper formatting */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {formatDate(user.lastBooking)}
                 </td>
-                {/* ✅ TOTAL BOOKINGS - number only, center aligned, not clickable */}
                 <td className="px-6 py-4 whitespace-nowrap text-center">
                   <span className="text-sm font-medium text-gray-900">
                     {user.totalBookings}
