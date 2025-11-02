@@ -1,4 +1,5 @@
-import { Edit, Power } from 'lucide-react';
+// ServiceStylesList.jsx
+import { Edit, Power, CheckCircle, X } from 'lucide-react';
 import { useState } from 'react';
 import EditServiceModal from './EditServiceModal';
 import ToggleServiceModal from './ToggleServiceModal';
@@ -7,6 +8,8 @@ import { servicesAPI } from "../../../../services/api.js";
 const ServiceStylesList = ({ styles, serviceId, categoryName }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [toggleModalOpen, setToggleModalOpen] = useState(false);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [selectedStyle, setSelectedStyle] = useState(null);
   const [stylesStatus, setStylesStatus] = useState(() => {
     const initialStatus = {};
@@ -45,7 +48,8 @@ const ServiceStylesList = ({ styles, serviceId, categoryName }) => {
       );
 
       if (result.success) {
-        alert('Style updated successfully!');
+        setSuccessMessage('Style updated successfully!');
+        setSuccessModalOpen(true);
         setEditModalOpen(false);
       } else {
         alert('Failed to update style: ' + result.message);
@@ -68,7 +72,9 @@ const ServiceStylesList = ({ styles, serviceId, categoryName }) => {
           ...prev,
           [style.id]: !prev[style.id]
         }));
-        alert(result.message);
+        setSuccessMessage(result.message);
+        setSuccessModalOpen(true);
+        setToggleModalOpen(false);
       } else {
         alert('Failed to toggle style: ' + result.message);
       }
@@ -132,6 +138,35 @@ const ServiceStylesList = ({ styles, serviceId, categoryName }) => {
         onConfirm={handleToggleConfirm}
         loading={loading}
       />
+
+      {successModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 relative">
+            <button
+              onClick={() => setSuccessModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle size={32} className="text-green-600" />
+              </div>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Success</h3>
+              <p className="text-gray-600 mb-6">{successMessage}</p>
+
+              <button
+                onClick={() => setSuccessModalOpen(false)}
+                className="w-full bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

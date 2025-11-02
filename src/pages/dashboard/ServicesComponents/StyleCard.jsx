@@ -1,4 +1,5 @@
-import { Edit, Power, Trash2, X } from "lucide-react";
+// StyleCard.jsx
+import { Edit, Power, Trash2, X, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import EditServiceModal from "./EditServiceModal";
 import ToggleServiceModal from "./ToggleServiceModal";
@@ -9,12 +10,13 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [toggleModalOpen, setToggleModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [isActive, setIsActive] = useState(style.isActive !== false);
   const [isOnSale, setIsOnSale] = useState(style.isOnSale || false);
   const [loading, setLoading] = useState(false);
 
-  // Handle multiple images (for Foot Spa Package) or single image
   const hasMultipleImages =
     Array.isArray(style.images) && style.images.length > 1;
   const imageUrl =
@@ -40,37 +42,40 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
   };
 
   const handleSaveEdit = async (updatedStyle) => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const result = await servicesAPI.updateStyle(
-        serviceId,
-        categoryName,
-        updatedStyle.id,
-        {
-          price: updatedStyle.price,
-          description: updatedStyle.description,
-          isOnSale: updatedStyle.isOnSale,
-        }
-      );
-
-      if (result.success) {
-        setIsOnSale(updatedStyle.isOnSale);
-        alert("Style updated successfully!");
-        setEditModalOpen(false);
-
-        // Trigger parent refresh if callback exists
-        if (onUpdate) onUpdate();
-      } else {
-        alert("Failed to update style: " + result.message);
+    const result = await servicesAPI.updateStyle(
+      serviceId,
+      categoryName,
+      updatedStyle.id,
+      {
+        price: updatedStyle.price,
+        description: updatedStyle.description,
+        isOnSale: updatedStyle.isOnSale,
       }
-    } catch (error) {
-      console.error("Error updating style:", error);
-      alert("Error updating style: " + error.message);
-    } finally {
-      setLoading(false);
+    );
+
+    if (result.success) {
+      setIsOnSale(updatedStyle.isOnSale);
+      setSuccessMessage('Style updated successfully!');
+      setSuccessModalOpen(true);
+      setEditModalOpen(false);
+
+      //
+      setTimeout(() => {
+        if (onUpdate) onUpdate();
+      }, 1500);
+    } else {
+      alert("Failed to update style: " + result.message);
     }
-  };
+  } catch (error) {
+    console.error("Error updating style:", error);
+    alert("Error updating style: " + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleToggleConfirm = async () => {
     try {
@@ -83,10 +88,10 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
 
       if (result.success) {
         setIsActive(!isActive);
-        alert(result.message);
+        setSuccessMessage(result.message);
+        setSuccessModalOpen(true);
         setToggleModalOpen(false);
 
-        // Trigger parent refresh if callback exists
         if (onUpdate) onUpdate();
       } else {
         alert("Failed to toggle style: " + result.message);
@@ -100,42 +105,41 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
   };
 
   const handleDeleteConfirm = async () => {
-    try {
-      setLoading(true);
-      const result = await servicesAPI.deleteStyle(
-        serviceId,
-        categoryName,
-        style.id
-      );
+  try {
+    setLoading(true);
+    const result = await servicesAPI.deleteStyle(
+      serviceId,
+      categoryName,
+      style.id
+    );
 
-      if (result.success) {
-        alert("Style deleted successfully!");
-        setDeleteModalOpen(false);
-
-        // Trigger parent refresh if callback exists
+    if (result.success) {
+      setSuccessMessage('Style deleted successfully!');
+      setSuccessModalOpen(true);
+      setDeleteModalOpen(false);
+      setTimeout(() => {
         if (onUpdate) onUpdate();
-      } else {
-        alert("Failed to delete style: " + result.message);
-      }
-    } catch (error) {
-      console.error("Error deleting style:", error);
-      alert("Error deleting style: " + error.message);
-    } finally {
-      setLoading(false);
+      }, 1500);
+    } else {
+      alert("Failed to delete style: " + result.message);
     }
-  };
+  } catch (error) {
+    console.error("Error deleting style:", error);
+    alert("Error deleting style: " + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
-        {/* Image - Clickable */}
         <div
           className="relative w-full bg-gray-100 cursor-pointer hover:opacity-95 transition-opacity"
           style={{ paddingBottom: "100%" }}
           onClick={handleImageClick}
         >
           {hasMultipleImages ? (
-            // Multiple images grid (for Foot Spa Package)
             <div className="absolute inset-0 grid grid-cols-3 gap-1 p-1">
               {style.images.map((img, idx) => (
                 <img
@@ -147,7 +151,6 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
               ))}
             </div>
           ) : (
-            // Single image
             <img
               src={imageUrl}
               alt={style.name}
@@ -155,16 +158,13 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
             />
           )}
 
-          {/* Status Badges */}
           <div className="absolute top-2 right-2 flex flex-col gap-2 z-10">
-            {/* Sale Badge - Orange/Yellow */}
             {isOnSale && isActive && (
               <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-pulse">
                 SALE
               </div>
             )}
 
-            {/* Disabled Badge - Red */}
             {!isActive && (
               <div className="bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
                 Disabled
@@ -173,14 +173,11 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
           </div>
         </div>
 
-        {/* Content */}
         <div className="p-4">
-          {/* Name */}
           <h4 className="font-semibold text-gray-900 text-lg mb-1 truncate">
             {style.name}
           </h4>
 
-          {/* Price - with sale indicator */}
           <div className="flex items-center gap-2 mb-2">
             <p
               className={`font-bold text-xl ${isOnSale ? "text-orange-600" : "text-green-600"}`}
@@ -194,12 +191,10 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
             )}
           </div>
 
-          {/* Description */}
           <p className="text-sm text-gray-600 line-clamp-2 mb-4 min-h-[40px]">
             {style.description}
           </p>
 
-          {/* Action Buttons - NOW WITH DELETE */}
           <div className="flex items-center gap-2 pt-3 border-t">
             <button
               onClick={handleEditClick}
@@ -225,7 +220,6 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
               </span>
             </button>
 
-            {/* DELETE BUTTON - NEW */}
             <button
               onClick={handleDeleteClick}
               disabled={loading}
@@ -237,7 +231,6 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
         </div>
       </div>
 
-      {/* Modals */}
       <EditServiceModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
@@ -254,7 +247,6 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
         loading={loading}
       />
 
-      {/* DELETE MODAL - NEW */}
       <DeleteServiceModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
@@ -263,13 +255,40 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
         loading={loading}
       />
 
-      {/* Image Fullscreen Modal */}
+      {successModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 relative">
+            <button
+              onClick={() => setSuccessModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle size={32} className="text-green-600" />
+              </div>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Success</h3>
+              <p className="text-gray-600 mb-6">{successMessage}</p>
+
+              <button
+                onClick={() => setSuccessModalOpen(false)}
+                className="w-full bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {imageModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
           onClick={() => setImageModalOpen(false)}
         >
-          {/* Close Button */}
           <button
             onClick={() => setImageModalOpen(false)}
             className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-50"
@@ -277,13 +296,11 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
             <X size={32} />
           </button>
 
-          {/* Image Container */}
           <div
             className="relative max-w-4xl max-h-[90vh] w-full"
             onClick={(e) => e.stopPropagation()}
           >
             {hasMultipleImages ? (
-              // Multiple images
               <div className="bg-white rounded-lg p-4">
                 <div className="grid grid-cols-3 gap-2">
                   {allImages.map((img, idx) => (
@@ -297,7 +314,6 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
                 </div>
               </div>
             ) : (
-              // Single image
               <img
                 src={imageUrl}
                 alt={style.name}
@@ -305,7 +321,6 @@ const StyleCard = ({ style, serviceId, categoryName, onUpdate }) => {
               />
             )}
 
-            {/* Image Info */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 rounded-b-lg">
               <div className="flex items-center gap-2">
                 <h3 className="text-white font-bold text-xl">{style.name}</h3>

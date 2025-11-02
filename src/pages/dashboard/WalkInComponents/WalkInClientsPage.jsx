@@ -1,6 +1,6 @@
-// WalkInClientsPage.jsx - FIXED VERSION
+// WalkInClientsPage.jsx
 import React, { useState, useEffect } from "react";
-import { Plus, UserX, X, Search, Calendar } from "lucide-react";
+import { Plus, UserX, X, Search, Calendar, CheckCircle, AlertCircle } from "lucide-react";
 import WalkInTable from "./WalkInTable";
 import WalkInStats from "./WalkInStats";
 import WalkInForm from "./WalkInForm";
@@ -15,6 +15,12 @@ const WalkInClientsPage = () => {
 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState(null);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [clientToCancel, setClientToCancel] = useState(null);
 
   const [clientType, setClientType] = useState(null);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -75,7 +81,7 @@ const WalkInClientsPage = () => {
         is_main_record:
           walkIn.is_main_record !== undefined ? walkIn.is_main_record : true,
         main_client_id: walkIn.main_client_id || null,
-        visitHistory: walkIn.visitHistory || [], // ✅ Include visit history
+        visitHistory: walkIn.visitHistory || [],
       }));
 
       setClients(transformedClients);
@@ -179,7 +185,6 @@ const WalkInClientsPage = () => {
     }
   };
 
-  // ✅ FIXED: Helper function para sa date comparison
   const getTodayDateString = () => {
     const today = new Date();
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -202,17 +207,14 @@ const WalkInClientsPage = () => {
     }
   };
 
-  // ✅ SIMPLIFIED: Stats computation based on visit history
   const getStats = () => {
     const today = getTodayDateString();
     const todayClients = clients.filter((c) => normalizeDate(c.date) === today);
 
-    // Count NEW clients (no visit history)
     const newClientsCount = todayClients.filter(
       (c) => !c.visitHistory || c.visitHistory.length === 0
     ).length;
 
-    // Count RETURNING clients (has visit history)
     const returningClientsCount = todayClients.filter(
       (c) => c.visitHistory && c.visitHistory.length > 0
     ).length;
@@ -230,20 +232,17 @@ const WalkInClientsPage = () => {
     };
   };
 
-  // ✅ SIMPLIFIED: Filter clients based on visit history
   const getFilteredClients = () => {
     const today = getTodayDateString();
     const todayClients = clients.filter((c) => normalizeDate(c.date) === today);
 
     switch (activeFilter) {
       case "new":
-        // NEW CLIENT: Has NO visit history (first time client)
         return todayClients.filter(
           (c) => !c.visitHistory || c.visitHistory.length === 0
         );
 
       case "returning":
-        // RETURNING CLIENT: Has visit history (came back)
         return todayClients.filter(
           (c) => c.visitHistory && c.visitHistory.length > 0
         );
@@ -263,15 +262,12 @@ const WalkInClientsPage = () => {
 
   const filteredClients = getFilteredClients();
 
-  // ✅ FIXED: Handle service toggle with object (name + price)
   const handleServiceToggle = (serviceObj) => {
     setSelectedServices((prev) => {
       const exists = prev.find((s) => s.name === serviceObj.name);
       if (exists) {
-        // Remove service
         return prev.filter((s) => s.name !== serviceObj.name);
       } else {
-        // Add service
         return [...prev, serviceObj];
       }
     });
@@ -307,13 +303,11 @@ const WalkInClientsPage = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ FIXED: Build services string from selected services array
     const servicesString =
       selectedServices.length > 0
         ? selectedServices.map((s) => s.name).join(", ")
         : formData.services;
 
-    // ✅ FIXED: Validation
     if (!servicesString) {
       alert("Please select at least one service");
       return;
@@ -328,7 +322,6 @@ const WalkInClientsPage = () => {
       const token = localStorage.getItem("token");
 
       if (editingId) {
-        // Update existing walk-in
         const response = await fetch(`${API_BASE_URL}/walkin/${editingId}`, {
           method: "PUT",
           headers: {
@@ -343,11 +336,15 @@ const WalkInClientsPage = () => {
         });
 
         if (!response.ok) throw new Error("Failed to update");
-        alert("Walk-in updated successfully!");
+        setSuccessMessage('Walk-in updated successfully!');
+        setSuccessModalOpen(true);
+        resetForm();
+        
+        setTimeout(() => {
+          fetchWalkIns();
+        }, 1500);
       } else {
-        // Create new walk-in
         if (clientType === "new") {
-          // ✅ NEW: Check if client already exists
           const existingClient = clients.find(
             (c) =>
               c.name.toLowerCase() === formData.name.toLowerCase() ||
@@ -361,7 +358,6 @@ const WalkInClientsPage = () => {
             return;
           }
 
-          // New client - create main record
           const response = await fetch(`${API_BASE_URL}/walkin/new-client`, {
             method: "POST",
             headers: {
@@ -385,9 +381,14 @@ const WalkInClientsPage = () => {
             const errorData = await response.json();
             throw new Error(errorData.message || "Failed to create new client");
           }
-          alert("New client added successfully!");
+          setSuccessMessage('New client added successfully!');
+          setSuccessModalOpen(true);
+          resetForm();
+          
+          setTimeout(() => {
+            fetchWalkIns();
+          }, 1500);
         } else if (clientType === "returning" && selectedClient) {
-          // Returning client - update main record
           const response = await fetch(
             `${API_BASE_URL}/walkin/returning-client/${selectedClient.id}`,
             {
@@ -411,12 +412,15 @@ const WalkInClientsPage = () => {
             const errorData = await response.json();
             throw new Error(errorData.message || "Failed to add visit");
           }
-          alert("Visit added successfully!");
+          setSuccessMessage('Visit added successfully!');
+          setSuccessModalOpen(true);
+          resetForm();
+          
+          setTimeout(() => {
+            fetchWalkIns();
+          }, 1500);
         }
       }
-
-      await fetchWalkIns();
-      resetForm();
     } catch (error) {
       console.error("Submit error:", error);
       alert(error.message || "Failed to save walk-in");
@@ -437,20 +441,19 @@ const WalkInClientsPage = () => {
       status: client.status,
     });
 
-    // ✅ FIXED: Parse services string back to array for editing
-    // Note: When editing, we don't have the original prices, so we'll just show the services string
-    // User will need to re-select services if they want to change them
     setSelectedServices([]);
     setShowAddForm(true);
   };
 
-  const handleDeleteClient = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this walk-in?"))
-      return;
+  const handleDeleteClient = (id) => {
+    setClientToDelete(id);
+    setDeleteModalOpen(true);
+  };
 
+  const handleConfirmDelete = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/walkin/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/walkin/${clientToDelete}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -459,8 +462,14 @@ const WalkInClientsPage = () => {
 
       if (!response.ok) throw new Error("Failed to delete");
 
-      alert("Walk-in deleted successfully!");
-      await fetchWalkIns();
+      setDeleteModalOpen(false);
+      setClientToDelete(null);
+      setSuccessMessage('Walk-in deleted successfully!');
+      setSuccessModalOpen(true);
+      
+      setTimeout(() => {
+        fetchWalkIns();
+      }, 1500);
     } catch (error) {
       console.error("Delete error:", error);
       alert("Failed to delete walk-in");
@@ -508,13 +517,15 @@ const WalkInClientsPage = () => {
     }
   };
 
-  const handleMarkAsCancelled = async (id) => {
-    if (!window.confirm("Are you sure you want to cancel this walk-in?"))
-      return;
+  const handleMarkAsCancelled = (id) => {
+    setClientToCancel(id);
+    setCancelModalOpen(true);
+  };
 
+  const handleConfirmCancel = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/walkin/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/walkin/${clientToCancel}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -525,6 +536,8 @@ const WalkInClientsPage = () => {
 
       if (!response.ok) throw new Error("Failed to cancel");
 
+      setCancelModalOpen(false);
+      setClientToCancel(null);
       await fetchWalkIns();
     } catch (error) {
       console.error("Cancel error:", error);
@@ -562,7 +575,6 @@ const WalkInClientsPage = () => {
         stats={getStats()}
       />
 
-      {/* SEARCH BAR - SA NEW CLIENT TAB NA */}
       {activeFilter === "new" && (
         <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
           <div className="flex gap-4">
@@ -597,7 +609,6 @@ const WalkInClientsPage = () => {
         </div>
       )}
 
-      {/* ADD WALK-IN BUTTON - FOR BRAND NEW CLIENTS ONLY */}
       {activeFilter === "new" && (
         <div className="flex justify-end mb-4">
           <button
@@ -627,7 +638,6 @@ const WalkInClientsPage = () => {
         </div>
       ) : (
         <div>
-          {/* ✅ Dynamic Table Title */}
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             {activeFilter === "returning"
               ? "List of Returning Walk-in Clients"
@@ -893,6 +903,97 @@ const WalkInClientsPage = () => {
             >
               OK, Got it!
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE CONFIRMATION MODAL */}
+      {deleteModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10001]">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 relative">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                <AlertCircle size={32} className="text-red-600" />
+              </div>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Delete Walk-in</h3>
+              <p className="text-gray-600 mb-6">Are you sure you want to delete this walk-in?</p>
+
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => {
+                    setDeleteModalOpen(false);
+                    setClientToDelete(null);
+                  }}
+                  className="flex-1 bg-gray-200 text-gray-800 py-2.5 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  className="flex-1 bg-red-600 text-white py-2.5 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CANCEL CONFIRMATION MODAL */}
+      {cancelModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10001]">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 relative">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                <AlertCircle size={32} className="text-orange-600" />
+              </div>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Cancel Walk-in</h3>
+              <p className="text-gray-600 mb-6">Are you sure you want to cancel this walk-in?</p>
+
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => {
+                    setCancelModalOpen(false);
+                    setClientToCancel(null);
+                  }}
+                  className="flex-1 bg-gray-200 text-gray-800 py-2.5 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                >
+                  No
+                </button>
+                <button
+                  onClick={handleConfirmCancel}
+                  className="flex-1 bg-orange-600 text-white py-2.5 rounded-lg font-medium hover:bg-orange-700 transition-colors"
+                >
+                  Yes, Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUCCESS MODAL */}
+      {successModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10001]">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 relative">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle size={32} className="text-green-600" />
+              </div>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Success</h3>
+              <p className="text-gray-600 mb-6">{successMessage}</p>
+
+              <button
+                onClick={() => setSuccessModalOpen(false)}
+                className="w-full bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors"
+              >
+                OK
+              </button>
+            </div>
           </div>
         </div>
       )}

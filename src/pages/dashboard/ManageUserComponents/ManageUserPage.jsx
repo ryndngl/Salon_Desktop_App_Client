@@ -1,4 +1,6 @@
+// ManageUserPage.jsx
 import { useState, useEffect } from "react";
+import { CheckCircle, X } from "lucide-react";
 
 // Import components
 import UserSearchBar from "./UserSearchBar";
@@ -44,6 +46,8 @@ const ManageUserPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [deletingUser, setDeletingUser] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // State for users - empty array initially
   const [users, setUsers] = useState([]);
@@ -65,45 +69,43 @@ const ManageUserPage = () => {
         throw new Error("Invalid response format from server");
       }
 
-     // FIXED: Transform MongoDB data properly
-const transformedUsers = data.map((user) => {
-  // Helper to format dates
-  const formatDate = (date) => {
-    if (!date) return "No bookings yet";
-    try {
-      const d = new Date(date);
-      return isNaN(d.getTime())
-        ? "Invalid Date"
-        : d.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          });
-    } catch {
-      return "Invalid Date";
-    }
-  };
+      const transformedUsers = data.map((user) => {
+        const formatDate = (date) => {
+          if (!date) return "No bookings yet";
+          try {
+            const d = new Date(date);
+            return isNaN(d.getTime())
+              ? "Invalid Date"
+              : d.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                });
+          } catch {
+            return "Invalid Date";
+          }
+        };
 
-  return {
-    id: user._id,
-    name: user.fullName,
-    email: user.email,
-    phone: user.phone || "Not provided", 
-    joinDate: user.createdAt,
-    lastBooking: user.lastBooking || null,
-    totalBookings: user.totalBookings || 0,
-    status: "Active",
-    avatar: user.fullName
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2),
-    favoriteServices:
-      user.favorites?.map((f) => f.name).join(", ") || "None selected",
-    bookingHistory: [],
-  };
-});
+        return {
+          id: user._id,
+          name: user.fullName,
+          email: user.email,
+          phone: user.phone || "Not provided",
+          joinDate: user.createdAt,
+          lastBooking: user.lastBooking || null,
+          totalBookings: user.totalBookings || 0,
+          status: "Active",
+          avatar: user.fullName
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2),
+          favoriteServices:
+            user.favorites?.map((f) => f.name).join(", ") || "None selected",
+          bookingHistory: [],
+        };
+      });
       setUsers(transformedUsers);
       setError(null);
     } catch (err) {
@@ -150,7 +152,8 @@ const transformedUsers = data.map((user) => {
 
     setShowEditModal(false);
     setEditingUser(null);
-    alert("User updated successfully!");
+    setSuccessMessage('User updated successfully!');
+    setSuccessModalOpen(true);
   };
 
   const handleInputChange = (field, value) => {
@@ -177,7 +180,8 @@ const transformedUsers = data.map((user) => {
 
     setShowDeleteModal(false);
     setDeletingUser(null);
-    alert("User deleted successfully!");
+    setSuccessMessage('User deleted successfully!');
+    setSuccessModalOpen(true);
   };
 
   // Loading state
@@ -250,6 +254,36 @@ const transformedUsers = data.map((user) => {
           onCloseModal={handleCloseDeleteModal}
           onConfirmDelete={handleConfirmDelete}
         />
+
+        {/* Success Modal */}
+        {successModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 relative">
+              <button
+                onClick={() => setSuccessModalOpen(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle size={32} className="text-green-600" />
+                </div>
+
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Success</h3>
+                <p className="text-gray-600 mb-6">{successMessage}</p>
+
+                <button
+                  onClick={() => setSuccessModalOpen(false)}
+                  className="w-full bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
