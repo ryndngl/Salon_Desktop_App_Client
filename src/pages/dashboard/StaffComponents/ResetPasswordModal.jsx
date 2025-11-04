@@ -93,10 +93,6 @@ const ResetPasswordModal = ({ isOpen, onClose, staff, onSuccess }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
-          {/* Info Box */}
-          <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          </div>
-
           <div className="space-y-4">
             {/* New Password */}
             <div>
