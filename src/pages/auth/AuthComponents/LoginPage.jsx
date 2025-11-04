@@ -2,10 +2,13 @@
 import { useState } from 'react';
 import LoginForm from './LoginForm';
 import LoginHero from './LoginHero';
+import ForgotPasswordModal from './ForgotPasswordModal';
 import useLogin from '../../../hooks/useLogin';
 import LoadingSpinner from '../../../components/ui/LoadingSpinner'; 
+
 const LoginPage = () => {
   const [selectedRole, setSelectedRole] = useState(null);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   
   const {
     formData,
@@ -24,6 +27,14 @@ const LoginPage = () => {
     setFormData({ username: '', password: '' });
   };
 
+  const handleForgotPassword = () => {
+    setShowForgotPasswordModal(true);
+  };
+
+  const handleCloseForgotPassword = () => {
+    setShowForgotPasswordModal(false);
+  };
+
   return (
     <>
       <div className="flex h-screen font-sans">
@@ -35,7 +46,6 @@ const LoginPage = () => {
             <div className="w-full max-w-md">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-800 mb-2">Login</h2>
-      
               </div>
 
               <div className="space-y-4">
@@ -70,19 +80,27 @@ const LoginPage = () => {
                 </button>
               </div>
 
-              {/* Your existing LoginForm */}
+              {/* Login Form */}
               <LoginForm
                 formData={formData}
                 setFormData={setFormData}
                 isLoading={isLoading}
                 onSubmit={handleSubmit}
                 selectedRole={selectedRole}
+                onForgotPassword={handleForgotPassword}
               />
             </div>
           </div>
         )}
       </div>
+      
       <LoadingSpinner show={showSpinner} />
+      
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal 
+        isOpen={showForgotPasswordModal}
+        onClose={handleCloseForgotPassword}
+      />
     </>
   );
 };

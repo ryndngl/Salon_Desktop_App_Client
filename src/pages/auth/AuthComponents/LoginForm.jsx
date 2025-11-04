@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import PasswordInput from './PasswordInput';
 import LoginButton from "./LoginButton";
 
-const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef, selectedRole }) => {
+const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef, selectedRole, onForgotPassword }) => {
   const localUsernameRef = useRef(null);
   const finalUsernameRef = usernameRef || localUsernameRef;
 
@@ -29,14 +29,13 @@ const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef, se
     }
   };
 
-  // ✅ NEW: Create wrapper function that includes selectedRole
   const handleLoginClick = (e) => {
     onSubmit(e, selectedRole);
   };
 
   return (
     <div className="w-full">
-      {/* Header - Updated to show role */}
+      {/* Header */}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-800 mb-2">
           {selectedRole === 'admin' ? 'Admin' : 'Staff'}
@@ -75,16 +74,17 @@ const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef, se
           />
         </div>
 
-        {/* Login Button - ✅ FIXED: Now passes selectedRole */}
+        {/* Login Button */}
         <LoginButton 
           isLoading={isLoading}
           onClick={handleLoginClick}
         />
 
-        {/* Forgot Password */}
+        {/* Forgot Password - Updated with onClick handler */}
         <div className="text-center">
           <button
             type="button"
+            onClick={onForgotPassword}
             disabled={isLoading}
             className="text-sm text-gray-600 hover:text-green-600 transition-colors duration-200 bg-transparent border-none outline-none cursor-pointer disabled:opacity-50"
           >
