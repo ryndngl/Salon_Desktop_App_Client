@@ -7,6 +7,7 @@ import { ServicesPage } from '../ServicesComponents';
 import { SalesReportPage} from '../SalesReportComponents'; 
 import { ManageUserPage } from '../ManageUserComponents';
 import { ReviewsPage } from '../ReviewsComponents'; 
+import { StaffPage } from '../StaffComponents'; // 🔥 NEW: Import StaffPage
 
 const Dashboard = ({ onLogout, currentUser }) => { 
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -31,6 +32,8 @@ const Dashboard = ({ onLogout, currentUser }) => {
         return <SalesReportPage />;
       case 'manage-user':
         return <ManageUserPage />;
+      case 'staff-accounts': 
+        return <StaffPage />;
       default:
         return <DashboardHome />;
     }
@@ -44,7 +47,8 @@ const Dashboard = ({ onLogout, currentUser }) => {
       'services': 'Services',
       'reviews': 'Reviews',  
       'sales-report': 'Sales Report',
-      'manage-user': 'Manage Users'
+      'manage-user': 'Manage Users',
+      'staff-accounts': 'Staff Management'
     };
     return titles[activeTab] || 'Dashboard';
   };
