@@ -80,17 +80,19 @@ const LoginForm = ({ formData, setFormData, isLoading, onSubmit, usernameRef, se
           onClick={handleLoginClick}
         />
 
-        {/* Forgot Password - Updated with onClick handler */}
-        <div className="text-center">
-          <button
-            type="button"
-            onClick={onForgotPassword}
-            disabled={isLoading}
-            className="text-sm text-gray-600 hover:text-green-600 transition-colors duration-200 bg-transparent border-none outline-none cursor-pointer disabled:opacity-50"
-          >
-            Forgot your password?
-          </button>
-        </div>
+        {/* Forgot Password - ONLY show for Admin */}
+        {selectedRole === 'admin' && (
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={onForgotPassword}
+              disabled={isLoading}
+              className="text-sm text-gray-600 hover:text-green-600 transition-colors duration-200 bg-transparent border-none outline-none cursor-pointer disabled:opacity-50"
+            >
+              Forgot your password?
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
