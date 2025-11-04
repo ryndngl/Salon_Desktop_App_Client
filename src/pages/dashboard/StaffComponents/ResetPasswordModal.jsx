@@ -95,10 +95,6 @@ const ResetPasswordModal = ({ isOpen, onClose, staff, onSuccess }) => {
         <form onSubmit={handleSubmit} className="p-6">
           {/* Info Box */}
           <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <strong>Note:</strong> Set a temporary password for this staff
-              member. They can change it after logging in.
-            </p>
           </div>
 
           <div className="space-y-4">
