@@ -1,4 +1,4 @@
-// src/pages/auth/AuthComponents/ForgotPasswordModal.jsx
+// src/pages/auth/AuthComponents/ForgotPasswordModal.jsx - FIXED VERSION
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -63,10 +63,10 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_URL}/api/auth/validate-token`, {
+      // 🔥 FIXED: Use admin validate-token endpoint
+      const response = await axios.post(`${API_URL}/api/auth/admin/validate-token`, {
         token: code.trim(),
-        email: email.toLowerCase().trim(),
-        type: 'admin'
+        email: email.toLowerCase().trim()
       });
 
       if (response.data.success) {
@@ -100,11 +100,11 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_URL}/api/auth/reset-password`, {
+      // 🔥 FIXED: Use admin reset-password endpoint
+      const response = await axios.post(`${API_URL}/api/auth/admin/reset-password`, {
         token: code.trim(),
         email: email.toLowerCase().trim(),
-        newPassword: newPassword,
-        type: 'admin'
+        newPassword: newPassword
       });
 
       if (response.data.success) {
