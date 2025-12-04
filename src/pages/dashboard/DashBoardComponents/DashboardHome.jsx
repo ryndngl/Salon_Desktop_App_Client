@@ -65,7 +65,7 @@ const DashboardHome = () => {
     try {
       // ✅ Use the dedicated dashboard stats endpoint
       const dashboardRes = await axios.get(
-        "https://salon-app-server.onrender.com/api/appointments/dashboard-stats"
+        "https://salon-app-server-0akh.onrender.com/api/appointments/dashboard-stats"
       );
       
       const dashboardStats = dashboardRes.data.stats;
