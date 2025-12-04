@@ -27,7 +27,7 @@ const ResetPasswordModal = ({ isOpen, onClose, staff, onSuccess }) => {
 
     try {
       const response = await fetch(
-        `https://salon-app-server.onrender.com/api/staff/${staff._id}/reset-password`,
+        `https://salon-app-server-0akh.onrender.com/api/staff/${staff._id}/reset-password`,
         {
           method: "PUT",
           headers: {
@@ -43,15 +43,15 @@ const ResetPasswordModal = ({ isOpen, onClose, staff, onSuccess }) => {
 
       if (response.ok && result.isSuccess) {
         alert(`Password reset successfully for ${staff.username}!`);
-        
+
         // Reset form
         setNewPassword("");
         setConfirmPassword("");
-        
+
         if (onSuccess) {
           onSuccess();
         }
-        
+
         onClose();
       } else {
         alert(`Failed to reset password: ${result.message || "Unknown error"}`);

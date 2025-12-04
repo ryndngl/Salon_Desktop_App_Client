@@ -25,7 +25,7 @@ const SalesReportPage = () => {
 
       // ✅ FIXED: Use the correct endpoint - /all
       const response = await axios.get(
-        "https://salon-app-server.onrender.com/api/appointments/all"
+        "https://salon-app-server-0akh.onrender.com/api/appointments/all"
       );
 
       if (response.data.success) {

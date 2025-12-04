@@ -1,6 +1,6 @@
 // services/api.js
 
-const API_BASE_URL = "https://salon-app-server.onrender.com/api";
+const API_BASE_URL = "https://salon-app-server-0akh.onrender.com/api";
 
 export const servicesAPI = {
   getAllServices: async () => {

@@ -21,8 +21,8 @@ const useLogin = () => {
       // ✅ CORRECT ENDPOINTS
       const endpoint =
         selectedRole === "staff"
-          ? "https://salon-app-server.onrender.com/api/staff/sign-in"
-          : "https://salon-app-server.onrender.com/api/auth/admin/sign-in";
+          ? "https://salon-app-server-0akh.onrender.com/api/staff/sign-in"
+          : "https://salon-app-server-0akh.onrender.com/api/auth/admin/sign-in";
 
       const response = await fetch(endpoint, {
         method: "POST",

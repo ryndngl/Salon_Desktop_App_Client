@@ -11,7 +11,7 @@ import UserEditModal from "./UserEditModal";
 import UserDeleteModal from "./UserDeleteModal";
 
 // TEMPORARY - userService code pasted directly here (for testing)
-const API_BASE_URL = "https://salon-app-server.onrender.com/api";
+const API_BASE_URL = "https://salon-app-server-0akh.onrender.com/api";
 
 const userService = {
   getAll: async () => {
@@ -47,7 +47,7 @@ const ManageUserPage = () => {
   const [deletingUser, setDeletingUser] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [successModalOpen, setSuccessModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
   // State for users - empty array initially
   const [users, setUsers] = useState([]);
@@ -152,7 +152,7 @@ const ManageUserPage = () => {
 
     setShowEditModal(false);
     setEditingUser(null);
-    setSuccessMessage('User updated successfully!');
+    setSuccessMessage("User updated successfully!");
     setSuccessModalOpen(true);
   };
 
@@ -180,7 +180,7 @@ const ManageUserPage = () => {
 
     setShowDeleteModal(false);
     setDeletingUser(null);
-    setSuccessMessage('User deleted successfully!');
+    setSuccessMessage("User deleted successfully!");
     setSuccessModalOpen(true);
   };
 
@@ -271,7 +271,9 @@ const ManageUserPage = () => {
                   <CheckCircle size={32} className="text-green-600" />
                 </div>
 
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Success</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Success
+                </h3>
                 <p className="text-gray-600 mb-6">{successMessage}</p>
 
                 <button

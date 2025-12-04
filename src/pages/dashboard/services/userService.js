@@ -1,7 +1,7 @@
 // /src/services/userService.js
 
 // Base URL ng server mo - CHANGE THIS to your actual server URL
-const API_BASE_URL = "https://salon-app-server.onrender.com";
+const API_BASE_URL = "https://salon-app-server-0akh.onrender.com";
 
 export const userService = {
   // Get all users

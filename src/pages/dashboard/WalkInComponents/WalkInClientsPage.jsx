@@ -1,12 +1,20 @@
 // WalkInClientsPage.jsx
 import React, { useState, useEffect } from "react";
-import { Plus, UserX, X, Search, Calendar, CheckCircle, AlertCircle } from "lucide-react";
+import {
+  Plus,
+  UserX,
+  X,
+  Search,
+  Calendar,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
 import WalkInTable from "./WalkInTable";
 import WalkInStats from "./WalkInStats";
 import WalkInForm from "./WalkInForm";
 import WalkInFilters from "./WalkInFilters";
 
-const API_BASE_URL = "https://salon-app-server.onrender.com/api";
+const API_BASE_URL = "https://salon-app-server-0akh.onrender.com/api";
 
 const WalkInClientsPage = () => {
   const [clients, setClients] = useState([]);
@@ -16,7 +24,7 @@ const WalkInClientsPage = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [successModalOpen, setSuccessModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [clientToDelete, setClientToDelete] = useState(null);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
@@ -336,10 +344,10 @@ const WalkInClientsPage = () => {
         });
 
         if (!response.ok) throw new Error("Failed to update");
-        setSuccessMessage('Walk-in updated successfully!');
+        setSuccessMessage("Walk-in updated successfully!");
         setSuccessModalOpen(true);
         resetForm();
-        
+
         setTimeout(() => {
           fetchWalkIns();
         }, 1500);
@@ -381,10 +389,10 @@ const WalkInClientsPage = () => {
             const errorData = await response.json();
             throw new Error(errorData.message || "Failed to create new client");
           }
-          setSuccessMessage('New client added successfully!');
+          setSuccessMessage("New client added successfully!");
           setSuccessModalOpen(true);
           resetForm();
-          
+
           setTimeout(() => {
             fetchWalkIns();
           }, 1500);
@@ -412,10 +420,10 @@ const WalkInClientsPage = () => {
             const errorData = await response.json();
             throw new Error(errorData.message || "Failed to add visit");
           }
-          setSuccessMessage('Visit added successfully!');
+          setSuccessMessage("Visit added successfully!");
           setSuccessModalOpen(true);
           resetForm();
-          
+
           setTimeout(() => {
             fetchWalkIns();
           }, 1500);
@@ -464,9 +472,9 @@ const WalkInClientsPage = () => {
 
       setDeleteModalOpen(false);
       setClientToDelete(null);
-      setSuccessMessage('Walk-in deleted successfully!');
+      setSuccessMessage("Walk-in deleted successfully!");
       setSuccessModalOpen(true);
-      
+
       setTimeout(() => {
         fetchWalkIns();
       }, 1500);
@@ -916,8 +924,12 @@ const WalkInClientsPage = () => {
                 <AlertCircle size={32} className="text-red-600" />
               </div>
 
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Delete Walk-in</h3>
-              <p className="text-gray-600 mb-6">Are you sure you want to delete this walk-in?</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Delete Walk-in
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to delete this walk-in?
+              </p>
 
               <div className="flex gap-3 w-full">
                 <button
@@ -950,8 +962,12 @@ const WalkInClientsPage = () => {
                 <AlertCircle size={32} className="text-orange-600" />
               </div>
 
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Cancel Walk-in</h3>
-              <p className="text-gray-600 mb-6">Are you sure you want to cancel this walk-in?</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Cancel Walk-in
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to cancel this walk-in?
+              </p>
 
               <div className="flex gap-3 w-full">
                 <button
@@ -984,7 +1000,9 @@ const WalkInClientsPage = () => {
                 <CheckCircle size={32} className="text-green-600" />
               </div>
 
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Success</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Success
+              </h3>
               <p className="text-gray-600 mb-6">{successMessage}</p>
 
               <button

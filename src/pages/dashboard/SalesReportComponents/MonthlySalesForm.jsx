@@ -18,7 +18,7 @@ const MonthlySalesForm = () => {
     const fetchSalesData = async () => {
       try {
         const response = await axios.get(
-          "https://salon-app-server.onrender.com/api/appointments/sales-monthly-breakdown"
+          "https://salon-app-server-0akh.onrender.com/api/appointments/sales-monthly-breakdown"
         );
 
         setSalesData({
@@ -59,7 +59,7 @@ const MonthlySalesForm = () => {
 
   const getWeekDateRange = (weekNumber) => {
     // ✅ Use weekRanges from API instead of calculating
-    const weekRange = salesData.weekRanges.find(w => w.week === weekNumber);
+    const weekRange = salesData.weekRanges.find((w) => w.week === weekNumber);
     if (weekRange) {
       return `${weekRange.start}-${weekRange.end}`;
     }
@@ -85,7 +85,7 @@ const MonthlySalesForm = () => {
     const headers = [];
     for (let week = 1; week <= salesData.totalWeeks; week++) {
       headers.push(
-        <th 
+        <th
           key={week}
           className="px-4 py-3 text-center text-sm font-bold text-gray-900 uppercase"
         >
@@ -106,11 +106,9 @@ const MonthlySalesForm = () => {
       const weekKey = `week${week}`;
       const value = service[weekKey] || 0;
       cells.push(
-        <td 
-          key={week}
-          className="px-4 py-3 text-sm text-center text-gray-800"
-        >
-          ₱{value.toLocaleString("en-PH", {
+        <td key={week} className="px-4 py-3 text-sm text-center text-gray-800">
+          ₱
+          {value.toLocaleString("en-PH", {
             minimumFractionDigits: 2,
           })}
         </td>
@@ -220,7 +218,8 @@ const MonthlySalesForm = () => {
                         {/* ✅ Dynamic week cells */}
                         {renderWeekCells(service)}
                         <td className="px-4 py-3 text-sm text-center text-gray-800 font-bold bg-gray-50">
-                          ₱{service.total.toLocaleString("en-PH", {
+                          ₱
+                          {service.total.toLocaleString("en-PH", {
                             minimumFractionDigits: 2,
                           })}
                         </td>
@@ -237,7 +236,8 @@ const MonthlySalesForm = () => {
                     Total Monthly Sales:
                   </span>
                   <span className="text-xl font-bold text-gray-900">
-                    ₱{salesData.totalSales.toLocaleString("en-PH", {
+                    ₱
+                    {salesData.totalSales.toLocaleString("en-PH", {
                       minimumFractionDigits: 2,
                     })}
                   </span>

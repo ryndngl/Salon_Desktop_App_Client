@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Your server configuration
-const SERVER_URL = "https://salon-app-server.onrender.com";
+const SERVER_URL = "https://salon-app-server-0akh.onrender.com";
 
 // Store mainWindow reference globally
 let mainWindow;
@@ -111,7 +111,7 @@ ipcMain.handle("login", async (event, credentials) => {
         success: false,
         isSuccess: false,
         message:
-          "Cannot connect to server. Make sure the server is running on port https://salon-app-server.onrender.com.",
+          "Cannot connect to server. Make sure the server is running on port https://salon-app-server-0akh.onrender.com.",
       };
     }
 
@@ -142,7 +142,8 @@ ipcMain.handle("test-connection", async () => {
     console.error("❌ Server connection test failed:", error);
     return {
       success: false,
-      message: "Server unreachable. Check if server is running on port https://salon-app-server.onrender.com.",
+      message:
+        "Server unreachable. Check if server is running on port https://salon-app-server-0akh.onrender.com.",
     };
   }
 });

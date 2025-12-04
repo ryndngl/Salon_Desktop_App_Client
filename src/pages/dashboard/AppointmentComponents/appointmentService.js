@@ -1,6 +1,6 @@
 // src/dashboard/services/appointmentService.js
 
-const API_BASE_URL = "https://salon-app-server.onrender.com/api";
+const API_BASE_URL = "https://salon-app-server-0akh.onrender.com/api";
 
 // ✅ HELPER FUNCTION: Format services array
 const formatServicesArray = (services) => {

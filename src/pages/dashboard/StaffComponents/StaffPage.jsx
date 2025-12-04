@@ -11,14 +11,17 @@ const StaffPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] =
+    useState(false);
   const [selectedStaff, setSelectedStaff] = useState(null);
 
   // Fetch all staff
   const fetchStaff = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("https://salon-app-server.onrender.com/api/staff");
+      const response = await fetch(
+        "https://salon-app-server-0akh.onrender.com/api/staff"
+      );
       const result = await response.json();
 
       if (result.isSuccess) {
@@ -80,7 +83,7 @@ const StaffPage = () => {
 
     try {
       const response = await fetch(
-        `https://salon-app-server.onrender.com/api/staff/${staffId}`,
+        `https://salon-app-server-0akh.onrender.com/api/staff/${staffId}`,
         {
           method: "DELETE",
         }
@@ -132,7 +135,9 @@ const StaffPage = () => {
         </div>
       ) : filteredStaff.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-64 bg-gray-50 rounded-lg">
-          <div className="text-gray-400 text-lg mb-2">No staff accounts found</div>
+          <div className="text-gray-400 text-lg mb-2">
+            No staff accounts found
+          </div>
           {searchQuery && (
             <div className="text-gray-500 text-sm">
               Try adjusting your search query
